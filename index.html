@@ -5,254 +5,104 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SENSOPED AI</title>
 <style>
-body {
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f2f5f8;
-  color:#243247;
-}
-header {
-  background:#123b5d;
-  color:white;
-  padding:25px 18px;
-  text-align:center;
-}
-header h1 {margin:0;font-size:28px;}
-header p {margin:8px 0 0;color:#cbd9e5;}
-.container {
-  max-width:850px;
-  margin:auto;
-  padding:16px;
-}
-.card {
-  background:white;
-  padding:20px;
-  border-radius:15px;
-  margin-bottom:16px;
-  box-shadow:0 2px 8px #0001;
-}
-h2 {color:#123b5d;}
-label {
-  display:block;
-  margin-top:14px;
-  font-weight:bold;
-}
-input,select,textarea {
-  width:100%;
-  padding:12px;
-  margin-top:6px;
-  border:1px solid #ccd5df;
-  border-radius:8px;
-  box-sizing:border-box;
-  font-size:16px;
-}
-textarea {min-height:90px;}
-button {
-  background:#176b8e;
-  color:white;
-  border:none;
-  padding:14px;
-  border-radius:10px;
-  font-size:16px;
-  width:100%;
-  margin-top:15px;
-}
-button.secondary {background:#123b5d;}
-button.green {background:#25845c;}
-.result {
-  background:#f0f6fa;
-  padding:15px;
-  border-radius:10px;
-  white-space:pre-wrap;
-}
-.small {font-size:13px;color:#667788;}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f2f5f8;color:#243247}
+header{background:#123b5d;color:white;padding:22px 16px;text-align:center}
+header h1{margin:0;font-size:28px} header p{margin:8px 0 0;color:#cbd9e5}
+.container{max-width:900px;margin:auto;padding:16px}
+.card{background:white;padding:20px;border-radius:15px;margin-bottom:16px;box-shadow:0 2px 8px #0001}
+h2{color:#123b5d;margin-top:0}
+label{display:block;margin-top:14px;font-weight:bold}
+input,select,textarea{width:100%;padding:12px;margin-top:6px;border:1px solid #ccd5df;border-radius:8px;font-size:16px;background:white}
+textarea{min-height:90px;resize:vertical}
+button{background:#176b8e;color:white;border:0;padding:14px;border-radius:10px;font-size:16px;width:100%;margin-top:12px;cursor:pointer}
+button.secondary{background:#123b5d}button.green{background:#25845c}button.light{background:#e7eef4;color:#123b5d}
+.result{background:#f0f6fa;padding:15px;border-radius:10px;white-space:pre-wrap;line-height:1.5;margin-top:12px}
+.small{font-size:13px;color:#667788;line-height:1.45}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:16px}}
+@media print{header,.formcard,button,.small.note{display:none!important}.container{max-width:none;padding:0}.card{box-shadow:none;border:0}.result{background:white}}
 </style>
 </head>
-
 <body>
-
-<header>
-<h1>SENSOPED AI</h1>
-<p>Digitale Fuß- und Ganganalyse</p>
-</header>
-
+<header><h1>SENSOPED AI</h1><p>Digitale Fuß- und Ganganalyse</p></header>
 <div class="container">
-
-<div class="card">
-<h2>1. Patient</h2>
-
-<label>Name</label>
-<input id="name" placeholder="Patientenname">
-
-<label>Geburtsdatum</label>
-<input id="birth" type="date">
-
-<label>Beschwerden</label>
-<textarea id="complaints"
-placeholder="Wo bestehen Beschwerden? Seit wann?"></textarea>
+<div class="card formcard">
+<h2>1. Patient und Beschwerden</h2>
+<div class="grid"><div><label>Name / Patientenkennung</label><input id="name" placeholder="Patient"></div><div><label>Geburtsdatum</label><input id="birth" type="date"></div></div>
+<label>Beschwerden / Anlass</label><textarea id="complaints" placeholder="Beschwerden, seit wann, Belastung, Ziele"></textarea>
 </div>
-
-<div class="card">
+<div class="card formcard">
 <h2>2. Fußuntersuchung</h2>
-
-<label>Rechter Fuß</label>
-<textarea id="right"
-placeholder="Fußform, Belastung, Auffälligkeiten"></textarea>
-
-<label>Linker Fuß</label>
-<textarea id="left"
-placeholder="Fußform, Belastung, Auffälligkeiten"></textarea>
-
-<label>Fußstellung</label>
-<select id="foot">
-<option>Bitte auswählen</option>
-<option>Senkfuß</option>
-<option>Plattfuß</option>
-<option>Hohlfuß</option>
-<option>Knickfuß</option>
-<option>Spreizfuß</option>
-<option>Hallux valgus</option>
-<option>Keine wesentliche Auffälligkeit</option>
-<option>Sonstige</option>
-</select>
+<div class="grid"><div><label>Rechter Fuß</label><textarea id="right" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div><div><label>Linker Fuß</label><textarea id="left" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div></div>
+<label>Beobachtete Fußstellung / Befund</label><select id="foot"><option>Keine Auswahl</option><option>Senkfuß</option><option>Plattfuß</option><option>Hohlfuß</option><option>Knickfuß</option><option>Spreizfuß</option><option>Hallux valgus</option><option>Mehrere Auffälligkeiten</option><option>Keine wesentliche Auffälligkeit</option><option>Sonstige</option></select>
+<label>Weitere Befunde</label><textarea id="footnotes" placeholder="Druckstellen, Beweglichkeit, Funktion, weitere Details"></textarea>
 </div>
-
+<div class="card formcard">
+<h2>3. Bewegungs- und Ganganalyse</h2>
+<label>Gangbild</label><textarea id="gait" placeholder="Beobachtungen beim Gehen"></textarea>
+<div class="grid"><div><label>Knieachse</label><textarea id="knee" placeholder="Beobachtung der Knieachse"></textarea></div><div><label>Beweglichkeit</label><textarea id="movement" placeholder="Beweglichkeit / Einschränkungen"></textarea></div></div>
+<label>Weitere Beobachtungen</label><textarea id="observations" placeholder="Weitere Untersuchungsergebnisse"></textarea>
+</div>
+<div class="card formcard">
+<h2>4. Versorgung und Ziel</h2>
+<label>Empfohlene Versorgung</label><select id="therapy"><option>Keine Auswahl</option><option>Sensomotorische Einlage</option><option>Orthopädische Einlage</option><option>Orthopädische Schuhe</option><option>Schuhzurichtung</option><option>Individuelle Kombination</option><option>Weitere Versorgung</option></select>
+<label>Behandlungs- / Versorgungsziel</label><textarea id="goal" placeholder="Ziel und gewünschte funktionelle Verbesserung"></textarea>
+<label>Besondere Hinweise</label><textarea id="extra" placeholder="Optional"></textarea>
+</div>
+<div class="card formcard">
+<h2>5. Berichte erstellen</h2>
+<p class="small note">Die Berichte sind Vorschläge auf Grundlage der eingegebenen Befunde. Bitte vor Weitergabe prüfen und medizinisch bestätigen.</p>
+<button onclick="createReports()">Patientenbericht und Fachbericht erstellen</button>
+</div>
 <div class="card">
-<h2>3. Bewegungsanalyse</h2>
-
-<label>Gangbild</label>
-<textarea id="gait"
-placeholder="Gangbild und Auffälligkeiten"></textarea>
-
-<label>Knieachse</label>
-<textarea id="knee"
-placeholder="Beobachtung der Knieachse"></textarea>
-
-<label>Beweglichkeit</label>
-<textarea id="movement"
-placeholder="Beweglichkeit und Einschränkungen"></textarea>
-
-<label>Weitere Beobachtungen</label>
-<textarea id="observations"
-placeholder="Weitere Untersuchungsergebnisse"></textarea>
+<h2>Patientenbericht – verständlich erklärt</h2><div id="patientOutput" class="result" style="display:none"></div>
+<button class="light" onclick="copyText('patientOutput')">Patientenbericht kopieren</button>
 </div>
-
 <div class="card">
-<h2>4. Sensoped Versorgung</h2>
-
-<label>Empfohlene Versorgung</label>
-<select id="therapy">
-<option>Bitte auswählen</option>
-<option>Sensomotorische Einlage</option>
-<option>Orthopädische Einlage</option>
-<option>Orthopädische Schuhe</option>
-<option>Schuhzurichtung</option>
-<option>Individuelle Kombination</option>
-<option>Weitere Versorgung</option>
-</select>
-
-<label>Behandlungsziel</label>
-<textarea id="goal"
-placeholder="Ziel der Versorgung"></textarea>
+<h2>Fachbericht</h2><div id="doctorOutput" class="result" style="display:none"></div>
+<button class="secondary" onclick="copyText('doctorOutput')">Fachbericht kopieren</button>
+<button class="green" onclick="printReports()">Berichte drucken</button>
 </div>
-
 <div class="card">
-<h2>5. Bericht erstellen</h2>
-
-<button onclick="createReport()">
-Patienten- und Arztbericht erstellen
-</button>
-
-<div id="output" class="result"
-style="display:none;margin-top:20px"></div>
-
-<button class="secondary" onclick="copyReport()">
-Bericht kopieren
-</button>
-
-<button class="green" onclick="printReport()">
-Bericht drucken
-</button>
+<h2>6. KI-Bilder und Video</h2>
+<p>Dieser Bereich ist als nächster Entwicklungsschritt vorgesehen: Bilderkennung, Video-Ganganalyse, unterstützende Messwerte und strukturierte KI-Auswertung.</p>
+<p class="small">KI-Ausgaben sind unterstützende Hinweise. Die Beurteilung und Freigabe erfolgt durch den Untersucher.</p>
 </div>
-
-<div class="card">
-<h2>6. Bilder und Video</h2>
-<p>
-Hier wird später die KI-Bilderkennung und
-Video-Ganganalyse integriert.
-</p>
-<p class="small">
-Geplant: Fußbilder, Bewegungsanalyse,
-automatische Erkennung von Auffälligkeiten
-und unterstützende Messwerte.
-</p>
+<div class="card"><p class="small">SENSOPED AI – Untersuchung und Dokumentation. Patienteninformationen und Befunde bitte verantwortungsvoll behandeln.</p></div>
 </div>
-
-<div class="card">
-<p class="small">
-SENSOPED AI – Untersuchung und Dokumentation.
-KI-Ergebnisse sind unterstützende Hinweise.
-Die medizinische Beurteilung erfolgt durch
-den Untersucher.
-</p>
-</div>
-
-</div>
-
 <script>
-function val(id){
-return document.getElementById(id).value || "Keine Angabe";
+function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
+function createReports(){
+ const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
+ "Patient: "+val("name")+"\n"+
+ "Unser Eindruck von Ihren Beschwerden: "+val("complaints")+"\n\n"+
+ "Was wir untersucht haben:\n"+
+ "Rechter Fuß: "+val("right")+"\n"+
+ "Linker Fuß: "+val("left")+"\n"+
+ "Fußstellung: "+val("foot")+"\n"+
+ "Weitere Fußbefunde: "+val("footnotes")+"\n\n"+
+ "Beim Gehen und Bewegen:\n"+
+ "Gangbild: "+val("gait")+"\n"+
+ "Knieachse: "+val("knee")+"\n"+
+ "Beweglichkeit: "+val("movement")+"\n"+
+ "Weitere Beobachtungen: "+val("observations")+"\n\n"+
+ "Unser Versorgungsansatz: "+val("therapy")+"\n"+
+ "Ziel: "+val("goal")+"\n"+
+ "Hinweise: "+val("extra")+"\n\n"+
+ "Die vorgeschlagene Versorgung soll die individuell festgestellten Funktionen unterstützen. Die endgültige Beurteilung und Versorgung wird gemeinsam mit dem Untersucher festgelegt.\n\nSENSOPED";
+ const doctor="SENSOPED AI – Untersuchungsdokumentation\n\n"+
+ "PATIENT\nName / Kennung: "+val("name")+"\nGeburtsdatum: "+val("birth")+"\n\n"+
+ "ANAMNESE / BESCHWERDEN\n"+val("complaints")+"\n\n"+
+ "FUSSBEFUND\nRechter Fuß: "+val("right")+"\nLinker Fuß: "+val("left")+"\nFußstellung: "+val("foot")+"\nWeitere Befunde: "+val("footnotes")+"\n\n"+
+ "BEWEGUNGSANALYSE\nGangbild: "+val("gait")+"\nKnieachse: "+val("knee")+"\nBeweglichkeit: "+val("movement")+"\nWeitere Beobachtungen: "+val("observations")+"\n\n"+
+ "VERSORGUNG\nEmpfehlung: "+val("therapy")+"\nZiel: "+val("goal")+"\nZusätzliche Hinweise: "+val("extra")+"\n\n"+
+ "Bewertung und Freigabe durch den Untersucher erforderlich.\nSENSOPED AI";
+ const p=document.getElementById("patientOutput"),d=document.getElementById("doctorOutput");
+ p.innerText=patient;d.innerText=doctor;p.style.display="block";d.style.display="block";
 }
-
-function createReport(){
-
-let report =
-"SENSOPED AI – Untersuchungsbericht\n\n"+
-"PATIENT\n"+
-"Name: "+val("name")+"\n"+
-"Geburtsdatum: "+val("birth")+"\n\n"+
-"BESCHWERDEN\n"+
-val("complaints")+"\n\n"+
-"FUSSUNTERSUCHUNG\n"+
-"Rechter Fuß: "+val("right")+"\n"+
-"Linker Fuß: "+val("left")+"\n"+
-"Fußstellung: "+val("foot")+"\n\n"+
-"BEWEGUNGSANALYSE\n"+
-"Gangbild: "+val("gait")+"\n"+
-"Knieachse: "+val("knee")+"\n"+
-"Beweglichkeit: "+val("movement")+"\n"+
-"Weitere Beobachtungen: "+val("observations")+"\n\n"+
-"VERSORGUNG\n"+
-"Empfehlung: "+val("therapy")+"\n"+
-"Behandlungsziel: "+val("goal")+"\n\n"+
-"ZUSAMMENFASSUNG\n"+
-"Die vorliegenden Untersuchungsergebnisse "+
-"werden vom Untersucher beurteilt. "+
-"Die Versorgung wird individuell festgelegt.\n\n"+
-"SENSOPED AI";
-
-document.getElementById("output").style.display="block";
-document.getElementById("output").innerText=report;
-}
-
-function copyReport(){
-let text=document.getElementById("output").innerText;
-if(!text){
-alert("Bitte zuerst den Bericht erstellen.");
-return;
-}
-navigator.clipboard.writeText(text)
-.then(()=>alert("Bericht kopiert!"))
-.catch(()=>alert("Bitte den Bericht manuell markieren und kopieren."));
-}
-
-function printReport(){
-if(!document.getElementById("output").innerText){
-createReport();
-}
-window.print();
-}
+function copyText(id){const t=document.getElementById(id).innerText;if(!t){alert("Bitte zuerst die Berichte erstellen.");return}navigator.clipboard.writeText(t).then(()=>alert("Bericht kopiert.")).catch(()=>alert("Kopieren nicht möglich. Bitte Text markieren und kopieren."))}
+function printReports(){if(!document.getElementById("patientOutput").innerText)createReports();window.print()}
 </script>
-
 </body>
 </html>
