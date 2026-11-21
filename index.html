@@ -80,18 +80,27 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 <script>
 async function readDocument(input){
  const file=input.files&&input.files[0]; if(!file)return;
- const status=document.getElementById("ocrStatus");status.textContent="Foto wird gelesen…";
+ const status=document.getElementById("ocrStatus");status.textContent="Rezept wird gelesen und Daten werden übernommen…";
  try{
   if(!window.Tesseract){status.textContent="Texterkennung konnte nicht geladen werden.";return;}
   const result=await Tesseract.recognize(file,"deu+eng");
   const text=result.data.text||"";
   if(!text.trim()){status.textContent="Kein Text erkannt. Bitte Foto erneut aufnehmen.";return;}
-  document.getElementById("doctorDiagnosis").value=(document.getElementById("doctorDiagnosis").value?document.getElementById("doctorDiagnosis").value+"\n\n":"")+"OCR-Text vom Dokument (bitte überprüfen):\n"+text;
-  status.textContent="Text erkannt und im Diagnosefeld abgelegt. Bitte Daten kontrollieren.";
+  // OCR-Text sichern und vorsichtig anhand eindeutiger Beschriftungen zuordnen
+  const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const findLabel=(patterns)=>{for(let i=0;i<lines.length;i++){for(const p of patterns){if(p.test(lines[i])){const inline=lines[i].replace(p,"").replace(/^[:\-\s]+/,"").trim();if(inline)return inline;if(lines[i+1])return lines[i+1];}}}return "";};
+  const name=findLabel([/^patient(?:en)?(?:name)?\s*[:]?/i,/^name\s*[:]?/i]);
+  const birth=findLabel([/^(?:geb(?:urtsdatum)?|geb\.?)\s*[:]?/i,/^date of birth\s*[:]?/i]);
+  const address=findLabel([/^(?:adresse|anschrift)\s*[:]?/i]);
+  if(name && !document.getElementById("name").value)document.getElementById("name").value=name;
+  if(birth && !document.getElementById("birth").value){const m=birth.match(/(\d{1,2})[.\/\-](\d{1,2})[.\/\-](\d{2,4})/);if(m){let y=m[3];if(y.length===2)y=(+y>30?"19":"20")+y;document.getElementById("birth").value=y+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0");}}
+  if(address && !document.getElementById("address").value)document.getElementById("address").value=address;
+  document.getElementById("doctorDiagnosis").value=(document.getElementById("doctorDiagnosis").value?document.getElementById("doctorDiagnosis").value+"\n\n":"")+"Ausgelesene Rezeptdaten (bitte überprüfen):\n"+text;
+  status.textContent="Rezept ausgelesen. Erkannte Angaben wurden übernommen; bitte kurz kontrollieren.";
  }catch(e){status.textContent="Texterkennung fehlgeschlagen. Bitte erneut versuchen."}
  finally{input.value=""}
 }
-\nfunction val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
+function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
 function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
  "MPG-Nummer: "+val("mpg")+"\n"+
