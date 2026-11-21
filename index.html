@@ -25,7 +25,7 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>\n</head>
 <body>
-<header><h1>SENSOPED AI</h1><p>Digitale Fuß- und Ganganalyse</p><button class="cameraBtn" onclick="document.getElementById('photoInput').click()">📷 Dokument fotografieren</button><input id="photoInput" type="file" accept="image/*" capture="environment" onchange="readDocument(this)"><p id="ocrStatus" class="small" style="color:#fff"></p></header>
+<header><h1>SENSOPED AI</h1><p>Digitale Fuß- und Ganganalyse</p><button class="cameraBtn" onclick="document.getElementById('cameraInput').click()">📷 Dokument fotografieren</button><button class="cameraBtn" onclick="document.getElementById('fileInput').click()">📁 Foto oder Dokument auswählen</button><input id="cameraInput" type="file" accept="image/*" capture="environment" onchange="readDocument(this)" style="display:none"><input id="fileInput" type="file" accept="image/*" onchange="readDocument(this)" style="display:none"><p id="ocrStatus" class="small" style="color:#fff"></p></header>
 <div class="container">
 <div class="card formcard">
 <h2>1. Patient und Beschwerden</h2>
