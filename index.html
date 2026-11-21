@@ -105,21 +105,30 @@ async function readDocument(input){
  finally{input.value=""}
 }
 document.getElementById("footprintFile").addEventListener("change",function(){document.getElementById("footprintFileName").textContent=this.files&&this.files[0]?"Datei ausgewählt: "+this.files[0].name:"";});
-let footprintRecognition=null,footprintListening=false;
+let footprintRecognition=null,footprintListening=false,footprintRecorder=null,footprintChunks=[];
 async function toggleFootprintDictation(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  const status=document.getElementById("speechStatus"),btn=document.getElementById("dictationButton");
- if(!SR){status.textContent="Direkte Spracherkennung ist in diesem Browser nicht unterstützt. Bitte SENSOPED AI in Google Chrome öffnen. Die Tastatur-Diktierfunktion ist nicht Teil dieser Funktion.";return}
- if(footprintListening&&footprintRecognition){footprintRecognition.stop();return}
+ if(footprintRecorder&&footprintRecorder.state==="recording"){footprintRecorder.stop();btn.textContent="🎙️ Befund sprechen";status.textContent="Aufnahme wird übertragen und transkribiert…";return}
+ const endpoint=window.SENSOPED_AI_ENDPOINT;
+ if(!endpoint){status.textContent="Bitte zuerst im Feld KI-Server-Verbindung die Worker-Adresse speichern.";return}
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){status.textContent="Audioaufnahme wird in diesem Browser nicht unterstützt. Bitte Google Chrome verwenden.";return}
  try{
-  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const stream=await navigator.mediaDevices.getUserMedia({audio:true});stream.getTracks().forEach(t=>t.stop())}
-  footprintRecognition=new SR();footprintRecognition.lang="de-DE";footprintRecognition.continuous=true;footprintRecognition.interimResults=true;
-  footprintRecognition.onstart=()=>{footprintListening=true;btn.textContent="⏹️ Diktat beenden";status.textContent="🎙️ Ich höre zu. Bitte sprechen…"};
-  footprintRecognition.onresult=(event)=>{let finalText="",interim="";for(let i=event.resultIndex;i<event.results.length;i++){const t=event.results[i][0].transcript;if(event.results[i].isFinal)finalText+=t+" ";else interim+=t}const field=document.getElementById("footprintSpeech");if(finalText)field.value+=(field.value.trim()?" ":"")+finalText.trim();status.textContent=interim?"Erkannt: "+interim:"Diktat läuft…"};
-  footprintRecognition.onerror=(event)=>{status.textContent="Mikrofon/Spracherkennung: "+event.error+". Prüfen Sie die Mikrofonberechtigung im Browser."};
-  footprintRecognition.onend=()=>{footprintListening=false;btn.textContent="🎙️ Befund sprechen";if(!status.textContent.includes("Mikrofon/"))status.textContent="Diktat beendet. Text bitte prüfen."};
-  footprintRecognition.start();
- }catch(e){status.textContent="Mikrofonzugriff verweigert oder nicht verfügbar. Bitte Chrome die Mikrofonberechtigung erlauben und erneut versuchen."}
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});footprintChunks=[];
+  footprintRecorder=new MediaRecorder(stream);
+  footprintRecorder.ondataavailable=e=>{if(e.data&&e.data.size)footprintChunks.push(e.data)};
+  footprintRecorder.onstop=async()=>{
+   stream.getTracks().forEach(t=>t.stop());
+   try{
+    const blob=new Blob(footprintChunks,{type:footprintRecorder.mimeType||"audio/webm"});
+    const form=new FormData();form.append("audio",blob,"befund.webm");
+    const response=await fetch(endpoint.replace(/\/$/,"")+"/transcribe",{method:"POST",body:form});
+    const data=await response.json();if(!response.ok)throw new Error(data.error||"Serverfehler");
+    const field=document.getElementById("footprintSpeech");if(data.text)field.value+=(field.value.trim()?" ":"")+data.text;
+    status.textContent=data.text?"Transkription fertig. Bitte Befund prüfen.":"Keine Sprache erkannt.";
+   }catch(e){status.textContent="Transkription fehlgeschlagen: "+e.message}
+  };
+  footprintRecorder.start();footprintListening=true;btn.textContent="⏹️ Aufnahme beenden";status.textContent="🎙️ Aufnahme läuft – sprechen Sie Ihren Befund.";
+ }catch(e){status.textContent="Mikrofonzugriff nicht möglich. Bitte die Mikrofonberechtigung erlauben."}
 }
 function applyFootprintSpeech(){
  const text=document.getElementById("footprintSpeech").value.trim();if(!text){document.getElementById("speechStatus").textContent="Bitte zuerst etwas diktieren.";return}
