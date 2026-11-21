@@ -29,7 +29,7 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 <div class="container">
 <div class="card formcard">
 <h2>1. Patient und Beschwerden</h2>
-<label>MPG-Nummer</label><input id="mpg" placeholder="MPG-Nummer – unbedingt eintragen" style="font-size:20px;font-weight:bold;border:2px solid #176b8e"><div class="grid"><div><label>Name / Patientenkennung</label><input id="name" placeholder="Patient"></div><div><label>Geburtsdatum</label><input id="birth" type="date"></div></div>
+<div class="grid"><div><label>Name / Patientenkennung</label><input id="name" placeholder="Patient"></div><div><label>Geburtsdatum</label><input id="birth" type="date"></div></div><label>MPG-Nummer</label><input id="mpg" placeholder="MPG-Nummer">
 <label>Beschwerden / Anlass</label><textarea id="complaints" placeholder="Beschwerden, seit wann, Belastung, Ziele"></textarea>
 </div>
 <div class="card formcard">
@@ -75,7 +75,8 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
 function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
- "MPG-Nummer: "+val("mpg")+"\n"+\n "Patient: "+val("name")+"\n"+
+ "MPG-Nummer: "+val("mpg")+"\n"+
+ "Patient: "+val("name")+"\n"+
  "Unser Eindruck von Ihren Beschwerden: "+val("complaints")+"\n\n"+
  "Was wir untersucht haben:\n"+
  "Rechter Fuß: "+val("right")+"\n"+
@@ -92,7 +93,7 @@ function createReports(){
  "Hinweise: "+val("extra")+"\n\n"+
  "Die vorgeschlagene Versorgung soll die individuell festgestellten Funktionen unterstützen. Die endgültige Beurteilung und Versorgung wird gemeinsam mit dem Untersucher festgelegt.\n\nSENSOPED";
  const doctor="SENSOPED AI – Untersuchungsdokumentation\n\n"+
- "PATIENT\nName / Kennung: "+val("name")+"\nGeburtsdatum: "+val("birth")+"\n\n"+
+ "PATIENT\nName / Kennung: "+val("name")+"\nGeburtsdatum: "+val("birth")+"\nMPG-Nummer: "+val("mpg")+"\n\n"+
  "ANAMNESE / BESCHWERDEN\n"+val("complaints")+"\n\n"+
  "FUSSBEFUND\nRechter Fuß: "+val("right")+"\nLinker Fuß: "+val("left")+"\nFußstellung: "+val("foot")+"\nWeitere Befunde: "+val("footnotes")+"\n\n"+
  "BEWEGUNGSANALYSE\nGangbild: "+val("gait")+"\nKnieachse: "+val("knee")+"\nBeweglichkeit: "+val("movement")+"\nWeitere Beobachtungen: "+val("observations")+"\n\n"+
