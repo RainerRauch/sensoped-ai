@@ -30,7 +30,8 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 <div class="card formcard">
 <h2>1. Patient und Beschwerden</h2>
 <div class="grid"><div><label>Name / Patientenkennung</label><input id="name" placeholder="Patient"></div><div><label>Geburtsdatum</label><input id="birth" type="date"></div></div><label>MPG-Nummer</label><input id="mpg" placeholder="MPG-Nummer">
-<label>Beschwerden / Anlass</label><textarea id="complaints" placeholder="Beschwerden, seit wann, Belastung, Ziele"></textarea>
+<label>Adresse</label><textarea id="address" rows="2" placeholder="Straße, PLZ, Ort"></textarea>
+<label>Beschwerden / Untersuchungsanlass</label><textarea id="complaints" placeholder="Was führt den Patienten zu uns? Beschwerden, seit wann, Belastung, Ziele"></textarea>
 </div>
 <div class="card formcard">
 <h2>2. Rezept und ärztliche Diagnose</h2>
@@ -97,6 +98,7 @@ function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
  "MPG-Nummer: "+val("mpg")+"\n"+
  "Patient: "+val("name")+"\n"+
+ "Adresse: "+val("address")+"\n"+
  "Beschwerden / Anlass: "+val("complaints")+"\n\n"+
  "Ärztliche Verordnung: "+val("prescription")+"\n"+
  "Ärztliche Diagnose: "+val("doctorDiagnosis")+"\n"+
