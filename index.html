@@ -40,6 +40,9 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 </div>
 <div class="card formcard">
 <h2>3. Orthopädieschuhtechnische Untersuchung</h2>
+<h3>3.1 Fußabdruck</h3>
+<label>Art des Fußabdrucks</label><select id="footprintType"><option>Blauabdruck</option><option>Digitaler Fußabdruck</option><option>Sonstiger Fußabdruck</option></select>
+<label>Foto des Fußabdrucks</label><input id="footprintPhoto" type="file" accept="image/*" capture="environment" onchange="previewFootprint(this)"><p class="small">Blauabdruck oder anderer Fußabdruck kann hier fotografiert oder als Foto ausgewählt werden.</p><img id="footprintPreview" alt="Foto des Fußabdrucks" style="display:none;max-width:100%;margin-top:10px;border-radius:10px">
 <div class="grid"><div><label>Rechter Fuß</label><textarea id="right" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div><div><label>Linker Fuß</label><textarea id="left" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div></div>
 <label>Beobachtete Fußstellung / Befund</label><select id="foot"><option>Keine Auswahl</option><option>Senkfuß</option><option>Plattfuß</option><option>Hohlfuß</option><option>Knickfuß</option><option>Spreizfuß</option><option>Hallux valgus</option><option>Mehrere Auffälligkeiten</option><option>Keine wesentliche Auffälligkeit</option><option>Sonstige</option></select>
 <label>Weitere Befunde</label><textarea id="footnotes" placeholder="Druckstellen, Beweglichkeit, Funktion, weitere Details"></textarea>
@@ -100,6 +103,7 @@ async function readDocument(input){
  }catch(e){status.textContent="Texterkennung fehlgeschlagen. Bitte erneut versuchen."}
  finally{input.value=""}
 }
+function previewFootprint(input){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById("footprintPreview");const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display="block"};reader.readAsDataURL(f)}
 function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
 function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
@@ -112,6 +116,7 @@ function createReports(){
  "Was wir untersucht haben:\n"+
  "Rechter Fuß: "+val("right")+"\n"+
  "Linker Fuß: "+val("left")+"\n"+
+ "Art des Fußabdrucks: "+val("footprintType")+"\n"+
  "Fußstellung: "+val("foot")+"\n"+
  "Weitere Fußbefunde: "+val("footnotes")+"\n\n"+
  "Beim Gehen und Bewegen:\n"+
