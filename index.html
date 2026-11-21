@@ -106,26 +106,29 @@ async function readDocument(input){
 }
 document.getElementById("footprintFile").addEventListener("change",function(){document.getElementById("footprintFileName").textContent=this.files&&this.files[0]?"Datei ausgewählt: "+this.files[0].name:"";});
 let footprintRecognition=null,footprintListening=false;
-function toggleFootprintDictation(){
+async function toggleFootprintDictation(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  const status=document.getElementById("speechStatus"),btn=document.getElementById("dictationButton");
- if(!SR){status.textContent="Spracherkennung wird in diesem Browser nicht unterstützt. Bitte Chrome verwenden.";return}
+ if(!SR){status.textContent="Diese Spracherkennung ist in diesem Browser nicht verfügbar. Bitte die App in Google Chrome öffnen.";return}
  if(footprintListening&&footprintRecognition){footprintRecognition.stop();return}
- footprintRecognition=new SR();footprintRecognition.lang="de-DE";footprintRecognition.continuous=true;footprintRecognition.interimResults=true;
- footprintRecognition.onstart=()=>{footprintListening=true;btn.textContent="⏹️ Diktat beenden";status.textContent="Ich höre zu…"};
- footprintRecognition.onresult=(event)=>{let finalText="",interim="";for(let i=event.resultIndex;i<event.results.length;i++){const t=event.results[i][0].transcript;if(event.results[i].isFinal)finalText+=t+" ";else interim+=t}const field=document.getElementById("footprintSpeech");if(finalText)field.value+=(field.value.trim()?" ":"")+finalText.trim();status.textContent=interim?"Erkannt: "+interim:"Diktat aufgenommen. Du kannst weiter sprechen."};
- footprintRecognition.onerror=(event)=>{status.textContent="Spracherkennung: "+event.error};
- footprintRecognition.onend=()=>{footprintListening=false;btn.textContent="🎙️ Befund sprechen";if(status.textContent==="Ich höre zu…")status.textContent="Diktat beendet."};
- footprintRecognition.start();
+ try{
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const stream=await navigator.mediaDevices.getUserMedia({audio:true});stream.getTracks().forEach(t=>t.stop())}
+  footprintRecognition=new SR();footprintRecognition.lang="de-DE";footprintRecognition.continuous=true;footprintRecognition.interimResults=true;
+  footprintRecognition.onstart=()=>{footprintListening=true;btn.textContent="⏹️ Diktat beenden";status.textContent="🎙️ Ich höre zu. Bitte sprechen…"};
+  footprintRecognition.onresult=(event)=>{let finalText="",interim="";for(let i=event.resultIndex;i<event.results.length;i++){const t=event.results[i][0].transcript;if(event.results[i].isFinal)finalText+=t+" ";else interim+=t}const field=document.getElementById("footprintSpeech");if(finalText)field.value+=(field.value.trim()?" ":"")+finalText.trim();status.textContent=interim?"Erkannt: "+interim:"Diktat läuft…"};
+  footprintRecognition.onerror=(event)=>{status.textContent="Mikrofon/Spracherkennung: "+event.error+". Prüfen Sie die Mikrofonberechtigung im Browser."};
+  footprintRecognition.onend=()=>{footprintListening=false;btn.textContent="🎙️ Befund sprechen";if(!status.textContent.includes("Mikrofon/"))status.textContent="Diktat beendet. Text bitte prüfen."};
+  footprintRecognition.start();
+ }catch(e){status.textContent="Mikrofonzugriff verweigert oder nicht verfügbar. Bitte Chrome die Mikrofonberechtigung erlauben und erneut versuchen."}
 }
 function applyFootprintSpeech(){
  const text=document.getElementById("footprintSpeech").value.trim();if(!text){document.getElementById("speechStatus").textContent="Bitte zuerst etwas diktieren.";return}
  const right=[],left=[],other=[];
  const chunks=text.split(/[.!?;]+/).map(x=>x.trim()).filter(Boolean);
- chunks.forEach(s=>{const lower=s.toLowerCase();if(/\\b(rechts|rechter|rechte|recht)\\b/.test(lower))right.push(s);else if(/\\b(links|linker|linke|link)\\b/.test(lower))left.push(s);else other.push(s)});
- const append=(id,arr)=>{if(!arr.length)return;const el=document.getElementById(id);el.value+=(el.value.trim()?"\\n":"")+arr.join(". ")};
+ chunks.forEach(s=>{const lower=s.toLowerCase();if(/\b(rechts|rechter|rechte|recht)\b/.test(lower))right.push(s);else if(/\b(links|linker|linke|link)\b/.test(lower))left.push(s);else other.push(s)});
+ const append=(id,arr)=>{if(!arr.length)return;const el=document.getElementById(id);el.value+=(el.value.trim()?"\n":"")+arr.join(". ")};
  append("right",right);append("left",left);append("footnotes",other);
- document.getElementById("speechStatus").textContent="Befund übernommen: "+(right.length?"rechts ":"")+(left.length?"links ":"")+(other.length?"weitere Beobachtungen ":"")+"Bitte Zuordnung prüfen.";
+ document.getElementById("speechStatus").textContent="Befund übernommen. Bitte die Zuordnung kontrollieren.";
 }
 function previewFootprint(input){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById("footprintPreview");const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display="block"};reader.readAsDataURL(f)}
 function saveAIEndpoint(){const v=document.getElementById("aiEndpointInput").value.trim();if(!/^https:\/\//i.test(v)){alert("Bitte eine gültige HTTPS-Serveradresse eingeben.");return}localStorage.setItem("sensoped_ai_endpoint",v);window.SENSOPED_AI_ENDPOINT=v;document.getElementById("footprintAIStatus").textContent="Serveradresse auf diesem Gerät gespeichert."}
