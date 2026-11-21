@@ -106,7 +106,7 @@ async function readDocument(input){
 }
 document.getElementById("footprintFile").addEventListener("change",function(){document.getElementById("footprintFileName").textContent=this.files&&this.files[0]?"Datei ausgewählt: "+this.files[0].name:"";});
 let footprintRecognition=null,footprintListening=false;
-async function toggleFootprintDictation(){
+async async function toggleFootprintDictation(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  const status=document.getElementById("speechStatus"),btn=document.getElementById("dictationButton");
  if(!SR){status.textContent="Direkte Spracherkennung ist in diesem Browser nicht unterstützt. Bitte SENSOPED AI in Google Chrome öffnen. Die Tastatur-Diktierfunktion ist nicht Teil dieser Funktion.";return}
