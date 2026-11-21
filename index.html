@@ -43,7 +43,7 @@ button.secondary{background:#244e61}button.green{background:#287d69}button.light
 <h2>3. Orthopädieschuhtechnische Untersuchung</h2>
 <h3>3.1 Fußabdruck</h3>
 <label>Art des Fußabdrucks</label><select id="footprintType"><option>Blauabdruck</option><option>Digitaler Fußabdruck</option><option>Sonstiger Fußabdruck</option></select>
-<label>Fußabdruck fotografieren oder Bild auswählen</label><button type="button" class="cameraBtn" onclick="document.getElementById('footprintPhoto').click()">📷 Foto aufnehmen / Bild auswählen</button><input id="footprintPhoto" type="file" accept="image/*" capture="environment" onchange="previewFootprint(this)" style="display:none"><p class="small">Foto direkt aufnehmen oder ein vorhandenes Bild (z. B. Blauabdruck) auswählen.</p><img id="footprintPreview" alt="Foto des Fußabdrucks" style="display:none;max-width:100%;margin-top:10px;border-radius:10px"><label>Datei hinzufügen</label><button type="button" class="cameraBtn" onclick="document.getElementById('footprintFile').click()">📎 Datei auswählen (PDF oder Dokument)</button><input id="footprintFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx" style="display:none"><p id="footprintFileName" class="small"></p>
+<label>Fußabdruck fotografieren oder Bild auswählen</label><button type="button" class="cameraBtn" onclick="document.getElementById('footprintPhoto').click()">📷 Foto aufnehmen / Bild auswählen</button><input id="footprintPhoto" type="file" accept="image/*" capture="environment" onchange="previewFootprint(this)" style="display:none"><p class="small">Foto direkt aufnehmen oder ein vorhandenes Bild (z. B. Blauabdruck) auswählen.</p><img id="footprintPreview" alt="Foto des Fußabdrucks" style="display:none;max-width:100%;margin-top:10px;border-radius:10px">\n<div style="margin-top:12px"><button type="button" onclick="analyzeFootprintImage()">🤖 KI: Fußabdruck erkennen und zuordnen</button><p id="footprintAIStatus" class="small"></p><div id="footprintAIResult" class="result" style="display:none"></div></div><label>Datei hinzufügen</label><button type="button" class="cameraBtn" onclick="document.getElementById('footprintFile').click()">📎 Datei auswählen (PDF oder Dokument)</button><input id="footprintFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx" style="display:none"><p id="footprintFileName" class="small"></p>
 <div class="grid"><div><label>Rechter Fuß</label><textarea id="right" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div><div><label>Linker Fuß</label><textarea id="left" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div></div>
 <label>Beobachtete Fußstellung / Befund</label><select id="foot"><option>Keine Auswahl</option><option>Senkfuß</option><option>Plattfuß</option><option>Hohlfuß</option><option>Knickfuß</option><option>Spreizfuß</option><option>Hallux valgus</option><option>Mehrere Auffälligkeiten</option><option>Keine wesentliche Auffälligkeit</option><option>Sonstige</option></select>
 <label>Weitere Befunde</label><textarea id="footnotes" placeholder="Druckstellen, Beweglichkeit, Funktion, weitere Details"></textarea>
@@ -106,6 +106,26 @@ async function readDocument(input){
 }
 document.getElementById("footprintFile").addEventListener("change",function(){document.getElementById("footprintFileName").textContent=this.files&&this.files[0]?"Datei ausgewählt: "+this.files[0].name:"";});
 function previewFootprint(input){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById("footprintPreview");const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display="block"};reader.readAsDataURL(f)}
+async function analyzeFootprintImage(){
+ const input=document.getElementById("footprintPhoto"),file=input.files&&input.files[0],status=document.getElementById("footprintAIStatus"),result=document.getElementById("footprintAIResult");
+ if(!file){status.textContent="Bitte zuerst ein Foto des Fußabdrucks aufnehmen oder auswählen.";return}
+ status.textContent="Bild wird vorbereitet…";result.style.display="none";
+ const endpoint=window.SENSOPED_AI_ENDPOINT;
+ if(!endpoint){status.textContent="Bild ist bereit. Für echte KI-Erkennung muss noch ein sicherer KI-Server verbunden werden. Das Bild wird nicht ohne Verbindung analysiert.";result.style.display="block";result.textContent="KI-Verbindung noch nicht eingerichtet. Nach Verbindung kann die KI Seite, Abdrucktyp und Befunde erkennen und die Felder automatisch befüllen.";return}
+ try{
+  const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)});
+  status.textContent="KI analysiert den Fußabdruck…";
+  const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:data,filename:file.name,task:"footprint_analysis",language:"de"})});
+  if(!response.ok)throw new Error("KI-Server antwortete mit "+response.status);
+  const analysis=await response.json();
+  if(analysis.side==="right"||analysis.side==="left"){const id=analysis.side==="right"?"right":"left";const field=document.getElementById(id);field.value=(field.value?field.value+"\n":"")+"KI-Bildanalyse: "+(analysis.description||analysis.findings||"");}
+  if(analysis.footprint_type)document.getElementById("footprintType").value=analysis.footprint_type;
+  if(analysis.foot_position)document.getElementById("foot").value=analysis.foot_position;
+  if(analysis.findings)document.getElementById("footnotes").value+=(document.getElementById("footnotes").value?"\n":"")+"KI-Hinweis: "+analysis.findings;
+  result.style.display="block";result.textContent="Erkennung: "+(analysis.side||"Seite nicht sicher erkannt")+"\nAbdrucktyp: "+(analysis.footprint_type||"nicht erkannt")+"\nBefundhinweise: "+(analysis.findings||analysis.description||"keine Angaben")+"\n\nBitte Zuordnung und Befunde kontrollieren.";
+  status.textContent="KI-Auswertung abgeschlossen – bitte prüfen und bestätigen.";
+ }catch(e){status.textContent="KI-Auswertung konnte nicht durchgeführt werden: "+e.message}
+}
 function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
 function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
