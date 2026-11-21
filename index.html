@@ -109,7 +109,7 @@ let footprintRecognition=null,footprintListening=false;
 async function toggleFootprintDictation(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  const status=document.getElementById("speechStatus"),btn=document.getElementById("dictationButton");
- if(!SR){status.textContent="Diese Spracherkennung ist in diesem Browser nicht verfügbar. Bitte die App in Google Chrome öffnen.";return}
+ if(!SR){const field=document.getElementById("footprintSpeech");status.textContent="Browser-Spracherkennung nicht verfügbar. Tippe ins Befundfeld und nutze das Mikrofon deiner Android-Tastatur (Gboard) zum Diktieren.";field.focus();btn.textContent="🎙️ Über Tastatur diktieren";return}
  if(footprintListening&&footprintRecognition){footprintRecognition.stop();return}
  try{
   if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const stream=await navigator.mediaDevices.getUserMedia({audio:true});stream.getTracks().forEach(t=>t.stop())}
