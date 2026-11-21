@@ -33,25 +33,32 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 <label>Beschwerden / Anlass</label><textarea id="complaints" placeholder="Beschwerden, seit wann, Belastung, Ziele"></textarea>
 </div>
 <div class="card formcard">
-<h2>2. Fußuntersuchung</h2>
+<h2>2. Rezept und ärztliche Diagnose</h2>
+<label>Angaben aus dem Rezept / ärztliche Verordnung</label><textarea id="prescription" placeholder="Verordnete Versorgung, Rezeptangaben – ggf. später aus Foto übernommen"></textarea>
+<label>Diagnose des behandelnden Arztes</label><textarea id="doctorDiagnosis" placeholder="Ärztliche Diagnose – getrennt von unserer eigenen Untersuchung"></textarea>
+<label>Weitere ärztliche Angaben / Arztbrief</label><textarea id="doctorNotes" placeholder="Weitere Angaben aus Arztbrief oder Befund"></textarea>
+<p class="small">Diese Felder dokumentieren ausschließlich die Angaben aus der ärztlichen Verordnung bzw. ärztlichen Unterlagen.</p>
+</div>
+<div class="card formcard">
+<h2>3. Orthopädieschuhtechnische Untersuchung</h2>
 <div class="grid"><div><label>Rechter Fuß</label><textarea id="right" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div><div><label>Linker Fuß</label><textarea id="left" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div></div>
 <label>Beobachtete Fußstellung / Befund</label><select id="foot"><option>Keine Auswahl</option><option>Senkfuß</option><option>Plattfuß</option><option>Hohlfuß</option><option>Knickfuß</option><option>Spreizfuß</option><option>Hallux valgus</option><option>Mehrere Auffälligkeiten</option><option>Keine wesentliche Auffälligkeit</option><option>Sonstige</option></select>
 <label>Weitere Befunde</label><textarea id="footnotes" placeholder="Druckstellen, Beweglichkeit, Funktion, weitere Details"></textarea>
 </div>
 <div class="card formcard">
-<h2>3. Bewegungs- und Ganganalyse</h2>
+<h2>4. Bewegungs- und Ganganalyse</h2>
 <label>Gangbild</label><textarea id="gait" placeholder="Beobachtungen beim Gehen"></textarea>
 <div class="grid"><div><label>Knieachse</label><textarea id="knee" placeholder="Beobachtung der Knieachse"></textarea></div><div><label>Beweglichkeit</label><textarea id="movement" placeholder="Beweglichkeit / Einschränkungen"></textarea></div></div>
 <label>Weitere Beobachtungen</label><textarea id="observations" placeholder="Weitere Untersuchungsergebnisse"></textarea>
 </div>
 <div class="card formcard">
-<h2>4. Versorgung und Ziel</h2>
+<h2>5. Orthopädieschuhtechnische Einschätzung und Versorgung</h2>
 <label>Empfohlene Versorgung</label><select id="therapy"><option>Keine Auswahl</option><option>Sensomotorische Einlage</option><option>Orthopädische Einlage</option><option>Orthopädische Schuhe</option><option>Schuhzurichtung</option><option>Individuelle Kombination</option><option>Weitere Versorgung</option></select>
 <label>Behandlungs- / Versorgungsziel</label><textarea id="goal" placeholder="Ziel und gewünschte funktionelle Verbesserung"></textarea>
 <label>Besondere Hinweise</label><textarea id="extra" placeholder="Optional"></textarea>
 </div>
 <div class="card formcard">
-<h2>5. Berichte erstellen</h2>
+<h2>6. Berichte erstellen</h2>
 <p class="small note">Die Berichte sind Vorschläge auf Grundlage der eingegebenen Befunde. Bitte vor Weitergabe prüfen und medizinisch bestätigen.</p>
 <button onclick="createReports()">Patientenbericht und Fachbericht erstellen</button>
 </div>
@@ -77,7 +84,11 @@ function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
  "MPG-Nummer: "+val("mpg")+"\n"+
  "Patient: "+val("name")+"\n"+
- "Unser Eindruck von Ihren Beschwerden: "+val("complaints")+"\n\n"+
+ "Beschwerden / Anlass: "+val("complaints")+"\n\n"+
+ "Ärztliche Verordnung: "+val("prescription")+"\n"+
+ "Ärztliche Diagnose: "+val("doctorDiagnosis")+"\n"+
+ "Weitere ärztliche Angaben: "+val("doctorNotes")+"\n\n"+
+ "Unsere orthopädieschuhtechnische Untersuchung:\n"+
  "Was wir untersucht haben:\n"+
  "Rechter Fuß: "+val("right")+"\n"+
  "Linker Fuß: "+val("left")+"\n"+
@@ -95,6 +106,10 @@ function createReports(){
  const doctor="SENSOPED AI – Untersuchungsdokumentation\n\n"+
  "PATIENT\nName / Kennung: "+val("name")+"\nGeburtsdatum: "+val("birth")+"\nMPG-Nummer: "+val("mpg")+"\n\n"+
  "ANAMNESE / BESCHWERDEN\n"+val("complaints")+"\n\n"+
+ "ÄRZTLICHE VERORDNUNG / REZEPT\n"+val("prescription")+"\n\n"+
+ "ÄRZTLICHE DIAGNOSE (Angabe des Arztes)\n"+val("doctorDiagnosis")+"\n\n"+
+ "WEITERE ÄRZTLICHE ANGABEN\n"+val("doctorNotes")+"\n\n"+
+ "ORTHOPÄDIESCHUHTECHNISCHE EIGENE UNTERSUCHUNG UND EINSCHÄTZUNG\n"+
  "FUSSBEFUND\nRechter Fuß: "+val("right")+"\nLinker Fuß: "+val("left")+"\nFußstellung: "+val("foot")+"\nWeitere Befunde: "+val("footnotes")+"\n\n"+
  "BEWEGUNGSANALYSE\nGangbild: "+val("gait")+"\nKnieachse: "+val("knee")+"\nBeweglichkeit: "+val("movement")+"\nWeitere Beobachtungen: "+val("observations")+"\n\n"+
  "VERSORGUNG\nEmpfehlung: "+val("therapy")+"\nZiel: "+val("goal")+"\nZusätzliche Hinweise: "+val("extra")+"\n\n"+
