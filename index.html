@@ -34,11 +34,9 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 <label>Beschwerden / Untersuchungsanlass</label><textarea id="complaints" placeholder="Was führt den Patienten zu uns? Beschwerden, seit wann, Belastung, Ziele"></textarea>
 </div>
 <div class="card formcard">
-<h2>2. Rezept und ärztliche Diagnose</h2>
-<label>Angaben aus dem Rezept / ärztliche Verordnung</label><textarea id="prescription" placeholder="Verordnete Versorgung, Rezeptangaben – ggf. später aus Foto übernommen"></textarea>
-<label>Diagnose des behandelnden Arztes</label><textarea id="doctorDiagnosis" placeholder="Ärztliche Diagnose – getrennt von unserer eigenen Untersuchung"></textarea>
-<label>Weitere ärztliche Angaben / Arztbrief</label><textarea id="doctorNotes" placeholder="Weitere Angaben aus Arztbrief oder Befund"></textarea>
-<p class="small">Diese Felder dokumentieren ausschließlich die Angaben aus der ärztlichen Verordnung bzw. ärztlichen Unterlagen.</p>
+<h2>2. Ärztliche Diagnose (laut Rezept)</h2>
+<textarea id="doctorDiagnosis" placeholder="Diagnose und relevante Angaben direkt vom Rezept"></textarea>
+<p class="small">Hier werden die ärztliche Diagnose und relevante Angaben vom Rezept erfasst. Die orthopädieschuhtechnische Untersuchung erfolgt getrennt.</p>
 </div>
 <div class="card formcard">
 <h2>3. Orthopädieschuhtechnische Untersuchung</h2>
@@ -88,8 +86,8 @@ async function readDocument(input){
   const result=await Tesseract.recognize(file,"deu+eng");
   const text=result.data.text||"";
   if(!text.trim()){status.textContent="Kein Text erkannt. Bitte Foto erneut aufnehmen.";return;}
-  document.getElementById("doctorNotes").value=(document.getElementById("doctorNotes").value?document.getElementById("doctorNotes").value+"\n\n":"")+"OCR-Text vom Dokument (bitte überprüfen und zuordnen):\n"+text;
-  status.textContent="Text erkannt und im ärztlichen Notizfeld abgelegt. Bitte Daten kontrollieren und zuordnen.";
+  document.getElementById("doctorDiagnosis").value=(document.getElementById("doctorDiagnosis").value?document.getElementById("doctorDiagnosis").value+"\n\n":"")+"OCR-Text vom Dokument (bitte überprüfen):\n"+text;
+  status.textContent="Text erkannt und im Diagnosefeld abgelegt. Bitte Daten kontrollieren.";
  }catch(e){status.textContent="Texterkennung fehlgeschlagen. Bitte erneut versuchen."}
  finally{input.value=""}
 }
@@ -100,9 +98,7 @@ function createReports(){
  "Patient: "+val("name")+"\n"+
  "Adresse: "+val("address")+"\n"+
  "Beschwerden / Anlass: "+val("complaints")+"\n\n"+
- "Ärztliche Verordnung: "+val("prescription")+"\n"+
- "Ärztliche Diagnose: "+val("doctorDiagnosis")+"\n"+
- "Weitere ärztliche Angaben: "+val("doctorNotes")+"\n\n"+
+ "Ärztliche Diagnose (laut Rezept): "+val("doctorDiagnosis")+"\n\n"+
  "Unsere orthopädieschuhtechnische Untersuchung:\n"+
  "Was wir untersucht haben:\n"+
  "Rechter Fuß: "+val("right")+"\n"+
@@ -121,9 +117,7 @@ function createReports(){
  const doctor="SENSOPED AI – Untersuchungsdokumentation\n\n"+
  "PATIENT\nName / Kennung: "+val("name")+"\nGeburtsdatum: "+val("birth")+"\nMPG-Nummer: "+val("mpg")+"\n\n"+
  "ANAMNESE / BESCHWERDEN\n"+val("complaints")+"\n\n"+
- "ÄRZTLICHE VERORDNUNG / REZEPT\n"+val("prescription")+"\n\n"+
- "ÄRZTLICHE DIAGNOSE (Angabe des Arztes)\n"+val("doctorDiagnosis")+"\n\n"+
- "WEITERE ÄRZTLICHE ANGABEN\n"+val("doctorNotes")+"\n\n"+
+ "ÄRZTLICHE DIAGNOSE (laut Rezept)\n"+val("doctorDiagnosis")+"\n\n"+
  "ORTHOPÄDIESCHUHTECHNISCHE EIGENE UNTERSUCHUNG UND EINSCHÄTZUNG\n"+
  "FUSSBEFUND\nRechter Fuß: "+val("right")+"\nLinker Fuß: "+val("left")+"\nFußstellung: "+val("foot")+"\nWeitere Befunde: "+val("footnotes")+"\n\n"+
  "BEWEGUNGSANALYSE\nGangbild: "+val("gait")+"\nKnieachse: "+val("knee")+"\nBeweglichkeit: "+val("movement")+"\nWeitere Beobachtungen: "+val("observations")+"\n\n"+
