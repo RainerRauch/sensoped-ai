@@ -8,7 +8,7 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f2f5f8;color:#243247}
 header{background:#123b5d;color:white;padding:22px 16px;text-align:center}
-header h1{margin:0;font-size:28px} header p{margin:8px 0 0;color:#cbd9e5}
+header h1{margin:0;font-size:28px} header p{margin:8px 0 0;color:#cbd9e5}\n.cameraBtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:auto;margin:14px auto 0;padding:10px 16px;background:#fff;color:#123b5d;font-weight:bold;border-radius:10px}\n#photoInput{display:none}
 .container{max-width:900px;margin:auto;padding:16px}
 .card{background:white;padding:20px;border-radius:15px;margin-bottom:16px;box-shadow:0 2px 8px #0001}
 h2{color:#123b5d;margin-top:0}
@@ -23,9 +23,9 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 @media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:16px}}
 @media print{header,.formcard,button,.small.note{display:none!important}.container{max-width:none;padding:0}.card{box-shadow:none;border:0}.result{background:white}}
 </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>\n</head>
 <body>
-<header><h1>SENSOPED AI</h1><p>Digitale Fuß- und Ganganalyse</p></header>
+<header><h1>SENSOPED AI</h1><p>Digitale Fuß- und Ganganalyse</p><button class="cameraBtn" onclick="document.getElementById('photoInput').click()">📷 Dokument fotografieren</button><input id="photoInput" type="file" accept="image/*" capture="environment" onchange="readDocument(this)"><p id="ocrStatus" class="small" style="color:#fff"></p></header>
 <div class="container">
 <div class="card formcard">
 <h2>1. Patient und Beschwerden</h2>
@@ -79,7 +79,20 @@ button.secondary{background:#123b5d}button.green{background:#25845c}button.light
 <div class="card"><p class="small">SENSOPED AI – Untersuchung und Dokumentation. Patienteninformationen und Befunde bitte verantwortungsvoll behandeln.</p></div>
 </div>
 <script>
-function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
+async function readDocument(input){
+ const file=input.files&&input.files[0]; if(!file)return;
+ const status=document.getElementById("ocrStatus");status.textContent="Foto wird gelesen…";
+ try{
+  if(!window.Tesseract){status.textContent="Texterkennung konnte nicht geladen werden.";return;}
+  const result=await Tesseract.recognize(file,"deu+eng");
+  const text=result.data.text||"";
+  if(!text.trim()){status.textContent="Kein Text erkannt. Bitte Foto erneut aufnehmen.";return;}
+  document.getElementById("doctorNotes").value=(document.getElementById("doctorNotes").value?document.getElementById("doctorNotes").value+"\n\n":"")+"OCR-Text vom Dokument (bitte überprüfen und zuordnen):\n"+text;
+  status.textContent="Text erkannt und im ärztlichen Notizfeld abgelegt. Bitte Daten kontrollieren und zuordnen.";
+ }catch(e){status.textContent="Texterkennung fehlgeschlagen. Bitte erneut versuchen."}
+ finally{input.value=""}
+}
+\nfunction val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
 function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
  "MPG-Nummer: "+val("mpg")+"\n"+
