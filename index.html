@@ -375,17 +375,17 @@ function chooseFootprintSide(side){
  if(img&&img.src&&img.src!==""){if(typeof assignFootprintImage==="function")assignFootprintImage();}
 }
 function assignFootprintImage(){
- const status=document.getElementById("footprintAssignStatus");
- const side=(document.getElementById("footprintSide")||{}).value;
+ const status=document.getElementById("footprintAssignStatus"),side=(document.getElementById("footprintSide")||{}).value;
  const source=(document.getElementById("footprintPreview")||{}).src||((document.getElementById("sensopedUploadDebugImg")||{}).src)||"";
- if(!source){if(status)status.textContent="Bitte erst ein Foto laden.";return;}
- if(!side){if(status)status.textContent="Bitte RECHTS, LINKS oder BEIDE auswählen.";return;}
- const gallery=document.getElementById("assignedFootprintGallery");
- const ids=side==="both"?["assignedFootRight","assignedFootLeft"]:side==="right"?["assignedFootRight"]:["assignedFootLeft"];
- const empties=side==="both"?["assignedFootRightEmpty","assignedFootLeftEmpty"]:side==="right"?["assignedFootRightEmpty"]:["assignedFootLeftEmpty"];
- ids.forEach((id,i)=>{const im=document.getElementById(id),em=document.getElementById(empties[i]);if(im){im.src=source;im.style.display="block";im.removeAttribute("hidden");}if(em)em.style.display="none";});
- if(gallery){gallery.style.display="grid";gallery.style.visibility="visible";gallery.scrollIntoView({behavior:"smooth",block:"center"});}
- if(status){status.style.display="block";status.textContent="✓ Automatisch übertragen in: "+(side==="right"?"RECHTER FUSS":side==="left"?"LINKER FUSS":"BEIDE FÜSSE");}
+ if(!source||source==="about:blank"){if(status)status.textContent="Bitte erst ein Foto laden.";return;}
+ if(!side){if(status)status.textContent="Bitte wählen: RECHTS, LINKS oder BEIDE. Es ist keine zweite Seite erforderlich.";return;}
+ const gallery=document.getElementById("assignedFootprintGallery");let ids,empties;
+ if(side==="both"){ids=["assignedFootBoth"];empties=["assignedFootBothEmpty"];}
+ else if(side==="right"){ids=["assignedFootRight"];empties=["assignedFootRightEmpty"];}
+ else {ids=["assignedFootLeft"];empties=["assignedFootLeftEmpty"];}
+ ids.forEach((id,i)=>{const im=document.getElementById(id),em=document.getElementById(empties[i]);if(im){im.src=source;im.style.display="block";im.removeAttribute("hidden");if(window.sensopedFootImages)window.sensopedFootImages[side]=source;}if(em)em.style.display="none";});
+ if(gallery){gallery.style.display="grid";gallery.style.visibility="visible";}
+ if(status){status.style.display="block";status.textContent="✓ Foto gespeichert: "+(side==="right"?"RECHTER FUSS":side==="left"?"LINKER FUSS":"BEIDE FÜSSE")+" – eine einzelne Seite reicht aus.";}
 }
 function transferFootPhoto(n){const src=document.getElementById("footPhotoPreview"+n).src;if(!src||src.endsWith("#")||!document.getElementById("footPhotoPreview"+n).style.display||document.getElementById("footPhotoPreview"+n).style.display==="none"){document.getElementById("footprintAssignStatus").textContent="Bitte zuerst Foto "+n+" aufnehmen oder auswählen.";return}footprintSelectedFile=null;footprintSelectedLabel="Fotodokumentation Foto "+n;const img=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator");img.onload=()=>{document.getElementById("footprintMarkup").setAttribute("viewBox","0 0 1000 "+Math.round(1000*img.naturalHeight/img.naturalWidth));document.getElementById("footprintTools").style.display="block";drawFootMarks()};img.src=src;wrap.style.display="block";document.getElementById("footprintAssignStatus").textContent="Foto "+n+" aus der Fotodokumentation übernommen. Jetzt Seite auswählen und zuordnen."}
 function previewFootprint(input){
