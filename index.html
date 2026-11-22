@@ -183,33 +183,16 @@ function applyFootprintSpeech(){
  document.getElementById("speechStatus").textContent="Befund übernommen. Bitte die Zuordnung kontrollieren.";
 }
 const manualDictations={};
-async function dictateManualNote(targetId,statusId){
- const status=document.getElementById(statusId),button=status.previousElementSibling,endpoint=window.SENSOPED_AI_ENDPOINT;
- if(manualDictations[targetId]&&manualDictations[targetId].recorder.state==="recording"){manualDictations[targetId].recorder.stop();button.textContent="🎙️ Befund sprechen";button.onclick=()=>dictateManualNote(targetId,statusId);status.textContent="Aufnahme beendet. Text wird ergänzt…";return}
- if(!endpoint){status.textContent="Bitte zuerst die KI-Server-Verbindung einrichten.";return}
- if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status.textContent="Audioaufnahme wird hier nicht unterstützt.";return}
- status.textContent="Mikrofon wird gestartet…";
- try{
-  const stream=await navigator.mediaDevices.getUserMedia({audio:true}),recorder=new MediaRecorder(stream),chunks=[];
-  manualDictations[targetId]={recorder,stream};
-  recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
-  recorder.onstop=async()=>{
-   stream.getTracks().forEach(t=>t.stop());
-   status.textContent="Aufnahme wird transkribiert und zum bisherigen Befund hinzugefügt…";
-   try{
-    const blob=new Blob(chunks,{type:recorder.mimeType||"audio/webm"}),form=new FormData();form.append("audio",blob,"befund.webm");
-    const response=await fetch(endpoint.replace(/\/$/,"")+"/transcribe",{method:"POST",body:form}),data=await response.json();
-    if(!response.ok)throw new Error(data.error||"Serverfehler");
-    const field=document.getElementById(targetId);
-    if(data.text)field.value+=(field.value.trim()?"\n":"")+data.text;
-    status.textContent=data.text?"Neue Aufnahme ergänzt. Du kannst jederzeit erneut sprechen.":"Keine Sprache erkannt. Du kannst erneut aufnehmen.";
-   }catch(e){status.textContent="Transkription fehlgeschlagen: "+e.message}
-   delete manualDictations[targetId];
-   button.textContent="🎙️ Befund sprechen";button.onclick=()=>dictateManualNote(targetId,statusId);
-  };
-  recorder.start();button.textContent="⏹️ Aufnahme stoppen";button.onclick=()=>dictateManualNote(targetId,statusId);
-  status.textContent="🎙️ Aufnahme läuft. Drücke erneut auf den Button, um zu stoppen.";
- }catch(e){status.textContent="Mikrofonzugriff nicht möglich. Bitte Berechtigung erlauben."}
+function dictateManualNote(targetId,statusId){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;const box=document.getElementById(targetId),status=document.getElementById(statusId),button=status?.previousElementSibling;
+ if(!box||!status||!button)return;if(!SR){status.textContent='Spracherkennung nicht verfügbar. Bitte Chrome verwenden.';return;}
+ if(window.sensopedActiveRec&&window.sensopedActiveKey===targetId){try{window.sensopedActiveRec.stop()}catch(e){};window.sensopedActiveRec=null;window.sensopedActiveKey=null;button.textContent='🎙️ Befund sprechen';return;}
+ if(window.sensopedActiveRec){try{window.sensopedActiveRec.abort()}catch(e){}}
+ const rec=new SR();window.sensopedActiveRec=rec;window.sensopedActiveKey=targetId;rec.lang='de-DE';rec.continuous=true;rec.interimResults=true;let finalText=box.value.trim(),interim='';
+ rec.onstart=()=>{status.textContent='🎙️ Mikrofon aktiv – jetzt sprechen.';button.textContent='⏹️ Aufnahme stoppen';};
+ rec.onresult=(ev)=>{interim='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=(ev.results[i][0]?.transcript||'').trim();if(!t)continue;if(ev.results[i].isFinal)finalText+=(finalText?' ':'')+t;else interim+=(interim?' ':'')+t;}box.value=(finalText+' '+interim).trim();};
+ rec.onerror=(ev)=>{status.textContent='Spracherkennung: '+(ev.error||'Fehler')+'. Bitte erneut versuchen.';};rec.onend=()=>{status.textContent='Aufnahme beendet. Bitte den Text prüfen.';button.textContent='🎙️ Befund sprechen';if(window.sensopedActiveRec===rec){window.sensopedActiveRec=null;window.sensopedActiveKey=null;}};
+ try{rec.start()}catch(e){status.textContent='Mikrofonstart fehlgeschlagen. Bitte Berechtigung prüfen.';button.textContent='🎙️ Befund sprechen';}
 }
 function showPosturePhoto(input,view){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById('posturePreview'+view.charAt(0).toUpperCase()+view.slice(1));const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display='block'};reader.readAsDataURL(f)}\nfunction showFootPhoto(input,n){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById("footPhotoPreview"+n);const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display="block"};reader.readAsDataURL(f)}
 let footMarks=[],footTool="ellipse",footSelected=-1,footGesture=null,footUndo=[];
