@@ -708,5 +708,10 @@ window.transferFootprintsToBlueprint=function(){
  box.style.display='block';box.style.visibility='visible';if(status)status.textContent='✓ '+items.length+' Bilder verbunden. Bitte unten das gewünschte Bild zum Markieren öffnen.';box.scrollIntoView({behavior:'smooth',block:'start'});
 };
 </script>
+
+<script>
+/* Fix missing handler for direct file test upload in static footprint panel */
+window.sensopedUploadDebug=function(input){try{var status=document.getElementById('sensopedUploadDebug');var preview=document.getElementById('sensopedUploadDebugImg');var f=input&&input.files&&input.files[0];if(!f){if(status)status.textContent='Keine Datei ausgewählt.';return;}if(!f.type||!f.type.startsWith('image/')){if(status)status.textContent='Bitte eine Bilddatei auswählen.';return;}if(status)status.textContent='Bild ausgewählt: '+f.name+' – wird geladen…';if(preview){preview.src=URL.createObjectURL(f);preview.style.display='block';preview.onload=function(){if(status)status.textContent='✓ Bildvorschau erfolgreich geladen. Bitte anschließend über den normalen Galerie-Button auswählen oder das Foto der Seite zuordnen.';};}if(typeof window.previewFootprint==='function'){window.previewFootprint(input);}else{if(status)status.textContent='Bildvorschau-Funktion fehlt noch.';}}catch(e){var s=document.getElementById('sensopedUploadDebug');if(s)s.textContent='Fehler beim Laden: '+e.message;}}
+</script>
 </body>
 </html>
