@@ -49,6 +49,7 @@ button.secondary{background:#244e61}button.green{background:#287d69}button.light
 <div style="margin:14px 0;padding:14px;background:#d9efec;border:2px solid #176b72;border-radius:12px"><label style="margin-top:0">🎙️ Sprachbefund zum Fußabdruck</label><button type="button" id="dictationButton" style="background:#124f59" onclick="toggleFootprintDictation()">🎙️ Befund sprechen</button><p class="small">Sprich frei deine Beobachtungen aus. Die Erkennung versucht Aussagen zu rechts und links zuzuordnen. Bitte den übernommenen Text kontrollieren.</p><textarea id="footprintSpeech" placeholder="Hier erscheint dein diktierter Befund…" style="min-height:110px"></textarea><button type="button" class="green" onclick="applyFootprintSpeech()">Befund in die Fußfelder übernehmen</button><p id="speechStatus" class="small"></p></div><div class="grid"><div><label>Rechter Fuß</label><textarea id="right" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div><div><label>Linker Fuß</label><textarea id="left" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div></div>
 <label>Beobachtete Fußstellung / Befund</label><select id="foot"><option>Keine Auswahl</option><option>Senkfuß</option><option>Plattfuß</option><option>Hohlfuß</option><option>Knickfuß</option><option>Spreizfuß</option><option>Hallux valgus</option><option>Mehrere Auffälligkeiten</option><option>Keine wesentliche Auffälligkeit</option><option>Sonstige</option></select>
 <label>Weitere Befunde</label><textarea id="footnotes" placeholder="Druckstellen, Beweglichkeit, Funktion, weitere Details"></textarea>
+<label>Fußbeschwerden / Befunddiagnosen</label><div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px"><label style="display:flex;align-items:center;gap:8px;font-weight:normal;margin:0"><input type="checkbox" id="halluxRigidus" style="width:auto;margin:0"> Hallux rigidus</label><label style="display:flex;align-items:center;gap:8px;font-weight:normal;margin:0"><input type="checkbox" id="metatarsalgia" style="width:auto;margin:0"> Metatarsalgie</label></div>
 </div>
 <div class="card formcard">
 <h2>4. Bewegungs- und Ganganalyse</h2>
@@ -178,7 +179,7 @@ function createReports(){
  "Linker Fuß: "+val("left")+"\n"+
  "Art des Fußabdrucks: "+val("footprintType")+"\n"+
  "Fußstellung: "+val("foot")+"\n"+
- "Weitere Fußbefunde: "+val("footnotes")+"\n\n"+
+ "Weitere Fußbefunde: "+val("footnotes")+"\n"+\n "Fußbeschwerden / Befunddiagnosen: "+((document.getElementById("halluxRigidus").checked?"Hallux rigidus; ":"")+(document.getElementById("metatarsalgia").checked?"Metatarsalgie; ":"")||"Keine Angabe")+"\n\n"+
  "Beim Gehen und Bewegen:\n"+
  "Gangbild: "+val("gait")+"\n"+
  "Knieachse: "+val("knee")+"\n"+
