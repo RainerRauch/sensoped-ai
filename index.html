@@ -324,7 +324,7 @@ function previewFootprint(input){
   const f=input&&input.files&&input.files[0];if(!f)return;
   const status=document.getElementById("footprintAssignStatus"),img=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator");
   if(!status||!img||!wrap){alert("Bildvorschau-Bereich fehlt. Bitte Seite neu laden.");return;}
-  const isImage=(f.type&&f.type.indexOf("image/")===0)||/\\.(jpg|jpeg|png|gif|webp|heic|heif)$/i.test(f.name||"");
+  const isImage=(f.type&&f.type.indexOf("image/")===0)||/\.(jpg|jpeg|png|gif|webp|heic|heif)$/i.test(f.name||"");
   if(!isImage){status.style.display="block";status.textContent="Bitte ein Bild auswählen (JPG, PNG oder HEIC).";input.value="";return;}
   window.footprintSelectedFile=f;
   status.style.cssText="display:block;margin:12px 0;padding:14px;border-radius:14px;background:#d9efec;color:#075b61;border:2px solid #176b72;font-weight:700;";
