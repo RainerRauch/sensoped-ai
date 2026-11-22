@@ -93,6 +93,7 @@ button.secondary{background:var(--navy)}button.green{background:var(--green)}but
 <label>Empfohlene Versorgung</label><select id="therapy"><option>Keine Auswahl</option><option>Sensomotorische Einlage</option><option>Orthopädische Einlage</option><option>Orthopädische Schuhe</option><option>Schuhzurichtung</option><option>Individuelle Kombination</option><option>Weitere Versorgung</option></select>
 <label>Behandlungs- / Versorgungsziel</label><textarea id="goal" placeholder="Ziel und gewünschte funktionelle Verbesserung"></textarea>
 <label>Besondere Hinweise</label><textarea id="extra" placeholder="Optional"></textarea>
+<button type="button" class="green" onclick="generateSupplyLogic()">✨ Versorgungslogik aus Befunden ableiten</button><div id="supplyLogicOutput" class="result" style="display:none"></div>
 </div>
 <div class="card formcard">
 <h2>7. Berichte erstellen</h2>
@@ -228,6 +229,27 @@ footSvg.addEventListener("pointerup",()=>footGesture=null);footSvg.addEventListe
 function saveAIEndpoint(){document.getElementById("footprintAIStatus").textContent="KI-Verbindung wird in einer späteren Ausbaustufe aktiviert."}
 async function analyzeFootprintImage(){document.getElementById("footprintAIStatus").textContent="KI-Auswertung ist derzeit noch nicht freigeschaltet. Der manuelle Befund bleibt verfügbar."}
 function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
+
+function generateSupplyLogic(){
+ const source=[val("complaints"),val("right"),val("left"),val("manualRightNotes"),val("manualLeftNotes"),val("manualRight"),val("manualLeft"),val("foot"),val("footnotes"),val("gait"),val("knee"),val("movement"),val("observations"),val("postureAnalysis")].join(" ").toLowerCase();
+ const rules=[
+ {keys:["senkfuß","plattfuß","abgesenkt","gewölbe"],label:"Fußgewölbe / Gewölbestatik",goal:"Unterstützung und Kontrolle der Gewölbestatik prüfen."},
+ {keys:["hohlfuß","cavus"],label:"Hochgewölbter Fuß",goal:"Druckverteilung und Anpassung an die Fußform prüfen."},
+ {keys:["pronation","proniert","valgus","knick"],label:"Pronation / Rückfußstellung",goal:"Kontrolle der Rückfuß- und Bewegungsstellung prüfen."},
+ {keys:["supination","supiniert","varus"],label:"Supination / Varusstellung",goal:"Belastungsverteilung und Stabilisierung prüfen."},
+ {keys:["schmerz","druck","reiz","belastung"],label:"Beschwerden / Druckbelastung",goal:"Druckentlastung und passende Belastungsführung prüfen."},
+ {keys:["eingeschränkt","beweglichkeit","steif","versteift"],label:"Beweglichkeit",goal:"Bewegungsspielraum und funktionelle Unterstützung berücksichtigen."},
+ {keys:["knee","knieachse","valg","var"],label:"Knieachse / Bewegungskette",goal:"Fußbezogene Einflussmöglichkeiten auf die Bewegungskette untersuchen."},
+ {keys:["gang","abroll","schritt"],label:"Gangbild",goal:"Versorgungsziel mit den beobachteten Abroll- und Bewegungsmustern abgleichen."}
+ ];
+ const matched=rules.filter(r=>r.keys.some(k=>source.includes(k)));
+ const out=document.getElementById("supplyLogicOutput");
+ const selected=val("therapy");
+ let result="VORSCHLAG – fachlich zu prüfen\n\n";
+ if(!matched.length){result+="Aus den derzeit dokumentierten Texten konnten keine klaren Schlagwort-Hinweise erkannt werden. Befunde ergänzen oder Versorgung manuell festlegen.\n";}else{result+="Erkannte Themen (nur anhand eingegebener Begriffe):\n"+matched.map(r=>"• "+r.label+"\n  "+r.goal).join("\n\n")+"\n\n";}
+ result+="\nAusgewählte Versorgungsart: "+selected+"\n\nDie Hinweise sind keine Diagnose und keine automatische Einlagenkonstruktion. Sie dienen als Prüfliste. Die konkrete Versorgung und Bauteile werden vom Untersucher/ Konstrukteur festgelegt.";
+ out.textContent=result;out.style.display="block";out.scrollIntoView({behavior:"smooth",block:"center"});
+}
 function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
  "MPG-Nummer: "+val("mpg")+"\n"+
