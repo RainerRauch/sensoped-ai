@@ -65,7 +65,7 @@ h2{border-bottom-color:#b8d9d7}
 <script>
 window.addEventListener('DOMContentLoaded',function(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- const ids=['address','complaints','doctorDiagnosis','right','left','manualRightNotes','manualLeftNotes','footnotes','gait','knee','movement','postureAnalysis','goal','extra'];
+ const ids=['complaints','doctorDiagnosis','right','left','manualRightNotes','manualLeftNotes','footnotes','gait','knee','movement','postureAnalysis','goal','extra'];
  ids.forEach(function(id){
   const field=document.getElementById(id);if(!field||field.dataset.voiceAdded)return;field.dataset.voiceAdded='1';
   const b=document.createElement('button');b.type='button';b.className='voiceInputBtn';b.textContent='🎙️ Text sprechen';field.insertAdjacentElement('afterend',b);
