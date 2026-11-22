@@ -114,7 +114,7 @@ h2{border-bottom-color:#b8d9d7}
 <p class="small note">Die Berichte sind Vorschläge auf Grundlage der eingegebenen Befunde. Bitte vor Weitergabe prüfen und medizinisch bestätigen.</p>
 <button onclick="createReports()">Patientenbericht und Fachbericht erstellen</button>
 </div>
-<div class="card">
+<div class="card" id="patientReportCard">
 <h2>Patientenbericht – verständlich erklärt</h2><div id="patientOutput" class="result" style="display:none"></div>
 <div class="patientReportActions"><button class="light" onclick="copyText('patientOutput')">📋 Bericht kopieren</button><button class="light" onclick="printPatientReport()">📄 PDF erstellen / drucken</button><button class="patientLaunch" onclick="launchPatientView()">✨ PatientenView auf dem iPad starten</button></div>
 </div>
