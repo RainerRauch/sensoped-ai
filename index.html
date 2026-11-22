@@ -316,7 +316,7 @@ function prepareConstructionSpec(){
  document.getElementById("constructionSpec").value=spec;
  document.getElementById("constructionSpec").scrollIntoView({behavior:"smooth",block:"center"});
 }
-window.createReports=function(){
+const aiFootprintNotes=(document.getElementById("footprintAIResult")&&document.getElementById("footprintAIResult").style.display!=="none"?(document.getElementById("footprintAIResult").innerText||"").trim():"");\nwindow.createReports=function(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
  "MPG-Nummer: "+val("mpg")+"\n"+
  "Patient: "+val("name")+"\n"+
@@ -329,7 +329,7 @@ window.createReports=function(){
  "Linker Fuß: "+val("left")+"\n"+
  "Art des Fußabdrucks: "+val("footprintType")+"\n"+"Manuelle Untersuchung rechts: "+val("manualRight")+" – "+val("manualRightNotes")+"\n"+"Manuelle Untersuchung links: "+val("manualLeft")+" – "+val("manualLeftNotes")+"\n"+
  "Fußstellung: "+val("foot")+"\n"+
- "Weitere Fußbefunde: "+val("footnotes")+"\n\n"+
+ "Weitere Fußbefunde: "+val("footnotes")+"\n\n"+"KI-Hinweise zum Fußabdruck (nur unterstützend, fachlich zu prüfen): "+(aiFootprintNotes||"Keine KI-Auswertung übernommen.")+"\n\n"+
  "Beim Gehen und Bewegen:\n"+
  "Gangbild: "+val("gait")+"\n"+
  "Knieachse: "+val("knee")+"\n"+
