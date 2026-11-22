@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENSOPED AI</title>
+<style>
+*{box-sizing:border-box}
+:root{--navy:#123b5d;--teal:#176b72;--green:#287d69;--bg:#f2f6f7;--ink:#263d43;--border:#d9e4e7}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#123b5d,#176b72);color:white;padding:24px 16px;text-align:center}
+header h1{margin:0;font-size:27px;letter-spacing:.3px}header p{margin:8px 0 0;color:#d6e7ee}
+.container{max-width:920px;margin:auto;padding:16px}
+.card{background:white;padding:22px;border-radius:16px;margin-bottom:18px;box-shadow:0 3px 12px #123b5d12;border:1px solid var(--border)}
+.card h2{border-bottom:1px solid var(--border);padding-bottom:12px;margin-top:0;color:var(--navy);font-size:21px}
+h2,h3{color:var(--teal)}h3{margin:22px 0 12px}
+label{display:block;margin-top:14px;font-weight:700;color:#304b54}
+input,select,textarea{width:100%;padding:13px;margin-top:6px;border:1px solid #cbd9dd;border-radius:10px;font-size:16px;background:#fff;color:#34434b}
+textarea{min-height:90px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #a4c9ca;border-color:var(--teal)}
+button{background:var(--teal);color:white;border:0;padding:14px;border-radius:11px;font-size:16px;width:100%;margin-top:10px;cursor:pointer;font-weight:600}
+button.secondary{background:var(--navy)}button.green{background:var(--green)}button.light,.cameraBtn{background:#e6f0f3;color:var(--navy)}
+.cameraBtn{display:flex;align-items:center;justify-content:center;gap:8px}
+.result{background:#eaf3f2;padding:15px;border-radius:10px;white-space:pre-wrap;line-height:1.5;margin-top:12px}
+.small{font-size:13px;color:#667788;line-height:1.45}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.formcard{scroll-margin-top:12px}.wizardNav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.wizardNav button{width:auto;flex:1;min-width:100px;margin:0}
+.wizardProgress{font-weight:bold;text-align:center;padding:12px;background:var(--navy);color:#fff;border-radius:12px;margin-bottom:12px}
+.wizardDots{display:flex;gap:5px;margin:10px 0 16px}.wizardDots span{flex:1;height:7px;background:#c7d9dc;border-radius:5px}.wizardDots span.active{background:var(--teal)}
+#footprintAnnotator{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#f7fafb}
+#footprintTools{background:#edf5f5!important;border-color:#c8dfdf!important}
+#footprintTools .grid button{min-height:54px}
+#footPhotoGrid>div{background:#fbfdfe}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:16px}header h1{font-size:24px}.container{padding:10px}.wizardNav button{min-width:90px}}
+@media print{header,.formcard,button,.small.note{display:none!important}.container{max-width:none;padding:0}.card{box-shadow:none;border:0}.result{background:white}}
+
+
+/* SENSOPED saturated petrol: all headings throughout the app */
+h1,h2,h3,h4,h5,h6,.formcard h2,.formcard h3{color:#075b61!important}
+h2{border-bottom-color:#b8d9d7}
+
+
+.patientReportActions{display:grid;grid-template-columns:1fr;gap:12px;margin-top:20px}.patientReportActions button{min-height:60px;border-radius:16px;font-size:17px;font-weight:750}
+@media print{body.printPatientOnly .card:not(#patientReportCard){display:none!important}body.printPatientOnly #patientReportCard{display:block!important}body.printPatientOnly #patientOutput{display:block!important}body.printPatientOnly #patientOutput:before{content:"SENSOPED – Patientenbericht";display:block;font-size:24px;font-weight:bold;color:#075b61;margin-bottom:20px}body.printPatientOnly .patientReportActions{display:none!important}}
+
+/* SENSOPED premium patient-view */
+.patientLaunch{background:linear-gradient(115deg,#0b4f59,#168c91,#43c6b6)!important;box-shadow:0 8px 24px #0b4f5930,inset 0 1px 0 #ffffff55;letter-spacing:.2px;transition:transform .18s,box-shadow .18s}.patientLaunch:hover{transform:translateY(-2px);box-shadow:0 12px 30px #0b4f5940}.patientLaunch:active{transform:scale(.98)}
+#patientView{display:none;position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at top,#164e57,#061d29 70%);color:#f3fbfc;overflow:auto;padding:24px;font-family:Arial,sans-serif}#patientView .pvWrap{max-width:900px;margin:auto}#patientView h1{font-size:clamp(28px,5vw,42px);color:#fff;margin:8px 0}#patientView h2{color:#80e2d4}#patientView .pvCard{background:#ffffff12;border:1px solid #ffffff22;border-radius:20px;padding:20px;margin:16px 0;box-shadow:0 12px 40px #0002}#patientView .pvText{white-space:pre-wrap;line-height:1.65;font-size:18px}#patientView button{background:linear-gradient(120deg,#19a69a,#51d2bd);color:#082d35;max-width:360px;font-weight:800}#patientView .pvClose{background:#ffffff22;color:white;border:1px solid #ffffff35}#patientView .pvProgress{height:6px;background:#ffffff20;border-radius:9px;margin:24px 0;overflow:hidden}#patientView #pvProgressBar{height:100%;width:20%;background:linear-gradient(90deg,#20b5a7,#80e2d4);transition:width .3s}#patientView .pvNav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0}#patientView .pvNav button{flex:1}#patientView .pvNav button:disabled{opacity:.35;cursor:not-allowed}#patientView .pvSlide h2{margin-top:4px}#patientView .pvCard{backdrop-filter:blur(8px)}#patientView .pvSlide{min-height:220px;animation:pvFade .25s ease}#patientView .pvSlide h2{font-size:24px}#patientView .pvSlide .pvText{font-size:19px;white-space:pre-wrap;line-height:1.7}#patientView .pvEmpty{opacity:.75;font-style:italic}@keyframes pvFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Guided examination wizard */
+.guidedNav{display:flex;gap:10px;margin-top:22px;align-items:center;justify-content:space-between}.guidedNav button{width:auto;flex:1}.guidedNav .back{background:#e5eef1;color:#123b5d}.guidedNav .stepMeta{font-size:13px;color:#607780;text-align:center;min-width:70px}@media(max-width:600px){.guidedNav{gap:6px}.guidedNav button{padding:12px 8px}}
+
+/* Version 1.19-inspired workflow buttons */
+.workflowButtons{display:flex;gap:6px;overflow-x:auto;margin:12px 0 2px;padding:4px 1px}.workflowButtons button{flex:0 0 auto;width:auto;min-width:86px;max-width:150px;margin:0;padding:9px 10px;background:#edf4f5;color:#34535a;border:1px solid #d5e3e5;border-radius:12px;text-align:center;font-size:12px}.workflowButtons button span{display:block;font-weight:800;font-size:15px;margin-bottom:3px}.workflowButtons button small{display:block;font-size:11px;line-height:1.25}.workflowButtons button.active{background:#d9efec;color:#0b5960;border:2px solid #176b72}.workflowButtons button.done{background:#e8f2ed;color:#287d69}.guidedNav{display:flex;gap:8px;margin-top:22px;align-items:stretch}.guidedNav>*{flex:1 1 0;min-width:0;width:0;margin:0;min-height:104px;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px 8px;font-weight:800;font-size:15px;line-height:1.25}.guidedNav .back{background:#e6f0f3;color:#17445e;border:0}.guidedNav .stepMeta{background:#176b72;color:#fff;font-size:14px;font-weight:800;overflow-wrap:anywhere}.guidedNav .next{background:linear-gradient(120deg,#176b72,#219a9b);color:#fff;border:0}.guidedNav button:disabled{opacity:.55}@media(max-width:600px){.workflowButtons button{min-width:76px}.guidedNav{gap:7px}.guidedNav>*{min-height:108px;padding:10px 6px;font-size:14px}.guidedNav .stepMeta{font-size:13px}}
+\n/* Clearly visible footprint method choices */\n.footprintTypeTiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}.footprintTypeTile{margin:0!important;width:100%;min-height:88px;padding:9px 8px!important;background:#f3f8f9!important;color:#254850!important;border:2px solid #d5e5e8!important;border-radius:13px!important;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;box-shadow:0 2px 8px #123b5d0a}.footprintTypeTile .ftIcon{font-size:20px;line-height:1.1}.footprintTypeTile strong{font-size:13px}.footprintTypeTile small{font-size:10px;line-height:1.2;color:#607780}.footprintTypeTile.selected{background:#d9efec!important;border:2px solid #176b72!important;box-shadow:0 3px 10px #176b7220}.footprintTypeTile.selected strong{color:#075b61}@media(max-width:420px){.footprintTypeTiles{gap:6px}.footprintTypeTile{min-height:82px;padding:8px 6px!important}}\n
+/* Strong override for compact footprint tile grid on phones */
+#footprintTypeTiles{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}#footprintTypeTiles button.footprintTypeTile{width:auto!important;min-width:0!important;min-height:78px!important;margin:0!important;padding:7px 4px!important}#footprintTypeTiles .ftIcon{font-size:18px!important}#footprintTypeTiles strong{font-size:12px!important;line-height:1.2!important}#footprintTypeTiles small{font-size:9px!important;line-height:1.15!important}
+
+/* SENSOPED AI landing design overlay */
+.sensopedHero{padding:22px 16px 24px;text-align:left;background:linear-gradient(145deg,#102f3a,#075e63 65%,#087c75);border-radius:0 0 34px 34px;box-shadow:0 10px 30px #075b6125}.heroBrand{display:flex;align-items:center;gap:14px;max-width:920px;margin:0 auto 22px}.heroMark{border:1px solid #ffffff55;background:#ffffff12;border-radius:18px;padding:12px 10px;font-weight:900;letter-spacing:1.5px;color:#fff}.heroMark span{color:#b6e86d}.heroTag{font-size:11px;letter-spacing:2px;line-height:1.5;color:#c4d9da;font-weight:800}.demoTag{margin-left:auto;border:1px solid #ffffff45;border-radius:99px;padding:9px 11px;color:#d8efdf;font-size:10px;letter-spacing:1px}.heroPanel{max-width:920px;margin:0 auto;background:linear-gradient(145deg,#12343d,#075b61);border:1px solid #ffffff20;border-radius:30px;padding:24px 20px;box-shadow:0 12px 35px #002a3025}.footprintGraphic{float:left;margin:0 14px 8px 0;width:86px;height:90px;background:#ffffff12;border:1px solid #ffffff25;border-radius:20px;display:flex;align-items:center;justify-content:center}.footprintGraphic svg{width:74px;height:84px}.heroPanel h1{font-size:26px!important;letter-spacing:2px;color:#fff!important;margin:8px 0}.heroSub{color:#c8e1e3;font-size:16px;margin:5px 0 20px}.heroAIVisual{clear:both;margin:14px 0 20px;border-radius:22px;overflow:hidden;border:1px solid #ffffff25;background:#ffffff08;box-shadow:0 12px 28px #001f2628}.heroAIVisual img{display:block;width:100%;height:auto;max-height:420px;object-fit:cover;object-position:center}.blueprintText strong{display:block;color:#fff}.blueprintText span{display:block;color:#cce0e2;font-size:14px;line-height:1.45}.heroTiles{display:grid;grid-template-columns:1fr 1fr;gap:9px}.heroTiles button{margin:0;min-height:76px;width:auto;display:flex;align-items:center;justify-content:flex-start;gap:10px;text-align:left;background:#ffffff12;color:#eefafa;border:1px solid #ffffff25;border-radius:17px;padding:10px;font-size:14px}.heroTiles button span{font-size:21px;background:#ffffff10;border-radius:12px;padding:8px}.heroTiles button b{line-height:1.25}.heroStart{background:#f8ffff!important;color:#12464d!important;margin-top:18px!important;border-radius:18px!important;max-width:430px!important;min-height:64px!important;font-weight:900!important;letter-spacing:1px!important;font-size:16px!important}.heroHint{color:#c2dddd;font-size:13px;margin-top:10px}.heroTools{max-width:920px;margin:14px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:8px}.heroTools button{margin:0;padding:11px 9px;font-size:13px}.heroTools button:last-child{grid-column:1/-1}@media(min-width:700px){.heroPanel{padding:30px}.heroTiles button{min-height:88px}.heroTools{grid-template-columns:repeat(3,1fr)}.heroTools button:last-child{grid-column:auto}}@media(max-width:380px){.heroPanel{padding:18px 14px}.heroTiles button{font-size:12px;gap:7px;padding:8px}.heroTiles button span{font-size:18px;padding:6px}.demoTag{font-size:9px;padding:7px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script><script>function sensopedHeroAction(action){const cards=[...document.querySelectorAll('.formcard')];if(action==='recipe'){document.getElementById('cameraInput')?.click();return;}if(action==='media'){const video=document.getElementById('gaitVideoInput');if(video){video.click();return;}cards[3]?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(action==='ai'){const out=document.getElementById('supplyLogicOutput');if(typeof generateSupplyLogic==='function'){generateSupplyLogic();}const section=out?.closest('.formcard');section?.scrollIntoView({behavior:'smooth',block:'start'});out?.scrollIntoView({behavior:'smooth',block:'center'});return;}if(action==='reports'){try{if(typeof window.createReports!=='function'){throw new Error('Berichtsfunktion noch nicht geladen');}window.createReports();const pc=document.getElementById('patientReportCard');const po=document.getElementById('patientOutput');const d=document.getElementById('doctorOutput');pc&&(pc.style.display='block');po&&(po.style.display='block');d&&(d.style.display='block');const dc=d?.closest('.card');dc&&(dc.style.display='block');document.querySelectorAll('.container .card,.container .formcard').forEach(el=>el.style.display='block');if(pc){pc.scrollIntoView({behavior:'smooth',block:'start'});}else{alert('Berichtsbereich konnte nicht gefunden werden.');}return;}catch(e){alert('Fehler beim Erstellen der Berichte: '+e.message);return;}}if(action==='start'){cards[0]?.scrollIntoView({behavior:'smooth',block:'start'});}}</script>
+<script>window.sensopedMicTest=function(){var s=document.getElementById("microphoneTestStatus");if(!s){alert("Statusfeld fehlt");return;}s.style.cssText="display:block;background:#123b5d;color:white;padding:14px;border-radius:12px;font-size:16px;margin:12px 0;";s.textContent="Test gestartet – frage Mikrofonzugriff an…";if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){s.textContent="Dieser Browser stellt den Mikrofonzugriff nicht bereit.";return;}navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){stream.getTracks().forEach(function(t){t.stop();});s.textContent="✅ ERFOLG: Das Handy und Chrome erlauben den Mikrofonzugriff.";}).catch(function(e){s.textContent="❌ Fehler: "+e.name+" – "+e.message;});};</script><script>window.sensopedSpeechTest=function(){var s=document.getElementById("microphoneTestStatus");s.style.cssText="display:block;background:#123b5d;color:white;padding:14px;border-radius:12px;font-size:16px;margin:12px 0;";var R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){s.textContent="Spracherkennung wird in diesem Browser nicht unterstützt. Bitte Google Chrome verwenden.";return;}try{var r=new R();window._sensopedSpeech=r;r.lang="de-DE";r.interimResults=true;r.continuous=false;r.onstart=function(){s.textContent="🎙️ Spracherkennung läuft. Bitte jetzt einen Satz sprechen.";};r.onresult=function(e){var t="";for(var i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;s.textContent="✅ Erkannt: "+t;};r.onerror=function(e){s.textContent="Spracherkennung-Fehler: "+e.error;};r.onend=function(){if(s.textContent.indexOf("läuft")>=0)s.textContent="Keine Sprache erkannt. Bitte erneut drücken.";};r.start();}catch(e){s.textContent="Startfehler: "+e.message;}};</script><style>
+.voiceInputBtn{width:auto!important;display:inline-flex!important;align-items:center;gap:6px;margin:6px 0 14px!important;padding:9px 14px!important;background:#d9efec!important;color:#075b61!important;border:1px solid #9bcfca!important;border-radius:12px!important;font-size:14px!important;font-weight:700!important}
+.voiceInputBtn.listening{background:#176b72!important;color:white!important}
+</style>
+<script>
+window.addEventListener('DOMContentLoaded',function(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ const ids=['complaints','doctorDiagnosis','right','left','manualRightNotes','manualLeftNotes','footnotes','gait','knee','movement','postureAnalysis','goal','extra'];
+ ids.forEach(function(id){
+  const field=document.getElementById(id);if(!field||field.dataset.voiceAdded)return;field.dataset.voiceAdded='1';
+  const b=document.createElement('button');b.type='button';b.className='voiceInputBtn';b.textContent='🎙️ Text sprechen';field.insertAdjacentElement('afterend',b);
+  b.addEventListener('click',function(){
+   if(!SR){alert('Spracherkennung wird von diesem Browser nicht unterstützt.');return;}
+   const rec=new SR();rec.lang='de-DE';rec.interimResults=false;rec.continuous=false;
+   b.classList.add('listening');b.textContent='🔴 Bitte sprechen…';
+   rec.onresult=function(e){const transcript=e.results[0][0].transcript;field.value=(field.value.trim()?field.value.trim()+' ':'')+transcript;field.dispatchEvent(new Event('input',{bubbles:true}));};
+   rec.onerror=function(e){b.textContent='⚠️ '+e.error;};
+   rec.onend=function(){b.classList.remove('listening');b.textContent='🎙️ Text sprechen';};
+   try{rec.start();}catch(e){b.textContent='Startfehler';b.classList.remove('listening');}
+  });
+ });
+});
+</script><style>.footprintVisual{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 16px}.fpVisualTile{background:linear-gradient(145deg,#f3f9fb,#e5f1f4);border:1px solid #d5e5e8;border-radius:14px;padding:13px 7px;text-align:center;color:#17445e}.fpVisualIcon{font-size:26px;min-height:42px;margin-bottom:6px}.fpVisualTile strong{font-size:13px;line-height:1.2}@media(max-width:400px){.fpVisualTile{padding:10px 5px}}</style><style>.footprintTypeTiles{display:none!important}</style></head>
+<body>
+<header class="sensopedHero">
+<div class="heroBrand"><div class="heroMark">SENSOPED<br><span>AI</span></div><div class="heroTag">FOOT &amp; GAIT<br>INTELLIGENCE</div><div class="demoTag">● Untersuchung</div></div>
+<div class="heroPanel"><div class="footprintGraphic" aria-hidden="true"><svg viewBox="0 0 120 140" width="100" height="120"><path d="M36 115 C19 103 25 80 35 62 C43 46 49 22 62 20 C75 18 77 43 82 55 C92 72 101 87 92 108 C82 128 53 129 36 115Z" fill="none" stroke="#9be5dc" stroke-width="3"/><circle cx="75" cy="14" r="8" fill="none" stroke="#9be5dc" stroke-width="3"/><circle cx="88" cy="27" r="7" fill="none" stroke="#9be5dc" stroke-width="3"/><circle cx="98" cy="40" r="6" fill="none" stroke="#9be5dc" stroke-width="3"/><circle cx="102" cy="53" r="5" fill="none" stroke="#9be5dc" stroke-width="3"/></svg></div><h1>SENSOPED AI</h1><p class="heroSub">KI – Digitale Ganganalyse</p><div class="heroAIVisual"><img src="sensoped_hero_clean.jpg" alt="SENSOPED AI – Fuß, Bewegungsanalyse und digitaler Blauabdruck"></div>
+<div class="heroTiles"><button type="button" onclick="sensopedHeroAction('recipe')"><span>📄</span><b>Rezept &amp;<br>Dokument</b></button><button type="button" onclick="sensopedHeroAction('media')"><span>📷</span><b>Fußbilder &amp;<br>Gangvideo</b></button><button type="button" onclick="sensopedHeroAction('ai')"><span>🧠</span><b>KI-Befundhilfe</b></button><button type="button" onclick="sensopedHeroAction('reports')"><span>📋</span><b>Berichte erstellen</b></button></div>
+<button type="button" class="heroStart" onclick="sensopedHeroAction('start')">⌕ &nbsp; ANALYSE STARTEN &nbsp; ›</button><div class="heroHint">Neue Untersuchung beginnen</div></div>
+<div class="heroTools"><button class="cameraBtn" onclick="document.getElementById('cameraInput').click()">📷 Dokument fotografieren</button><button class="cameraBtn" onclick="document.getElementById('fileInput').click()">📁 Foto oder Dokument auswählen</button><button type="button" class="cameraBtn" onclick="window.sensopedMicTest()">🎙️ Mikrofon testen</button><button type="button" class="cameraBtn" onclick="window.sensopedSpeechTest()">🗣️ Sprache testen</button></div>
+<input id="cameraInput" type="file" accept="image/*" capture="environment" onchange="readDocument(this)" style="display:none"><input id="fileInput" type="file" accept="image/*" onchange="readDocument(this)" style="display:none"><p id="microphoneTestStatus" class="small" style="color:#fff"></p><p id="ocrStatus" class="small" style="color:#fff"></p></header>
+<div class="container">
+<div class="card" id="examProgressCard" style="position:sticky;top:8px;z-index:10;padding:14px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><strong>Untersuchungsfortschritt</strong><span id="examProgressLabel" class="small">0 von 7 Bereichen</span></div><div style="height:8px;background:#dce8eb;border-radius:8px;overflow:hidden;margin:10px 0"><div id="examProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#176b72,#43c6b6);transition:width .3s"></div></div><div id="examProgressHint" class="small">Beginnen Sie mit den Patientendaten.</div></div>
+<div class="card formcard">
+<h2>1. Patient und Beschwerden</h2>
+<div class="grid"><div><label>Name / Patientenkennung</label><input id="name" placeholder="Patient"></div><div><label>Geburtsdatum</label><input id="birth" type="date"></div></div><label>MPG-Nummer</label><input id="mpg" placeholder="MPG-Nummer">
+<label>Adresse</label><textarea id="address" rows="2" placeholder="Straße, PLZ, Ort"></textarea>
+<label>Beschwerden / Untersuchungsanlass</label><textarea id="complaints" placeholder="Was führt den Patienten zu uns? Beschwerden, seit wann, Belastung, Ziele"></textarea>
+</div>
+<div class="card formcard">
+<h2>2. Ärztliche Diagnose (laut Rezept)</h2>
+<textarea id="doctorDiagnosis" placeholder="Diagnose und relevante Angaben direkt vom Rezept"></textarea>
+<p class="small">Hier werden die ärztliche Diagnose und relevante Angaben vom Rezept erfasst. Die orthopädieschuhtechnische Untersuchung erfolgt getrennt.</p>
+</div>
+<div class="card formcard">
+<h2>3. Orthopädieschuhtechnische Untersuchung</h2>
+<h3>3.1 Fußabdruck</h3>
+<div class="footprintVisual" aria-label="Bildkacheln der vier Fußabdruckmethoden">
+<button type="button" class="fpVisualTile" onclick="selectFootprintType(document.querySelectorAll('#footprintTypeTiles .footprintTypeTile')[0])"><img class="footprintMethodImage" src="assets/fussabdruck-blau.svg" alt="Blauabdruck des Fußes"/><strong>Blauabdruck</strong></button>
+<button type="button" class="fpVisualTile" onclick="selectFootprintType(document.querySelectorAll('#footprintTypeTiles .footprintTypeTile')[1])"><img class="footprintMethodImage" src="assets/fuss-scan-3d.svg" alt="Dreidimensionale Fußscan-Erfassung"/><strong>3D-Scan</strong></button>
+<button type="button" class="fpVisualTile" onclick="selectFootprintType(document.querySelectorAll('#footprintTypeTiles .footprintTypeTile')[2])"><img class="footprintMethodImage" src="assets/digitaler-fussdruck.svg" alt="Digitale Fußdruckverteilung"/><strong>Digitaler Fußabdruck</strong></button>
+<button type="button" class="fpVisualTile" onclick="selectFootprintType(document.querySelectorAll('#footprintTypeTiles .footprintTypeTile')[3])"><img class="footprintMethodImage" src="assets/manuelle-fussmessung.svg" alt="Manuelle Fußvermessung"/><strong>Sonstige Methode</strong></button></div>
+<style>.footprintMethodImage{display:block;width:100%;height:auto;aspect-ratio:640/440;object-fit:contain;border-radius:12px;margin:0 auto 10px}.fpVisualTile{display:flex;flex-direction:column;justify-content:space-between;align-items:center;gap:8px;min-width:0}.fpVisualTile strong{font-size:clamp(13px,3.6vw,17px)!important}</style><div id="footprintTypeTiles" class="footprintTypeTiles"><button type="button" class="footprintTypeTile" data-type="Blauabdruck" onclick="selectFootprintType(this)"><span class="ftIcon">🖐️</span><strong>Blauabdruck</strong><small>Traditioneller Abdruck auf Papier</small></button><button type="button" class="footprintTypeTile" data-type="3D-Scan" onclick="selectFootprintType(this)"><span class="ftIcon">📐</span><strong>3D-Scan</strong><small>Digitale Erfassung des Fußes</small></button><button type="button" class="footprintTypeTile" data-type="Digitaler Fußabdruck" onclick="selectFootprintType(this)"><span class="ftIcon">💻</span><strong>Digitaler Fußabdruck</strong><small>Digital gespeicherte Messung</small></button><button type="button" class="footprintTypeTile" data-type="Sonstiger Fußabdruck" onclick="selectFootprintType(this)"><span class="ftIcon">📋</span><strong>Sonstige Methode</strong><small>Andere Abdruck- oder Messmethode</small></button></div><select id="footprintType" style="display:none"><option>Blauabdruck</option><option>3D-Scan</option><option>Digitaler Fußabdruck</option><option>Sonstiger Fußabdruck</option></select>
+<label>Fußabdruck fotografieren oder Bild hochladen</label><div class="grid"><button type="button" class="cameraBtn" onclick="document.getElementById('footprintPhoto').click()">📷 Foto aufnehmen</button><button type="button" class="cameraBtn" onclick="document.getElementById('footprintUpload').click()">📁 Bild aus Galerie / Dateien hochladen</button></div><input id="footprintPhoto" type="file" accept="image/*" capture="environment" onchange="previewFootprint(this)" style="display:none"><input id="footprintUpload" type="file" accept="image/*" onchange="previewFootprint(this)" style="display:none"><p class="small">Foto direkt aufnehmen oder ein vorhandenes Bild (z. B. Blauabdruck) auswählen.</p><label>Zuordnung des Fußabdrucks</label><select id="footprintSide"><option value="">Bitte Seite auswählen</option><option value="right">Rechter Fuß</option><option value="left">Linker Fuß</option><option value="both">Beide Füße</option></select><p class="small">Falls die automatische Erkennung die Seite nicht erkennt, kannst du sie hier selbst festlegen.</p><button type="button" class="green" onclick="assignFootprintImage()">Bild der ausgewählten Seite zuordnen</button><p id="footprintAssignStatus" class="small"></p><div id="footprintAnnotator" style="display:none;position:relative;width:100%;margin-top:10px;touch-action:none"><img id="footprintPreview" alt="Foto des Fußabdrucks" style="display:block;width:100%;border-radius:10px"><svg id="footprintMarkup" viewBox="0 0 1000 1000" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none"></svg></div><div id="footprintTools" style="display:none;margin-top:10px;padding:12px;border:1px solid #b8d5d2;border-radius:12px;background:#eaf3f2"><strong>🧰 Fußabdruck markieren</strong><div class="grid"><button type="button" class="cameraBtn" onclick="setFootTool('lotline')">📏 Lotlinie</button><button type="button" class="cameraBtn" onclick="setFootTool('axis')">┄ Gestrichelte Achse</button><button type="button" class="cameraBtn" onclick="setFootTool('pen')">✏️ Freihand</button><button type="button" class="cameraBtn" onclick="setFootTool('arrow')">➡️ Pfeil</button><button type="button" class="cameraBtn" onclick="setFootTool('circle')">⭕ Kreis</button><button type="button" class="cameraBtn" onclick="setFootTool('ellipse')">⬭ Ellipse</button><button type="button" class="cameraBtn" onclick="setFootTool('edit')">🖐️ Formen bearbeiten</button><button type="button" class="cameraBtn" onclick="undoFootMark()">↩️ Rückgängig</button><button type="button" class="cameraBtn" onclick="clearFootMarks()">🗑️ Alles löschen</button></div><p id="footToolStatus" class="small">Werkzeug wählen und auf dem Bild zeichnen. Formen lassen sich anschließend bearbeiten.</p></div>
+<div style="margin-top:14px;padding:14px;border:1px dashed #b7cbd3;border-radius:12px;background:#f6fafb"><strong>🤖 KI-Auswertung (Vorbereitung)</strong><p class="small">Die KI-Funktionen werden in einer späteren Ausbaustufe aktiviert. Die Untersuchung und Dokumentation können bereits manuell durchgeführt werden.</p><p id="footprintAIStatus" class="small"></p><div id="footprintAIResult" class="result" style="display:none"></div></div><label>Datei hinzufügen</label><button type="button" class="cameraBtn" onclick="document.getElementById('footprintFile').click()">📎 Datei auswählen (PDF oder Dokument)</button><input id="footprintFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx" style="display:none"><p id="footprintFileName" class="small"></p>
+<div style="margin:14px 0;padding:14px;background:#d9efec;border:2px solid #176b72;border-radius:12px"><label style="margin-top:0">🎙️ Sprachbefund zum Fußabdruck</label><button type="button" id="dictationButton" style="background:#124f59" onclick="toggleFootprintDictation()">🎙️ Befund sprechen</button><p class="small">Sprich frei deine Beobachtungen aus. Die Erkennung versucht Aussagen zu rechts und links zuzuordnen. Bitte den übernommenen Text kontrollieren.</p><textarea id="footprintSpeech" placeholder="Hier erscheint dein diktierter Befund…" style="min-height:110px"></textarea><button type="button" class="green" onclick="applyFootprintSpeech()">Befund in die Fußfelder übernehmen</button><p id="speechStatus" class="small"></p></div><div class="grid"><div><label>Rechter Fuß</label><textarea id="right" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div><div><label>Linker Fuß</label><textarea id="left" placeholder="Fußform, Belastung, Auffälligkeiten"></textarea></div></div>
+<h3>3.2 Manuelle Fußuntersuchung</h3><p class="small">Den Fuß in die Hand nehmen und Beweglichkeit sowie mögliche Einschränkungen prüfen.</p><div class="grid"><div><label>Rechter Fuß – Beweglichkeit</label><select id="manualRight"><option>Keine Auswahl</option><option>Frei beweglich</option><option>Beweglichkeit eingeschränkt</option><option>Versteift</option><option>Schmerzhaft bei Bewegung</option><option>Sonstige Störung</option></select><label>Zusätzliche Auffälligkeiten rechts</label><textarea id="manualRightNotes" placeholder="Gelenke, Beweglichkeit, Widerstand, Schmerzen oder Auffälligkeiten"></textarea></div><div><label>Linker Fuß – Beweglichkeit</label><select id="manualLeft"><option>Keine Auswahl</option><option>Frei beweglich</option><option>Beweglichkeit eingeschränkt</option><option>Versteift</option><option>Schmerzhaft bei Bewegung</option><option>Sonstige Störung</option></select><label>Zusätzliche Auffälligkeiten links</label><textarea id="manualLeftNotes" placeholder="Gelenke, Beweglichkeit, Widerstand, Schmerzen oder Auffälligkeiten"></textarea></div></div>
+<textarea id="footnotes" style="display:none"></textarea>
+<h3>3.2 Fotodokumentation – Fuß</h3>
+<p class="small">Hier können acht unterschiedliche Fotos des Fußes aufgenommen oder ausgewählt werden.</p>
+<div class="grid" id="footPhotoGrid">
+<div style="border:1px solid #c1d8d5;border-radius:12px;padding:12px"><label>Foto 1</label><button type="button" class="cameraBtn" onclick="document.getElementById('footPhoto1').click()">📷 Foto 1 aufnehmen / auswählen</button><input id="footPhoto1" type="file" accept="image/*" capture="environment" onchange="showFootPhoto(this,1)" style="display:none"><img id="footPhotoPreview1" alt="Vorschau Foto 1" style="display:none;width:100%;max-width:100%;margin-top:10px;border-radius:8px"><button type="button" class="green" onclick="transferFootPhoto(1)">Foto in Fußabdruck übernehmen</button></div><div style="border:1px solid #c1d8d5;border-radius:12px;padding:12px"><label>Foto 2</label><button type="button" class="cameraBtn" onclick="document.getElementById('footPhoto2').click()">📷 Foto 2 aufnehmen / auswählen</button><input id="footPhoto2" type="file" accept="image/*" capture="environment" onchange="showFootPhoto(this,2)" style="display:none"><img id="footPhotoPreview2" alt="Vorschau Foto 2" style="display:none;width:100%;max-width:100%;margin-top:10px;border-radius:8px"><button type="button" class="green" onclick="transferFootPhoto(2)">Foto in Fußabdruck übernehmen</button></div><div style="border:1px solid #c1d8d5;border-radius:12px;padding:12px"><label>Foto 3</label><button type="button" class="cameraBtn" onclick="document.getElementById('footPhoto3').click()">📷 Foto 3 aufnehmen / auswählen</button><input id="footPhoto3" type="file" accept="image/*" capture="environment" onchange="showFootPhoto(this,3)" style="display:none"><img id="footPhotoPreview3" alt="Vorschau Foto 3" style="display:none;width:100%;max-width:100%;margin-top:10px;border-radius:8px"><button type="button" class="green" onclick="transferFootPhoto(3)">Foto in Fußabdruck übernehmen</button></div><div style="border:1px solid #c1d8d5;border-radius:12px;padding:12px"><label>Foto 4</label><button type="button" class="cameraBtn" onclick="document.getElementById('footPhoto4').click()">📷 Foto 4 aufnehmen / auswählen</button><input id="footPhoto4" type="file" accept="image/*" capture="environment" onchange="showFootPhoto(this,4)" style="display:none"><img id="footPhotoPreview4" alt="Vorschau Foto 4" style="display:none;width:100%;max-width:100%;margin-top:10px;border-radius:8px"><button type="button" class="green" onclick="transferFootPhoto(4)">Foto in Fußabdruck übernehmen</button></div><div style="border:1px solid #c1d8d5;border-radius:12px;padding:12px"><label>Foto 5</label><button type="button" class="cameraBtn" onclick="document.getElementById('footPhoto5').click()">📷 Foto 5 aufnehmen / auswählen</button><input id="footPhoto5" type="file" accept="image/*" capture="environment" onchange="showFootPhoto(this,5)" style="display:none"><img id="footPhotoPreview5" alt="Vorschau Foto 5" style="display:none;width:100%;max-width:100%;margin-top:10px;border-radius:8px"><button type="button" class="green" onclick="transferFootPhoto(5)">Foto in Fußabdruck übernehmen</button></div><div style="border:1px solid #c1d8d5;border-radius:12px;padding:12px"><label>Foto 6</label><button type="button" class="cameraBtn" onclick="document.getElementById('footPhoto6').click()">📷 Foto 6 aufnehmen / auswählen</button><input id="footPhoto6" type="file" accept="image/*" capture="environment" onchange="showFootPhoto(this,6)" style="display:none"><img id="footPhotoPreview6" alt="Vorschau Foto 6" style="display:none;width:100%;max-width:100%;margin-top:10px;border-radius:8px"><button type="button" class="green" onclick="transferFootPhoto(6)">Foto in Fußabdruck übernehmen</button></div><div style="border:1px solid #c1d8d5;border-radius:12px;padding:12px"><label>Foto 7</label><button type="button" class="cameraBtn" onclick="document.getElementById('footPhoto7').click()">📷 Foto 7 aufnehmen / auswählen</button><input id="footPhoto7" type="file" accept="image/*" capture="environment" onchange="showFootPhoto(this,7)" style="display:none"><img id="footPhotoPreview7" alt="Vorschau Foto 7" style="display:none;width:100%;max-width:100%;margin-top:10px;border-radius:8px"><button type="button" class="green" onclick="transferFootPhoto(7)">Foto in Fußabdruck übernehmen</button></div><div style="border:1px solid #c1d8d5;border-radius:12px;padding:12px"><label>Foto 8</label><button type="button" class="cameraBtn" onclick="document.getElementById('footPhoto8').click()">📷 Foto 8 aufnehmen / auswählen</button><input id="footPhoto8" type="file" accept="image/*" capture="environment" onchange="showFootPhoto(this,8)" style="display:none"><img id="footPhotoPreview8" alt="Vorschau Foto 8" style="display:none;width:100%;max-width:100%;margin-top:10px;border-radius:8px"><button type="button" class="green" onclick="transferFootPhoto(8)">Foto in Fußabdruck übernehmen</button></div>
+</div>
+<label>Beobachtete Fußstellung / Befund</label><select id="foot"><option>Keine Auswahl</option><option>Senkfuß</option><option>Plattfuß</option><option>Hohlfuß</option><option>Knickfuß</option><option>Spreizfuß</option><option>Metatarsalgie</option><option>Hallux valgus</option><option>Hallux rigidus</option><option>Mehrere Auffälligkeiten</option><option>Keine wesentliche Auffälligkeit</option><option>Sonstige</option></select>
+
+
+</div>
+<div class="card formcard">
+<h2>4. Bewegungs- und Ganganalyse</h2>
+<label>Video der Ganganalyse</label><div class="grid"><button type="button" class="cameraBtn" onclick="document.getElementById('gaitVideoInput').click()">🎥 Video aufnehmen / auswählen</button><button type="button" class="cameraBtn" onclick="document.getElementById('gaitFileInput').click()">📎 Datei hinzufügen</button></div><input id="gaitVideoInput" type="file" accept="video/*" capture="environment" onchange="previewGaitMedia(this)" style="display:none"><input id="gaitFileInput" type="file" accept="video/*,image/*,.pdf,.doc,.docx" onchange="previewGaitMedia(this)" style="display:none"><p id="gaitMediaName" class="small"></p><video id="gaitVideoPreview" controls playsinline style="display:none;max-width:100%;margin-top:10px;border-radius:10px"></video><img id="gaitImagePreview" alt="Ganganalyse-Datei" style="display:none;max-width:100%;margin-top:10px;border-radius:10px"><label>Gangbild</label><textarea id="gait" placeholder="Beobachtungen beim Gehen"></textarea>
+<div class="grid"><div><label>Knieachse</label><textarea id="knee" placeholder="Beobachtung der Knieachse"></textarea></div><div><label>Bewegungsablauf / Auffälligkeiten</label><textarea id="movement" placeholder="Bewegungsablauf von Fuß, Bein, Hüfte und Körper; Auffälligkeiten beim Gehen"></textarea></div></div>
+
+
+</div>
+<div class="card formcard">
+<h2>5. Statik und Haltungsanalyse</h2>
+<p class="small">Fotodokumentation im Stand. Die KI-Auswertung ist unterstützend; bitte Befunde prüfen.</p>
+<div class="grid">
+<div><label>Ansicht von vorne</label><button type="button" class="cameraBtn" onclick="document.getElementById('postureFront').click()">📷 Foto von vorne</button><button type="button" class="cameraBtn" onclick="document.getElementById('postureFrontFile').click()">📎 Datei hinzufügen</button><input id="postureFront" type="file" accept="image/*" capture="environment" onchange="showPosturePhoto(this,'front')" style="display:none"><input id="postureFrontFile" type="file" accept="image/*" onchange="showPosturePhoto(this,'front')" style="display:none"><img id="posturePreviewFront" alt="Haltungsfoto vorne" style="display:none;width:100%;margin-top:10px;border-radius:8px"></div>
+<div><label>Ansicht von hinten</label><button type="button" class="cameraBtn" onclick="document.getElementById('postureBack').click()">📷 Foto von hinten</button><button type="button" class="cameraBtn" onclick="document.getElementById('postureBackFile').click()">📎 Datei hinzufügen</button><input id="postureBack" type="file" accept="image/*" capture="environment" onchange="showPosturePhoto(this,'back')" style="display:none"><input id="postureBackFile" type="file" accept="image/*" onchange="showPosturePhoto(this,'back')" style="display:none"><img id="posturePreviewBack" alt="Haltungsfoto hinten" style="display:none;width:100%;margin-top:10px;border-radius:8px"></div>
+<div><label>Ansicht von der Seite</label><button type="button" class="cameraBtn" onclick="document.getElementById('postureSide').click()">📷 Foto von der Seite</button><button type="button" class="cameraBtn" onclick="document.getElementById('postureSideFile').click()">📎 Datei hinzufügen</button><input id="postureSide" type="file" accept="image/*" capture="environment" onchange="showPosturePhoto(this,'side')" style="display:none"><input id="postureSideFile" type="file" accept="image/*" onchange="showPosturePhoto(this,'side')" style="display:none"><img id="posturePreviewSide" alt="Haltungsfoto Seite" style="display:none;width:100%;margin-top:10px;border-radius:8px"></div></div>
+<label>Statik-Befund</label><textarea id="postureAnalysis" placeholder="Fußstellung, Fußgewölbe, Rückfuß, Beinachse, Knie, Becken, Wirbelsäule, Schulterstellung und Symmetrie"></textarea>
+</div>
+<div class="card formcard">
+<h2>6. Orthopädieschuhtechnische Einschätzung und Versorgung</h2>
+<label>Empfohlene Versorgung</label><select id="therapy"><option>Keine Auswahl</option><option>Sensomotorische Einlage</option><option>Orthopädische Einlage</option><option>Orthopädische Schuhe</option><option>Schuhzurichtung</option><option>Individuelle Kombination</option><option>Weitere Versorgung</option></select>
+<label>Behandlungs- / Versorgungsziel</label><textarea id="goal" placeholder="Ziel und gewünschte funktionelle Verbesserung"></textarea>
+<label>Besondere Hinweise</label><textarea id="extra" placeholder="Optional"></textarea>
+<button type="button" class="green" onclick="generateSupplyLogic()">✨ Versorgungslogik aus Befunden ableiten</button><div id="supplyLogicOutput" class="result" style="display:none"></div><button type="button" class="secondary" onclick="prepareConstructionSpec()">🛠️ Konstruktionsblatt für Werkstatt vorbereiten</button><label>Werkstatt- / Konstruktionsvorschlag (Entwurf)</label><textarea id="constructionSpec" placeholder="Hier wird ein strukturiertes Konstruktionsblatt vorbereitet. Bauteile und technische Umsetzung bitte fachlich festlegen und freigeben." rows="8"></textarea><p class="small">Entwurf aus dokumentierten Befunden – keine automatische Bauteilauswahl. Konstrukteur prüft, ergänzt und gibt frei.</p>
+</div>
+<div class="card formcard">
+<h2>7. Berichte erstellen</h2>
+<p class="small note">Die Berichte sind Vorschläge auf Grundlage der eingegebenen Befunde. Bitte vor Weitergabe prüfen und medizinisch bestätigen.</p>
+<button onclick="window.createReports()">Patientenbericht und Fachbericht erstellen</button>
+</div>
+
+<div class="card">
+<h2>8. KI-Bilder und Video</h2>
+<p>Dieser Bereich ist als nächster Entwicklungsschritt vorgesehen: Bilderkennung, Video-Ganganalyse, unterstützende Messwerte und strukturierte KI-Auswertung.</p>
+<p class="small">KI-Ausgaben sind unterstützende Hinweise. Die Beurteilung und Freigabe erfolgt durch den Untersucher.</p><button type="button" class="green" onclick="createExamSummary()">✨ Untersuchungszusammenfassung erstellen</button><div id="examSummaryOutput" class="result" style="display:none"></div>
+</div>
+<div class="card">
+<h2>Untersuchung abschließen &amp; Berichte erstellen</h2>
+<p>Alle Untersuchungsergebnisse sammeln, überprüfen und die Berichte erstellen.</p>
+</div>
+<div class="card" id="patientReportCard">
+<h2>Patientenbericht – verständlich erklärt</h2><div id="patientOutput" class="result" style="display:none"></div>
+<div class="patientReportActions"><button class="light" onclick="copyText('patientOutput')">📋 Bericht kopieren</button><button class="light" onclick="printPatientReport()">📄 PDF erstellen / drucken</button><button class="patientLaunch" onclick="launchPatientView()">✨ PatientenView auf dem iPad starten</button></div>
+</div>
+<div class="card">
+<h2>Fachbericht</h2><div id="doctorOutput" class="result" style="display:none"></div>
+<button class="secondary" onclick="copyText('doctorOutput')">Fachbericht kopieren</button>
+<button class="green" onclick="printReports()">Berichte drucken</button>
+</div>
+<div class="card"><p class="small">SENSOPED AI – Untersuchung und Dokumentation. Patienteninformationen und Befunde bitte verantwortungsvoll behandeln.</p></div>
+</div>
+<script>
+
+function createExamSummary(){const parts=[];const add=(title,id)=>{const x=val(id);if(x&&x!=="Keine Angabe"&&x!=="Keine Auswahl")parts.push(title+": "+x)};add("Beschwerden","complaints");add("Ärztliche Diagnose","doctorDiagnosis");add("Fußbefund rechts","right");add("Fußbefund links","left");add("Manuelle Untersuchung rechts","manualRightNotes");add("Manuelle Untersuchung links","manualLeftNotes");add("Beweglichkeit rechts","manualRight");add("Beweglichkeit links","manualLeft");add("Fußstellung","foot");add("Gangbild","gait");add("Knieachse","knee");add("Bewegungsablauf","movement");add("Statik und Haltung","postureAnalysis");add("Versorgung","therapy");add("Ziel","goal");add("Zusätzliche Hinweise","extra");const out=document.getElementById("examSummaryOutput");out.textContent=parts.length? "UNTERSUCHUNGSZUSAMMENFASSUNG\n\n"+parts.join("\n\n")+"\n\nBitte fachlich prüfen und ergänzen. Diese Zusammenfassung ordnet dokumentierte Eingaben, sie stellt keine automatische medizinische Diagnose dar.":"Noch keine Befunde vorhanden. Bitte zuerst Untersuchungseinträge erfassen.";out.style.display="block";out.scrollIntoView({behavior:"smooth",block:"center"});}
+function updateExamProgress(){const sections=[["Patient",["name","complaints"]],["Rezept",["doctorDiagnosis"]],["Fußbefund",["right","left","foot"]],["Manuelle Untersuchung",["manualRightNotes","manualLeftNotes"]],["Ganganalyse",["gait","knee","movement"]],["Statik / Haltung",["postureAnalysis"]],["Versorgung",["therapy","goal"]]];const completed=sections.filter(s=>s[1].some(id=>{const el=document.getElementById(id);return el&&el.value&&el.value.trim()&&el.value.trim()!=="Keine Auswahl"})).length;const pct=Math.round(completed/sections.length*100);const label=document.getElementById("examProgressLabel"),bar=document.getElementById("examProgressBar"),hint=document.getElementById("examProgressHint");if(label)label.textContent=completed+" von "+sections.length+" Bereichen";if(bar)bar.style.width=pct+"%";if(hint)hint.textContent=completed===sections.length?"Alle Hauptbereiche haben mindestens eine Eingabe. Bitte Befunde prüfen und Berichte erstellen.":completed+" Bereiche begonnen – der Fortschritt aktualisiert sich automatisch.";}
+document.addEventListener("input",updateExamProgress);document.addEventListener("change",updateExamProgress);window.addEventListener("DOMContentLoaded",updateExamProgress);
+function previewGaitMedia(input){const f=input.files&&input.files[0];if(!f)return;document.getElementById("gaitMediaName").textContent="Ausgewählt: "+f.name;const v=document.getElementById("gaitVideoPreview"),im=document.getElementById("gaitImagePreview");v.style.display="none";im.style.display="none";v.removeAttribute("src");im.removeAttribute("src");const url=URL.createObjectURL(f);if(f.type.startsWith("video/")){v.src=url;v.style.display="block";}else if(f.type.startsWith("image/")){im.src=url;im.style.display="block";}else{document.getElementById("gaitMediaName").textContent="Datei ausgewählt: "+f.name+" (Vorschau nicht verfügbar)";}}
+async function readDocument(input){
+ const file=input.files&&input.files[0]; if(!file)return;
+ const status=document.getElementById("ocrStatus");status.textContent="Rezept wird gelesen und Daten werden übernommen…";
+ try{
+  if(!window.Tesseract){status.textContent="Texterkennung konnte nicht geladen werden.";return;}
+  const result=await Tesseract.recognize(file,"deu+eng");
+  const text=result.data.text||"";
+  if(!text.trim()){status.textContent="Kein Text erkannt. Bitte Foto erneut aufnehmen.";return;}
+  // OCR-Text sichern und vorsichtig anhand eindeutiger Beschriftungen zuordnen
+  const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const findLabel=(patterns)=>{for(let i=0;i<lines.length;i++){for(const p of patterns){if(p.test(lines[i])){const inline=lines[i].replace(p,"").replace(/^[:\-\s]+/,"").trim();if(inline)return inline;if(lines[i+1])return lines[i+1];}}}return "";};
+  const name=findLabel([/^patient(?:en)?(?:name)?\s*[:]?/i,/^name\s*[:]?/i]);
+  const birth=findLabel([/^(?:geb(?:urtsdatum)?|geb\.?)\s*[:]?/i,/^date of birth\s*[:]?/i]);
+  const address=findLabel([/^(?:adresse|anschrift)\s*[:]?/i]);
+  if(name && !document.getElementById("name").value)document.getElementById("name").value=name;
+  if(birth && !document.getElementById("birth").value){const m=birth.match(/(\d{1,2})[.\/\-](\d{1,2})[.\/\-](\d{2,4})/);if(m){let y=m[3];if(y.length===2)y=(+y>30?"19":"20")+y;document.getElementById("birth").value=y+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0");}}
+  if(address && !document.getElementById("address").value)document.getElementById("address").value=address;
+  document.getElementById("doctorDiagnosis").value=(document.getElementById("doctorDiagnosis").value?document.getElementById("doctorDiagnosis").value+"\n\n":"")+"Ausgelesene Rezeptdaten (bitte überprüfen):\n"+text;
+  status.textContent="Rezept ausgelesen. Erkannte Angaben wurden übernommen; bitte kurz kontrollieren.";
+ }catch(e){status.textContent="Texterkennung fehlgeschlagen. Bitte erneut versuchen."}
+ finally{input.value=""}
+}
+document.getElementById("footprintFile").addEventListener("change",function(){document.getElementById("footprintFileName").textContent=this.files&&this.files[0]?"Datei ausgewählt: "+this.files[0].name:"";});
+let footprintRecognition=null,footprintListening=false,footprintRecorder=null,footprintChunks=[];
+let footprintSelectedFile=null,footprintSelectedLabel='';
+async function toggleFootprintDictation(){
+ const status=document.getElementById("speechStatus"),btn=document.getElementById("dictationButton");
+ if(footprintRecorder&&footprintRecorder.state==="recording"){footprintRecorder.stop();btn.textContent="🎙️ Befund sprechen";status.textContent="Aufnahme wird übertragen und transkribiert…";return}
+ const endpoint=window.SENSOPED_AI_ENDPOINT;
+ if(!endpoint){status.textContent="Bitte zuerst im Feld KI-Server-Verbindung die Worker-Adresse speichern.";return}
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){status.textContent="Audioaufnahme wird in diesem Browser nicht unterstützt. Bitte Google Chrome verwenden.";return}
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});footprintChunks=[];
+  footprintRecorder=new MediaRecorder(stream);
+  footprintRecorder.ondataavailable=e=>{if(e.data&&e.data.size)footprintChunks.push(e.data)};
+  footprintRecorder.onstop=async()=>{
+   stream.getTracks().forEach(t=>t.stop());
+   try{
+    const blob=new Blob(footprintChunks,{type:footprintRecorder.mimeType||"audio/webm"});
+    const form=new FormData();form.append("audio",blob,"befund.webm");
+    const response=await fetch(endpoint.replace(/\/$/,"")+"/transcribe",{method:"POST",body:form});
+    const data=await response.json();if(!response.ok)throw new Error(data.error||"Serverfehler");
+    const field=document.getElementById("footprintSpeech");if(data.text)field.value+=(field.value.trim()?" ":"")+data.text;
+    status.textContent=data.text?"Transkription fertig. Bitte Befund prüfen.":"Keine Sprache erkannt.";
+   }catch(e){status.textContent="Transkription fehlgeschlagen: "+e.message}
+  };
+  footprintRecorder.start();footprintListening=true;btn.textContent="⏹️ Aufnahme beenden";status.textContent="🎙️ Aufnahme läuft – sprechen Sie Ihren Befund.";
+ }catch(e){status.textContent="Mikrofonzugriff nicht möglich. Bitte die Mikrofonberechtigung erlauben."}
+}
+function applyFootprintSpeech(){
+ const text=document.getElementById("footprintSpeech").value.trim();if(!text){document.getElementById("speechStatus").textContent="Bitte zuerst etwas diktieren.";return}
+ const right=[],left=[],other=[];
+ const chunks=text.split(/[.!?;]+/).map(x=>x.trim()).filter(Boolean);
+ chunks.forEach(s=>{const lower=s.toLowerCase();if(/\b(rechts|rechter|rechte|recht)\b/.test(lower))right.push(s);else if(/\b(links|linker|linke|link)\b/.test(lower))left.push(s);else other.push(s)});
+ const append=(id,arr)=>{if(!arr.length)return;const el=document.getElementById(id);el.value+=(el.value.trim()?"\n":"")+arr.join(". ")};
+ append("right",right);append("left",left);append("footnotes",other);
+ document.getElementById("speechStatus").textContent="Befund übernommen. Bitte die Zuordnung kontrollieren.";
+}
+const manualDictations={};
+function dictateManualNote(targetId,statusId){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ const box=document.getElementById(targetId),status=document.getElementById(statusId);
+ const button=status?status.previousElementSibling:null;
+ if(!box||!status){alert('Eingabefeld oder Status fehlt.');return;}
+ if(!SR){status.textContent='Spracherkennung nicht verfügbar.';return;}
+ if(window.sensopedActiveRec){try{window.sensopedActiveRec.abort();}catch(e){}}
+ const rec=new SR();window.sensopedActiveRec=rec;window.sensopedActiveKey=targetId;
+ rec.lang='de-DE';rec.continuous=false;rec.interimResults=false;
+ status.textContent='🎙️ Bitte sprechen…';
+ if(button){button.textContent='🔴 Aufnahme läuft…';}
+ rec.onresult=function(ev){const text=ev.results[0][0].transcript;box.value=(box.value.trim()?box.value.trim()+' ':'')+text;box.dispatchEvent(new Event('input',{bubbles:true}));status.textContent='✅ Erkannt: '+text;};
+ rec.onerror=function(ev){status.textContent='Fehler: '+ev.error;};
+ rec.onend=function(){if(button)button.textContent='🎙️ Gangbild sprechen';};
+ try{rec.start();}catch(e){status.textContent='Startfehler: '+e.message;if(button)button.textContent='🎙️ Gangbild sprechen';}
+}
+function showPosturePhoto(input,view){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById('posturePreview'+view.charAt(0).toUpperCase()+view.slice(1));const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display='block'};reader.readAsDataURL(f)}
+function showFootPhoto(input,n){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById("footPhotoPreview"+n);const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display="block"};reader.readAsDataURL(f)}
+let footMarks=[],footTool="ellipse",footSelected=-1,footGesture=null,footUndo=[];
+function saveFootUndo(){footUndo.push(JSON.parse(JSON.stringify(footMarks)));if(footUndo.length>30)footUndo.shift()}
+function undoFootMark(){if(!footUndo.length){document.getElementById("footToolStatus").textContent="Nichts zum Rückgängig machen.";return}footMarks=footUndo.pop();footSelected=-1;drawFootMarks()}
+function setFootTool(t){footTool=t;document.getElementById("footToolStatus").textContent="Aktiv: "+({lotline:"Lotlinie",axis:"Gestrichelte Achse",pen:"Freihand",arrow:"Pfeil",circle:"Kreis",ellipse:"Ellipse",edit:"Formen bearbeiten"}[t]||t)+". Auf dem Bild zeichnen."}
+function footCoords(e){const svg=document.getElementById("footprintMarkup"),r=svg.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*1000,y:(e.clientY-r.top)/r.height*1000}}
+function drawFootMarks(){const svg=document.getElementById("footprintMarkup");svg.innerHTML="";footMarks.forEach((m,i)=>{const g=document.createElementNS(svg.namespaceURI,"g");g.setAttribute("transform","translate("+m.x+" "+m.y+") rotate("+m.rot+")");let s;if(m.type==="pen"){s=document.createElementNS(svg.namespaceURI,"path");s.setAttribute("d",m.path||"");s.setAttribute("fill","none");}else if(["lotline","axis","arrow"].includes(m.type)){s=document.createElementNS(svg.namespaceURI,"line");s.setAttribute("x1",0);s.setAttribute("y1",0);s.setAttribute("x2",m.rx||0);s.setAttribute("y2",m.ry||0);if(m.type==="arrow"){s.setAttribute("marker-end","url(#footArrow)")}if(m.type==="axis")s.setAttribute("stroke-dasharray","12 10");}else{s=document.createElementNS(svg.namespaceURI,m.type==="point"||m.type==="circle"?"circle":"ellipse");if(m.type==="point")s.setAttribute("r",12);else if(m.type==="circle")s.setAttribute("r",m.rx);else{s.setAttribute("rx",m.rx);s.setAttribute("ry",m.ry)}s.setAttribute("fill","none");}
+s.setAttribute("stroke",m.lock?"#555":"#e53935");s.setAttribute("stroke-width",5);s.setAttribute("stroke-linecap","round");s.setAttribute("stroke-linejoin","round");g.appendChild(s);if(i===footSelected&&!m.lock&&m.type!=="pen"){let h=document.createElementNS(svg.namespaceURI,"circle");h.setAttribute("r",18);h.setAttribute("fill","transparent");h.setAttribute("stroke","#176b72");h.setAttribute("stroke-dasharray","5 4");g.appendChild(h)}g.dataset.index=i;g.addEventListener("pointerdown",footMarkPointerDown);svg.appendChild(g)})}
+function footMarkPointerDown(e){e.preventDefault();footSelected=+this.dataset.index;const m=footMarks[footSelected];if(footTool==="edit"&&!m.lock){saveFootUndo();const p=footCoords(e);footGesture={mode:"move",start:p,orig:{...m}}}drawFootMarks()}
+function assignFootprintImage(){const f=footprintSelectedFile,side=document.getElementById("footprintSide").value,status=document.getElementById("footprintAssignStatus");const label=f?f.name:footprintSelectedLabel;if(!label){status.textContent="Bitte zuerst ein Bild hochladen oder aus der Fotodokumentation übernehmen.";return}if(!side){status.textContent="Bitte zuerst Rechts, Links oder Beide auswählen.";return}const note="Fußabdruck-Bild zugeordnet: "+label;if(side==="right"||side==="both"){const el=document.getElementById("right");el.value+=(el.value.trim()?"\\n":"")+note}if(side==="left"||side==="both"){const el=document.getElementById("left");el.value+=(el.value.trim()?"\\n":"")+note}status.textContent="Zuordnung übernommen: "+(side==="right"?"Rechter Fuß":side==="left"?"Linker Fuß":"Beide Füße")+". Das Bild bleibt oben in der Vorschau sichtbar.";}
+function transferFootPhoto(n){const src=document.getElementById("footPhotoPreview"+n).src;if(!src||src.endsWith("#")||!document.getElementById("footPhotoPreview"+n).style.display||document.getElementById("footPhotoPreview"+n).style.display==="none"){document.getElementById("footprintAssignStatus").textContent="Bitte zuerst Foto "+n+" aufnehmen oder auswählen.";return}footprintSelectedFile=null;footprintSelectedLabel="Fotodokumentation Foto "+n;const img=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator");img.onload=()=>{document.getElementById("footprintMarkup").setAttribute("viewBox","0 0 1000 "+Math.round(1000*img.naturalHeight/img.naturalWidth));document.getElementById("footprintTools").style.display="block";drawFootMarks()};img.src=src;wrap.style.display="block";document.getElementById("footprintAssignStatus").textContent="Foto "+n+" aus der Fotodokumentation übernommen. Jetzt Seite auswählen und zuordnen."}
+function previewFootprint(input){const f=input.files&&input.files[0];if(!f)return;if(!f.type||!f.type.startsWith("image/")){document.getElementById("footprintAssignStatus").textContent="Bitte eine Bilddatei auswählen.";return}footprintSelectedFile=f;const status=document.getElementById("footprintAssignStatus"),img=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator");status.textContent="Bild ausgewählt: "+f.name+" ("+Math.round(f.size/1024)+" KB).";wrap.style.display="block";img.style.display="block";img.onload=()=>{document.getElementById("footprintMarkup").setAttribute("viewBox","0 0 1000 "+Math.round(1000*img.naturalHeight/img.naturalWidth));document.getElementById("footprintTools").style.display="block";drawFootMarks()};img.onerror=()=>{status.textContent="Das Bild konnte nicht angezeigt werden. Bitte JPG, PNG oder HEIC erneut auswählen.";wrap.style.display="none"};const reader=new FileReader();reader.onload=()=>{img.src=reader.result};reader.onerror=()=>{status.textContent="Das Bild konnte nicht gelesen werden. Bitte erneut auswählen.";wrap.style.display="none"};reader.readAsDataURL(f)}
+function lockFootMark(){if(footSelected<0)return;footMarks[footSelected].lock=!footMarks[footSelected].lock;drawFootMarks();document.getElementById("footToolStatus").textContent=footMarks[footSelected].lock?"Markierung fixiert.":"Markierung wieder beweglich."}
+function deleteFootMark(){if(footSelected<0)return;footMarks.splice(footSelected,1);footSelected=-1;drawFootMarks()}
+function clearFootMarks(){saveFootUndo();footMarks=[];footSelected=-1;drawFootMarks()}
+const footSvg=document.getElementById("footprintMarkup");
+footSvg.addEventListener("pointerdown",e=>{if(e.target!==footSvg)return;e.preventDefault();if(footTool==="edit")return;saveFootUndo();const p=footCoords(e);if(footTool==="pen"){footMarks.push({type:"pen",x:0,y:0,path:"M "+p.x+" "+p.y,lock:false});footSelected=footMarks.length-1;footGesture={mode:"pen"};footSvg.setPointerCapture(e.pointerId)}else{footMarks.push({type:footTool,x:p.x,y:p.y,rx:1,ry:1,rot:0,lock:false});footSelected=footMarks.length-1;footGesture={mode:"draw",start:p}}});
+footSvg.addEventListener("pointermove",e=>{if(!footGesture)return;const p=footCoords(e),m=footMarks[footSelected];if(!m)return;if(footGesture.mode==="pen"){m.path+=" L "+p.x+" "+p.y}else if(footGesture.mode==="draw"){m.rx=p.x-footGesture.start.x;m.ry=p.y-footGesture.start.y;if(m.type==="circle")m.rx=m.ry=Math.max(Math.abs(m.rx),Math.abs(m.ry));if(["lotline","axis"].includes(m.type)){m.rx=0;m.ry=p.y-footGesture.start.y}}else if(footGesture.mode==="move"){m.x=footGesture.orig.x+(p.x-footGesture.start.x);m.y=footGesture.orig.y+(p.y-footGesture.start.y)}drawFootMarks()});
+footSvg.addEventListener("pointerup",()=>footGesture=null);footSvg.addEventListener("pointercancel",()=>footGesture=null);
+function saveAIEndpoint(){document.getElementById("footprintAIStatus").textContent="KI-Verbindung wird in einer späteren Ausbaustufe aktiviert."}
+async function analyzeFootprintImage(){document.getElementById("footprintAIStatus").textContent="KI-Auswertung ist derzeit noch nicht freigeschaltet. Der manuelle Befund bleibt verfügbar."}
+function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
+
+function generateSupplyLogic(){
+ const out=document.getElementById("supplyLogicOutput");
+ const selected=val("therapy");
+ const rightSource=[val("right"),val("manualRight"),val("manualRightNotes"),val("foot"),val("footnotes")].join(" ").toLowerCase();
+ const leftSource=[val("left"),val("manualLeft"),val("manualLeftNotes"),val("foot"),val("footnotes")].join(" ").toLowerCase();
+ const shared=[val("complaints"),val("gait"),val("knee"),val("movement"),val("postureAnalysis")].join(" ").toLowerCase();
+ const rules=[
+ {keys:["senkfuß","plattfuß","abgesenkt","gewölbe"],label:"Gewölbestatik",goal:"Gewölbeunterstützung und statische Führung prüfen."},
+ {keys:["hohlfuß","cavus"],label:"Hochgewölbter Fuß",goal:"Druckverteilung, Kontaktfläche und Anpassung prüfen."},
+ {keys:["pronation","proniert","valgus","knick"],label:"Pronation / Knickstellung",goal:"Rückfußführung und Stabilität im Belastungsverlauf prüfen."},
+ {keys:["supination","supiniert","varus"],label:"Supination / Varusstellung",goal:"Belastungsverteilung und Stabilisierung prüfen."},
+ {keys:["schmerz","druck","reiz","belastung"],label:"Beschwerden / Druck",goal:"Lokale Entlastung und Belastungssteuerung prüfen."},
+ {keys:["eingeschränkt","beweglichkeit","steif","versteift"],label:"Beweglichkeit",goal:"Bewegungsfunktion und erforderliche Freiräume berücksichtigen."},
+ {keys:["hallux","zehe","metatars"],label:"Vorfuß / Zehen",goal:"Vorfußbelastung, Zehenfunktion und Druckverteilung prüfen."}
+ ];
+ function matches(source){return rules.filter(r=>r.keys.some(k=>source.includes(k)));}
+ const right=matches(rightSource),left=matches(leftSource),global=matches(shared);
+ const gaitHints=[];
+ if(["gang","abroll","schritt"].some(k=>shared.includes(k)))gaitHints.push("Gang-/Abrollverhalten: Versorgungsziele mit den beobachteten Bewegungsmustern abgleichen.");
+ if(["knieachse","knie","valg","var"].some(k=>shared.includes(k)))gaitHints.push("Knieachse / Bewegungskette: mögliche fußbezogene Einflussmöglichkeiten fachlich prüfen.");
+ let result="STRUKTURIERTE BEFUNDBEZOGENE PRÜFLISTE\n— Vorschlag zur fachlichen Kontrolle —\n\n";
+ result+="RECHTS\n"+(right.length?right.map(r=>"• "+r.label+"\n  Ziel: "+r.goal).join("\n\n"):"• Noch keine eindeutigen Schlagwort-Hinweise erkannt. Befund prüfen/ergänzen.")+"\n\n";
+ result+="LINKS\n"+(left.length?left.map(r=>"• "+r.label+"\n  Ziel: "+r.goal).join("\n\n"):"• Noch keine eindeutigen Schlagwort-Hinweise erkannt. Befund prüfen/ergänzen.")+"\n\n";
+ result+="ÜBERGREIFENDE BEWEGUNGSBEFUNDE\n"+(gaitHints.length?gaitHints.map(x=>"• "+x).join("\n"):"• Keine eindeutigen Schlagwort-Hinweise in Gang-/Bewegungsfeldern erkannt.")+"\n\n";
+ if(global.length)result+="Weitere in allgemeinen Befundtexten erkannte Themen (Seitenzuordnung nicht sicher):\n"+global.map(r=>"• "+r.label+": "+r.goal).join("\n")+"\n\n";
+ result+="MÖGLICHE VERSORGUNGSZIELE ZUR AUSWAHL\n"+[...new Set([...right,...left,...global].map(r=>r.goal))].map(x=>"☐ "+x).join("\n");
+ if(!right.length&&!left.length&&!global.length)result+="\n☐ Befunde manuell bewerten und Versorgungsziel festlegen.";
+ result+="\n\nVersorgungsart (Auswahl): "+selected+"\n\nDiese strukturierte Liste beruht ausschließlich auf Schlagworten in den dokumentierten Texten. Sie ist keine Diagnose und keine automatische Bauteil- oder Einlagenkonstruktion. Seitenzuordnung und Versorgung müssen vom Untersucher bestätigt werden.";
+ out.textContent=result;out.style.display="block";out.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function prepareConstructionSpec(){
+ const right=[val("right"),val("manualRight"),val("manualRightNotes")].filter(x=>x!=="Keine Angabe"&&x!=="Keine Auswahl").join(" | ");
+ const left=[val("left"),val("manualLeft"),val("manualLeftNotes")].filter(x=>x!=="Keine Angabe"&&x!=="Keine Auswahl").join(" | ");
+ const spec="SENSOPED – WERKSTATT / KONSTRUKTIONSBLATT (ENTWURF)\\n\\nPatient / Kennung: "+val("name")+" | "+val("mpg")+"\\n\\nVersorgungsart: "+val("therapy")+"\\n\\nBESCHWERDEN / ANLASS\\n"+val("complaints")+"\\n\\nRECHTS – dokumentierte Befunde\\n"+(right||"Keine Angabe")+"\\n\\nLINKS – dokumentierte Befunde\\n"+(left||"Keine Angabe")+"\\n\\nSTATIK / FUSSSTELLUNG\\n"+val("foot")+" | "+val("postureAnalysis")+"\\n\\nGANG / BEWEGUNG / KNIEACHSE\\n"+val("gait")+"\\n"+val("movement")+"\\n"+val("knee")+"\\n\\nVERSORGUNGSZIELE\\n"+val("goal")+"\\n\\nKONSTRUKTION – fachlich durch Konstrukteur auszufüllen\\nRechts: Modell / Grundelement / Bauteile / Korrektur- oder Entlastungsbereiche / Material / Stärke / Hinweise\\n\\nLinks: Modell / Grundelement / Bauteile / Korrektur- oder Entlastungsbereiche / Material / Stärke / Hinweise\\n\\nZusätzliche Hinweise: "+val("extra")+"\\n\\nFreigabe Konstrukteur / Untersucher: ____________________\\n\\nDieses Blatt ist eine strukturierte Arbeitsgrundlage. Keine automatische Diagnose oder verbindliche Konstruktion.";
+ document.getElementById("constructionSpec").value=spec;
+ document.getElementById("constructionSpec").scrollIntoView({behavior:"smooth",block:"center"});
+}
+window.createReports=function(){
+ const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
+ "MPG-Nummer: "+val("mpg")+"\n"+
+ "Patient: "+val("name")+"\n"+
+ "Adresse: "+val("address")+"\n"+
+ "Beschwerden / Anlass: "+val("complaints")+"\n\n"+
+ "Ärztliche Diagnose (laut Rezept): "+val("doctorDiagnosis")+"\n\n"+
+ "Unsere orthopädieschuhtechnische Untersuchung:\n"+
+ "Was wir untersucht haben:\n"+
+ "Rechter Fuß: "+val("right")+"\n"+
+ "Linker Fuß: "+val("left")+"\n"+
+ "Art des Fußabdrucks: "+val("footprintType")+"\n"+"Manuelle Untersuchung rechts: "+val("manualRight")+" – "+val("manualRightNotes")+"\n"+"Manuelle Untersuchung links: "+val("manualLeft")+" – "+val("manualLeftNotes")+"\n"+
+ "Fußstellung: "+val("foot")+"\n"+
+ "Weitere Fußbefunde: "+val("footnotes")+"\n\n"+
+ "Beim Gehen und Bewegen:\n"+
+ "Gangbild: "+val("gait")+"\n"+
+ "Knieachse: "+val("knee")+"\n"+
+ "Beweglichkeit: "+val("movement")+"\n"+
+ "Statik und Haltung: "+val("postureAnalysis")+"\n\n"+
+ "Unser Versorgungsansatz: "+val("therapy")+"\n"+
+ "Ziel: "+val("goal")+"\n"+
+ "Hinweise: "+val("extra")+"\n\n"+
+ "Die vorgeschlagene Versorgung soll die individuell festgestellten Funktionen unterstützen. Die endgültige Beurteilung und Versorgung wird gemeinsam mit dem Untersucher festgelegt.\n\nSENSOPED";
+ const doctor="SENSOPED AI – Untersuchungsdokumentation\n\n"+
+ "PATIENT\nName / Kennung: "+val("name")+"\nGeburtsdatum: "+val("birth")+"\nMPG-Nummer: "+val("mpg")+"\n\n"+
+ "ANAMNESE / BESCHWERDEN\n"+val("complaints")+"\n\n"+
+ "ÄRZTLICHE DIAGNOSE (laut Rezept)\n"+val("doctorDiagnosis")+"\n\n"+
+ "ORTHOPÄDIESCHUHTECHNISCHE EIGENE UNTERSUCHUNG UND EINSCHÄTZUNG\n"+
+ "FUSSBEFUND\nRechter Fuß: "+val("right")+"\nLinker Fuß: "+val("left")+"\nFußstellung: "+val("foot")+"\nWeitere Befunde: "+val("footnotes")+"\n\n"+"MANUELLE UNTERSUCHUNG\nRechts: "+val("manualRight")+" – "+val("manualRightNotes")+"\nLinks: "+val("manualLeft")+" – "+val("manualLeftNotes")+"\n\n"+
+ "BEWEGUNGSANALYSE\nGangbild: "+val("gait")+"\nKnieachse: "+val("knee")+"\nBeweglichkeit: "+val("movement")+"\n\nSTATIK UND HALTUNG\n"+val("postureAnalysis")+"\n\n"+
+ "VERSORGUNG\nEmpfehlung: "+val("therapy")+"\nZiel: "+val("goal")+"\nZusätzliche Hinweise: "+val("extra")+"\n\n"+
+ "Bewertung und Freigabe durch den Untersucher erforderlich.\nSENSOPED AI";
+ const p=document.getElementById("patientOutput"),d=document.getElementById("doctorOutput");
+ p.innerText=patient;d.innerText=doctor;p.style.display="block";d.style.display="block";
+};
+let pvIndex=0;function pvSections(){const collected=[["Fußbefund rechts",val("right")],["Fußbefund links",val("left")],["Manuelle Prüfung rechts",val("manualRight")+" – "+val("manualRightNotes")],["Manuelle Prüfung links",val("manualLeft")+" – "+val("manualLeftNotes")],["Fußstellung",val("foot")+" "+val("footnotes")],["Gangbild",val("gait")],["Knieachse",val("knee")],["Bewegung",val("movement")]].filter(([t,x])=>x&&x!=="Keine Angabe"&&x!=="Keine Auswahl"&&x.replace(/Keine Angabe/g,"").trim());const explanation=collected.length?("Dokumentierte Beobachtungen aus Ihrer Untersuchung:\n\n"+collected.map(([t,x])=>t+": "+x).join("\n\n")+"\n\nDiese Beobachtungen helfen uns, Ihre Versorgung gezielt auf Ihre Beschwerden und Bewegungsabläufe auszurichten. Die Bewertung erfolgt durch den Untersucher."):"Ihre Untersuchungsergebnisse werden hier verständlich zusammengefasst, sobald Befunde dokumentiert wurden.";return [{title:"Das sind Ihre Füße",text:"\n"+val("right")+"\n\n"+val("left")},{title:"Unsere Untersuchung",text:"\n"+val("manualRight")+"\n"+val("manualRightNotes")+"\n\n"+val("manualLeft")+"\n"+val("manualLeftNotes")+"\n\n"+val("foot")+"\n"+val("footnotes")},{title:"Beim Gehen und Bewegen",text:"\n"+val("gait")+"\n\nKnieachse: "+val("knee")+"\n\nBeweglichkeit: "+val("movement")+"\n\nStatik und Haltung: "+val("postureAnalysis")},{title:"Was bedeutet das für Sie?",text:explanation+"\n\nIhre persönlichen Ziele: "+val("goal")+"\n"+val("extra")},{title:"Unsere Versorgungsempfehlung",text:"\n"+val("therapy")+"\n\nDie vorgeschlagene Versorgung soll die individuell festgestellten Funktionen unterstützen. Die endgültige Entscheidung treffen Sie gemeinsam mit Ihrem Untersucher."}];}function pvRender(){const s=pvSections();pvIndex=Math.max(0,Math.min(s.length-1,pvIndex));const raw=s[pvIndex].text.trim();const empty=raw==="Keine Angabe"||!raw.replace(/Keine Angabe/g,"").trim();const safe=raw.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");const labels=["Ihre Fußbefunde","Die manuelle Untersuchung","Beobachtungen in Bewegung","Ihre persönlichen Ziele","Unser Versorgungsvorschlag"];document.getElementById("pvSlides").innerHTML='<div class="pvCard pvSlide"><div style="font-size:12px;letter-spacing:1.8px;color:#80e2d4;font-weight:700;margin-bottom:8px">'+labels[pvIndex]+'</div><h2>'+s[pvIndex].title+'</h2><div class="pvText '+(empty?"pvEmpty":"")+'">'+(empty?"Diese Informationen werden während Ihrer Untersuchung gemeinsam besprochen.":safe)+'</div></div>';document.getElementById("pvStepLabel").textContent=(pvIndex+1)+' / '+s.length;document.getElementById("pvProgressBar").style.width=((pvIndex+1)/s.length*100)+'%';document.querySelector("#patientView .pvNav button:first-child").disabled=pvIndex===0;document.querySelector("#patientView .pvNav button:last-child").textContent=pvIndex===s.length-1?"Zum Abschluss ✓":"Weiter →";}function pvMove(d){if(d>0&&pvIndex>=pvSections().length-1){closePatientView();return}pvIndex+=d;pvRender();}function launchPatientView(){pvIndex=0;const n=document.getElementById("name").value.trim();document.querySelector("#patientView .pvWrap h1").textContent=n?"Ihre Füße. Ihre Analyse, "+n+".":"Ihre Füße. Ihre Analyse.";pvRender();document.getElementById("patientView").style.display="block";document.body.style.overflow="hidden";}
+function closePatientView(){document.getElementById("patientView").style.display="none";document.body.style.overflow="";}
+function copyText(id){const t=document.getElementById(id).innerText;if(!t){alert("Bitte zuerst die Berichte erstellen.");return}navigator.clipboard.writeText(t).then(()=>alert("Bericht kopiert.")).catch(()=>alert("Kopieren nicht möglich. Bitte Text markieren und kopieren."))}
+function printReports(){if(!document.getElementById("patientOutput").innerText)window.createReports();window.print()}
+function printPatientReport(){if(!document.getElementById("patientOutput").innerText)window.createReports();document.body.classList.add("printPatientOnly");window.print();setTimeout(()=>document.body.classList.remove("printPatientOnly"),500);}\n
+</script>
+
+<div id="patientView"><div class="pvWrap"><p style="color:#80e2d4;font-weight:700;letter-spacing:2px">SENSOPED · IHRE PERSÖNLICHE ANALYSE</p><h1>Ihre Füße. Ihre Analyse.</h1><p>Ein kurzer Einblick in Ihre Untersuchung – verständlich und Schritt für Schritt.</p><div class="pvProgress"><div id="pvProgressBar"></div></div><div id="pvSlides"></div><div class="pvNav"><button class="pvClose" onclick="pvMove(-1)">← Zurück</button><span id="pvStepLabel">1 / 5</span><button onclick="pvMove(1)">Weiter →</button></div><button class="pvClose" onclick="closePatientView()">Untersuchung beenden</button></div></div>
+
+<script>/* Guided examination flow: show only the active examination section; extras appear in overview. */
+function setupGuidedExam(){
+ const container=document.querySelector('.container'),cards=[...container.querySelectorAll('.formcard')];if(!cards.length)return;
+ const extras=[...container.children].filter(el=>el.classList.contains('card')&&!el.classList.contains('formcard')&&el.id!=='examProgressCard');
+ let current=0,overview=false;const labels=cards.map(card=>{const h=card.querySelector('h2');return h?h.textContent.replace(/^\\d+\\.\\s*/,''):'Untersuchung'});const progress=document.getElementById('examProgressCard');
+ if(progress&&!document.getElementById('workflowButtons')){const strip=document.createElement('div');strip.id='workflowButtons';strip.className='workflowButtons';strip.innerHTML=labels.map((label,i)=>'<button type="button" data-step="'+i+'"><span>'+(i+1)+'</span><small>'+label+'</small></button>').join('');progress.appendChild(strip);strip.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>show(+b.dataset.step)));}
+ function show(i){overview=false;current=Math.max(0,Math.min(cards.length-1,i));cards.forEach((card,n)=>card.style.display=n===current?'block':'none');extras.forEach(el=>el.style.display='none');if(progress)progress.style.display='block';document.querySelectorAll('.guidedNav .stepMeta').forEach(m=>m.textContent=(current+1)+'. '+labels[current]);document.querySelectorAll('.guidedNav .back').forEach(b=>{b.disabled=current===0;b.textContent=current===0?'▶ Start':'← Zurück'});document.querySelectorAll('.guidedNav .next').forEach(b=>b.textContent=current===cards.length-1?'Übersicht ✓':'Weiter →');const strip=document.getElementById('workflowButtons');if(strip)strip.querySelectorAll('button').forEach((b,n)=>{b.classList.toggle('active',n===current);b.classList.toggle('done',n<current)});window.scrollTo({top:0,behavior:'smooth'});}
+ function showOverview(){overview=true;cards.forEach(card=>card.style.display='block');extras.forEach(el=>el.style.display='block');if(progress)progress.style.display='block';progress?.scrollIntoView({behavior:'smooth'});document.querySelectorAll('.guidedNav .stepMeta').forEach(m=>m.textContent='Übersicht – alle Bereiche');document.querySelectorAll('.guidedNav .back').forEach(b=>{b.disabled=false;b.textContent='← Zurück zur Untersuchung'});document.querySelectorAll('.guidedNav .next').forEach(b=>b.textContent='Übersicht ✓');}
+ cards.forEach((card,n)=>{if(card.querySelector('.guidedNav'))return;const nav=document.createElement('div');nav.className='guidedNav';nav.innerHTML='<button type="button" class="back">▶ Start</button><span class="stepMeta">'+(n+1)+'. '+labels[n]+'</span><button type="button" class="next">Weiter →</button>';nav.querySelector('.back').addEventListener('click',()=>show(overview?current:current-1));nav.querySelector('.next').addEventListener('click',()=>{if(overview){show(current)}else if(current===cards.length-1){showOverview()}else show(current+1)});card.appendChild(nav);});show(0);
+}
+window.addEventListener('DOMContentLoaded',setupGuidedExam);
+\nfunction selectFootprintType(btn){const type=btn.dataset.type;const select=document.getElementById("footprintType");if(select)select.value=type;document.querySelectorAll(".footprintTypeTile").forEach(tile=>tile.classList.toggle("selected",tile===btn));}\nwindow.addEventListener("DOMContentLoaded",()=>{const select=document.getElementById("footprintType");if(select){const initial=document.querySelector(".footprintTypeTile[data-type="+JSON.stringify(select.value)+"]");if(initial)initial.classList.add("selected");}});\n\nwindow.testMicrophone=function(){
+ const status=document.getElementById("microphoneTestStatus");
+ if(!status){alert("Statusfeld fehlt.");return;}
+ status.style.cssText="display:block;background:#123b5d;color:white;padding:14px;border-radius:12px;font-size:16px;margin:12px 0;";
+ status.textContent="1/2: Prüfe Mikrofonzugriff…";
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+  status.textContent="Fehler: Chrome stellt den Mikrofonzugriff auf dieser Seite nicht bereit. Bitte die App direkt über HTTPS öffnen.";
+  return;
+ }
+ navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+  stream.getTracks().forEach(function(t){t.stop();});
+  status.textContent="✅ Mikrofonzugriff funktioniert! 2/2: Starte Spracherkennung…";
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){status.textContent="✅ Mikrofonzugriff funktioniert. Allerdings fehlt in diesem Browser die Spracherkennung (SpeechRecognition).";return;}
+  try{
+   var rec=new SR();window._sensopedMicRecognition=rec;
+   rec.lang="de-DE";rec.interimResults=true;rec.continuous=false;
+   rec.onstart=function(){status.textContent="🎙️ Mikrofon aktiv – bitte jetzt sprechen.";};
+   rec.onresult=function(ev){var t="";for(var i=0;i<ev.results.length;i++)t+=ev.results[i][0].transcript;status.textContent="✅ Sprache erkannt: "+t;};
+   rec.onerror=function(ev){status.textContent="Mikrofonzugriff ist OK, aber Spracherkennung meldet: "+ev.error;};
+   rec.onend=function(){if(status.textContent.indexOf("Mikrofon aktiv")===0)status.textContent="Mikrofon ist OK, aber es wurde keine Sprache erkannt.";};
+   rec.start();
+  }catch(err){status.textContent="Mikrofon ist OK. Spracherkennung-Startfehler: "+err.message;}
+ }).catch(function(err){
+  status.textContent="❌ Mikrofonzugriff scheitert: "+err.name+" – "+err.message;
+ });
+};
+</script>
+<script>
+window.createReports=function(){
+ const read=function(id){const e=document.getElementById(id);return e&&e.value&&e.value.trim()?e.value.trim():"Keine Angabe";};
+ const patient="SENSOPED – Ihr Untersuchungsergebnis\n\nPatient: "+read("name")+"\nAdresse: "+read("address")+"\nBeschwerden: "+read("complaints")+"\n\nÄrztliche Diagnose: "+read("doctorDiagnosis")+"\n\nRechter Fuß: "+read("right")+"\nLinker Fuß: "+read("left")+"\nFußstellung: "+read("foot")+"\n\nManuelle Untersuchung rechts: "+read("manualRight")+" – "+read("manualRightNotes")+"\nManuelle Untersuchung links: "+read("manualLeft")+" – "+read("manualLeftNotes")+"\n\nGangbild: "+read("gait")+"\nKnieachse: "+read("knee")+"\nBewegungsablauf: "+read("movement")+"\nStatik/Haltung: "+read("postureAnalysis")+"\n\nVersorgung: "+read("therapy")+"\nZiel: "+read("goal")+"\nHinweise: "+read("extra")+"\n\nBitte fachlich prüfen.\nSENSOPED";
+ const doctor="SENSOPED AI – Fachbericht\n\nPatient: "+read("name")+"\nGeburtsdatum: "+read("birth")+"\nMPG: "+read("mpg")+"\n\nBeschwerden: "+read("complaints")+"\n\nDiagnose (laut Rezept): "+read("doctorDiagnosis")+"\n\nFußbefund rechts: "+read("right")+"\nFußbefund links: "+read("left")+"\nFußstellung: "+read("foot")+"\nWeitere Befunde: "+read("footnotes")+"\n\nManuell rechts: "+read("manualRight")+" – "+read("manualRightNotes")+"\nManuell links: "+read("manualLeft")+" – "+read("manualLeftNotes")+"\n\nGangbild: "+read("gait")+"\nKnieachse: "+read("knee")+"\nBewegungsablauf: "+read("movement")+"\nStatik/Haltung: "+read("postureAnalysis")+"\n\nVersorgung: "+read("therapy")+"\nZiel: "+read("goal")+"\nZusätzliche Hinweise: "+read("extra")+"\n\nUntersucherprüfung und Freigabe erforderlich.";
+ const p=document.getElementById("patientOutput"),d=document.getElementById("doctorOutput");if(!p||!d){alert("Berichts-Ausgabefelder fehlen.");return;}
+ p.textContent=patient;d.textContent=doctor;p.style.display="block";d.style.display="block";
+ const pc=document.getElementById("patientReportCard");if(pc)pc.style.display="block";p.scrollIntoView({behavior:"smooth",block:"start"});
+};
+</script></body>
+</html>
