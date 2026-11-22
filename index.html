@@ -363,6 +363,6 @@ window.addEventListener('DOMContentLoaded',setupGuidedExam);
 }
 </script>
 
-function sensopedHeroAction(action){const cards=[...document.querySelectorAll('.formcard')];if(action==='recipe'){cards[1]?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(action==='media'){cards[2]?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(action==='ai'){cards[2]?.scrollIntoView({behavior:'smooth',block:'start'});const out=document.getElementById('supplyLogicOutput');if(out)out.scrollIntoView({behavior:'smooth',block:'center'});return;}if(action==='reports'){createReports();document.getElementById('patientReportCard')?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(action==='start'){cards[0]?.scrollIntoView({behavior:'smooth',block:'start'});}}
+function sensopedHeroAction(action){const cards=[...document.querySelectorAll('.formcard')];if(action==='recipe'){document.getElementById('cameraInput')?.click();return;}if(action==='media'){cards[2]?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(action==='ai'){cards[2]?.scrollIntoView({behavior:'smooth',block:'start'});const out=document.getElementById('supplyLogicOutput');if(out)out.scrollIntoView({behavior:'smooth',block:'center'});return;}if(action==='reports'){createReports();document.getElementById('patientReportCard')?.scrollIntoView({behavior:'smooth',block:'start'});return;}if(action==='start'){cards[0]?.scrollIntoView({behavior:'smooth',block:'start'});}}
 </body>
 </html>
