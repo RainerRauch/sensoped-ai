@@ -344,7 +344,7 @@ function getAiFootprintNotes(){const el=document.getElementById("footprintAIResu
  "ANAMNESE / BESCHWERDEN\n"+val("complaints")+"\n\n"+
  "ÄRZTLICHE DIAGNOSE (laut Rezept)\n"+val("doctorDiagnosis")+"\n\n"+
  "ORTHOPÄDIESCHUHTECHNISCHE EIGENE UNTERSUCHUNG UND EINSCHÄTZUNG\n"+
- "FUSSBEFUND\nRechter Fuß: "+val("right")+"\nLinker Fuß: "+val("left")+"\nFußstellung: "+val("foot")+"\nWeitere Befunde: "+val("footnotes")+"\n\n"+"MANUELLE UNTERSUCHUNG\nRechts: "+val("manualRight")+" – "+val("manualRightNotes")+"\nLinks: "+val("manualLeft")+" – "+val("manualLeftNotes")+"\n\n"+
+ "FUSSBEFUND\nRechter Fuß: "+val("right")+"\nLinker Fuß: "+val("left")+"\nFußstellung: "+val("foot")+"\nWeitere Befunde: "+val("footnotes")+"\nKI-HINWEISE FUSSDRUCK (zu prüfen): "+(getAiFootprintNotes()||"Keine KI-Auswertung übernommen.")+"\n\n"+"MANUELLE UNTERSUCHUNG\nRechts: "+val("manualRight")+" – "+val("manualRightNotes")+"\nLinks: "+val("manualLeft")+" – "+val("manualLeftNotes")+"\n\n"+
  "BEWEGUNGSANALYSE\nGangbild: "+val("gait")+"\nKnieachse: "+val("knee")+"\nBeweglichkeit: "+val("movement")+"\n\nSTATIK UND HALTUNG\n"+val("postureAnalysis")+"\n\n"+
  "VERSORGUNG\nEmpfehlung: "+val("therapy")+"\nZiel: "+val("goal")+"\nZusätzliche Hinweise: "+val("extra")+"\n\n"+
  "Bewertung und Freigabe durch den Untersucher erforderlich.\nSENSOPED AI";
