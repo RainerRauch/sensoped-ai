@@ -502,12 +502,26 @@ window.createReports=function(){
 })();
 </script><script>
 window.sensopedUploadDebug=function(input){
- var out=document.getElementById("sensopedUploadDebug"),img=document.getElementById("sensopedUploadDebugImg");
+ var out=document.getElementById("sensopedUploadDebug"),testImg=document.getElementById("sensopedUploadDebugImg");
+ var status=document.getElementById("footprintAssignStatus"),mainImg=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator"),tools=document.getElementById("footprintTools");
  try{
-  var f=input&&input.files&&input.files[0];
-  if(!f){out.textContent="Event angekommen, aber keine Datei.";return;}
-  out.textContent="✅ CHANGE-EVENT funktioniert! Datei: "+f.name+" ("+Math.round(f.size/1024)+" KB). Vorschau wird getestet.";
-  img.style.display="block";img.onload=function(){out.textContent="✅ Datei-Auswahl UND Bildvorschau funktionieren: "+f.name;};
+  var f=input&&input.files&&input.files[0];if(!f){out.textContent="Keine Datei ausgewählt.";return;}
+  footprintSelectedFile=f;window.footprintSelectedFile=f;
+  out.textContent="Datei erkannt: "+f.name+" – wird in die Hauptvorschau übernommen…";
+  var url=URL.createObjectURL(f);
+  testImg.style.display="block";testImg.onload=function(){out.textContent="✅ Upload funktioniert: "+f.name;};
+  testImg.onerror=function(){out.textContent="⚠️ Datei gewählt, Vorschau-Test fehlgeschlagen.";};
+  testImg.src=url;
+  if(mainImg&&wrap){
+   wrap.style.display="block";mainImg.style.display="block";mainImg.onload=function(){
+    if(status)status.textContent="✅ Fußbild geladen: "+f.name+". Seite auswählen und zuordnen.";
+    var markup=document.getElementById("footprintMarkup");if(markup&&mainImg.naturalWidth&&mainImg.naturalHeight)markup.setAttribute("viewBox","0 0 1000 "+Math.round(1000*mainImg.naturalHeight/mainImg.naturalWidth));
+    if(tools)tools.style.display="block";if(typeof drawFootMarks==="function")drawFootMarks();
+   };mainImg.onerror=function(){if(status)status.textContent="Fehler beim Übertragen in Hauptvorschau.";};mainImg.src=url;
+  }
+  if(status){status.style.display="block";status.textContent="Bild wird direkt übernommen: "+f.name;}
+ }catch(e){if(out)out.textContent="Diagnosefehler: "+e.message;if(status)status.textContent="Uploadfehler: "+e.message;}
+};
   img.onerror=function(){out.textContent="⚠️ Datei-Auswahl funktioniert, aber Bildformat kann nicht dargestellt werden: "+f.name;img.style.display="none";};
   img.src=URL.createObjectURL(f);
  }catch(e){if(out)out.textContent="Diagnosefehler: "+e.message;}
