@@ -187,15 +187,26 @@ function applyFootprintSpeech(){
 }
 const manualDictations={};
 function dictateManualNote(targetId,statusId){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;const box=document.getElementById(targetId),status=document.getElementById(statusId),button=status?.previousElementSibling;
- if(!box||!status||!button)return;if(!SR){status.textContent='Spracherkennung nicht verfügbar. Bitte Chrome verwenden.';return;}
- if(window.sensopedActiveRec&&window.sensopedActiveKey===targetId){try{window.sensopedActiveRec.stop()}catch(e){};window.sensopedActiveRec=null;window.sensopedActiveKey=null;button.textContent='🎙️ Befund sprechen';return;}
- if(window.sensopedActiveRec){try{window.sensopedActiveRec.abort()}catch(e){}}
- const rec=new SR();window.sensopedActiveRec=rec;window.sensopedActiveKey=targetId;rec.lang='de-DE';rec.continuous=true;rec.interimResults=true;let finalText=box.value.trim(),interim='';
- rec.onstart=()=>{status.textContent='🎙️ Mikrofon aktiv – jetzt sprechen.';button.textContent='⏹️ Aufnahme stoppen';};
- rec.onresult=(ev)=>{interim='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=(ev.results[i][0]?.transcript||'').trim();if(!t)continue;if(ev.results[i].isFinal)finalText+=(finalText?' ':'')+t;else interim+=(interim?' ':'')+t;}box.value=(finalText+' '+interim).trim();};
- rec.onerror=(ev)=>{status.textContent='Spracherkennung: '+(ev.error||'Fehler')+'. Bitte erneut versuchen.';};rec.onend=()=>{status.textContent='Aufnahme beendet. Bitte den Text prüfen.';button.textContent='🎙️ Befund sprechen';if(window.sensopedActiveRec===rec){window.sensopedActiveRec=null;window.sensopedActiveKey=null;}};
- try{rec.start()}catch(e){status.textContent='Mikrofonstart fehlgeschlagen. Bitte Berechtigung prüfen.';button.textContent='🎙️ Befund sprechen';}
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ const box=document.getElementById(targetId),status=document.getElementById(statusId);
+ const button=status?status.previousElementSibling:null;
+ if(!box||!status||!button)return;
+ const setStatus=t=>status.textContent=t;
+ if(!SR){setStatus('Spracherkennung nicht verfügbar. Bitte Google Chrome verwenden.');return;}
+ if(!window.isSecureContext){setStatus('Mikrofon benötigt HTTPS. Bitte die App über ihre GitHub-Adresse in Chrome öffnen.');return;}
+ if(window.sensopedActiveRec&&window.sensopedActiveKey===targetId){
+  try{window.sensopedActiveRec.stop();}catch(e){}
+  return;
+ }
+ if(window.sensopedActiveRec){try{window.sensopedActiveRec.abort();}catch(e){}}
+ const rec=new SR();window.sensopedActiveRec=rec;window.sensopedActiveKey=targetId;
+ rec.lang='de-DE';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=1;
+ let finalText=box.value.trim(),interim='';
+ rec.onstart=()=>{setStatus('🎙️ Mikrofon aktiv – jetzt sprechen.');button.textContent='⏹️ Aufnahme stoppen';button.classList.add('mic-on');};
+ rec.onresult=ev=>{interim='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=(ev.results[i][0]?.transcript||'').trim();if(!t)continue;if(ev.results[i].isFinal)finalText+=(finalText?' ':'')+t;else interim+=(interim?' ':'')+t;}box.value=(finalText+(interim?' '+interim:'')).trim();};
+ rec.onerror=ev=>{const messages={'not-allowed':'Mikrofonzugriff verweigert. Bitte Website-Berechtigung erlauben.','service-not-allowed':'Spracherkennung blockiert. Chrome und Internet verwenden.','audio-capture':'Kein Mikrofon gefunden.','network':'Internetverbindung zum Spracherkennungsdienst prüfen.','no-speech':'Keine Sprache erkannt. Bitte erneut versuchen.','aborted':'Aufnahme abgebrochen.'};setStatus('Spracherkennung: '+(messages[ev.error]||ev.error||'Fehler'));};
+ rec.onend=()=>{setStatus('Aufnahme beendet. Bitte Text kontrollieren.');button.textContent='🎙️ Befund sprechen';button.classList.remove('mic-on');if(window.sensopedActiveRec===rec){window.sensopedActiveRec=null;window.sensopedActiveKey=null;}};
+ try{rec.start();}catch(e){setStatus('Mikrofonstart fehlgeschlagen. Bitte Berechtigung prüfen.');button.textContent='🎙️ Befund sprechen';button.classList.remove('mic-on');window.sensopedActiveRec=null;window.sensopedActiveKey=null;}
 }
 function showPosturePhoto(input,view){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById('posturePreview'+view.charAt(0).toUpperCase()+view.slice(1));const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display='block'};reader.readAsDataURL(f)}
 function showFootPhoto(input,n){const f=input.files&&input.files[0];if(!f)return;const img=document.getElementById("footPhotoPreview"+n);const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display="block"};reader.readAsDataURL(f)}
