@@ -675,5 +675,20 @@ window.transferFootprintsToBlueprint=function(){
  items.forEach((it,i)=>{const card=document.createElement('div');card.style.cssText='border:1px solid #d1e4e5;border-radius:15px;padding:10px;text-align:center;background:#f5fbfb';const heading=document.createElement('strong');heading.textContent=it.label;card.appendChild(heading);const image=document.createElement('img');image.src=it.src;image.alt=it.label;image.style.cssText='display:block;width:100%;height:auto;max-height:500px;object-fit:contain;margin:10px auto;border-radius:12px';card.appendChild(image);const btn=document.createElement('button');btn.type='button';btn.textContent='✏️ Diesen Abdruck im Arbeitsbereich öffnen';btn.style.cssText='width:100%;margin-top:8px';btn.onclick=()=>window.openTransferredFootprint(i);card.appendChild(btn);grid.appendChild(card);});
  box.style.display='block';box.style.visibility='visible';box.scrollIntoView({behavior:'smooth',block:'start'});
  if(status)status.textContent='✓ '+items.length+' Bild(er) bereit. Wählen Sie den gewünschten Fußabdruck zum Markieren.';
-};</script></body>
+};</script>
+<script>
+/* Connect all transferred footprint cards to the actual annotator workspace */
+window.transferFootprintsToBlueprint=function(){
+ const status=document.getElementById('blueprintTransferStatus'),panel=document.getElementById('blueprintTransferPanel');
+ const sides=[['right','assignedFootRight','RECHTER FUSS'],['left','assignedFootLeft','LINKER FUSS'],['both','assignedFootBoth','BEIDE FÜSSE']];
+ const items=sides.map(([side,id,label])=>{const el=document.getElementById(id);let src=el&&el.src&&el.style.display!=='none'&&el.src!=='about:blank'?el.src:'';if(!src&&window.sensopedFootImages)src=window.sensopedFootImages[side]||'';return src?{side,label,src}:null;}).filter(Boolean);
+ if(!items.length){if(status)status.textContent='Noch keine Bilder vorhanden.';return;}
+ window._sensopedTransferred=items;
+ let box=document.getElementById('blueprintStableDisplay');if(!box){box=document.createElement('section');box.id='blueprintStableDisplay';box.style.cssText='display:block!important;visibility:visible;border:3px solid #176b72;border-radius:18px;padding:15px;margin:18px 0;background:#fff;color:#17445e';panel.insertAdjacentElement('afterend',box);}
+ box.innerHTML='<h3>🦶 Blauabdruck – Auswahl</h3><p>Tippen Sie auf den Fußabdruck, den Sie im Markierungsbereich bearbeiten möchten.</p><div id="blueprintStableImages" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px"></div>';
+ const grid=box.querySelector('#blueprintStableImages');items.forEach((it,i)=>{const card=document.createElement('div');card.style.cssText='border:1px solid #d1e4e5;border-radius:15px;padding:10px;background:#f5fbfb;text-align:center';const h=document.createElement('strong');h.textContent=it.label;card.appendChild(h);const im=document.createElement('img');im.src=it.src;im.style.cssText='display:block;width:100%;height:auto;max-height:350px;object-fit:contain;margin:8px auto;border-radius:12px';card.appendChild(im);const b=document.createElement('button');b.type='button';b.textContent='✏️ Im Blauabdruck markieren';b.style.cssText='width:100%;margin-top:8px';b.onclick=()=>window.openTransferredFootprint(i);card.appendChild(b);grid.appendChild(card);});
+ box.style.display='block';box.style.visibility='visible';if(status)status.textContent='✓ '+items.length+' Bilder verbunden. Bitte unten das gewünschte Bild zum Markieren öffnen.';box.scrollIntoView({behavior:'smooth',block:'start'});
+};
+</script>
+</body>
 </html>
