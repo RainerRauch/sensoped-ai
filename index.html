@@ -102,6 +102,19 @@ window.addEventListener('DOMContentLoaded',function(){
 .footprintVisual .fpVisualTile.selected{border:2px solid #18b8aa!important;background:#e5f6f4!important;box-shadow:0 0 0 2px #18b8aa20!important;transform:none!important}
 @media(max-width:380px){.footprintVisual{gap:6px!important}.footprintVisual .fpVisualTile{grid-template-columns:minmax(0,40%) minmax(0,1fr)!important;column-gap:6px!important;padding:7px!important;min-height:100px!important}.footprintVisual .footprintMethodImage{min-height:82px!important}.footprintVisual .fpVisualTile strong{font-size:11px!important}.footprintVisual .fpVisualTile small{font-size:9px!important}}
 </style>
+
+<style>
+/* Mobile width containment: prevent cards and controls from extending off-screen */
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+.container,.card,.formcard,header{width:100%;max-width:100%;min-width:0!important}
+.container{overflow-x:hidden}
+.card *{min-width:0;max-width:100%}
+.footprintVisual{width:100%!important;max-width:100%!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;overflow:hidden!important}
+.footprintVisual .fpVisualTile{width:100%!important;min-width:0!important;max-width:100%!important}
+.grid{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr)!important}
+.cameraBtn{width:100%;max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:600px){.footprintVisual{gap:7px!important}.footprintVisual .fpVisualTile{padding:7px!important}}
+</style>
 </head>
 <body>
 <header class="sensopedHero">
