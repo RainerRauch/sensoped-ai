@@ -117,10 +117,13 @@ html,body{width:100%;max-width:100%;overflow-x:hidden!important}
 </style>
 <style>.footSideCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}.footSideCards button{margin:0;min-width:0;min-height:94px;padding:12px 5px;background:#f2f8fa;color:#16485b;border:2px solid #c9e1e4;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:22px}.footSideCards button strong{font-size:14px}.footSideCards button small{font-size:11px;color:#58747b}.footSideCards button.selected{background:#d9efec;border-color:#176b72;box-shadow:0 0 0 3px #176b7220;color:#075b61}@media(max-width:400px){.footSideCards{gap:5px}.footSideCards button{min-height:85px;padding:8px 3px}}</style><script>function chooseFootprintSide(side){const s=document.getElementById("footprintSide");if(s)s.value=side;document.querySelectorAll("#footprintSideCards button").forEach(b=>b.classList.toggle("selected",b.dataset.side===side));const img=document.getElementById("footprintPreview");if(img&&img.src&&img.src!==""){if(typeof assignFootprintImage==="function")assignFootprintImage();}}</script>
 <style>
-/* Anatomische Bildschirm-Anordnung: links der linke Fuß, rechts der rechte Fuß */
+/* Anatomische Bildschirm-Anordnung: links linker Fuß, rechts rechter Fuß – beide Galerien */
 #assignedFootprintGallery > div:nth-child(1){order:2}
 #assignedFootprintGallery > div:nth-child(2){order:1}
 #assignedFootprintGallery > div:nth-child(3){order:3}
+#blueprintTransferPreview > div:nth-child(1){order:2}
+#blueprintTransferPreview > div:nth-child(2){order:1}
+#blueprintTransferPreview > div:nth-child(3){order:3}
 </style>
 </head>
 <body>
