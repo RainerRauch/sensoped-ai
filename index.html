@@ -486,30 +486,31 @@ window.createReports=function(){
  const pc=document.getElementById("patientReportCard");if(pc)pc.style.display="block";p.scrollIntoView({behavior:"smooth",block:"start"});
 };
 </script><script>
-(function(){
- const boot=function(){
-  const input=document.getElementById("footprintUpload");
-  const status=document.getElementById("footprintAssignStatus");
-  if(!input)return;
-  input.addEventListener("change",function(){
-   const f=this.files&&this.files[0];
-   if(status)status.textContent=f?"JavaScript-Test: Datei erkannt ("+f.name+"). Lade Vorschau…":"Keine Datei ausgewählt.";
-   try{if(typeof previewFootprint==="function")previewFootprint(this);else if(status)status.textContent="Datei erkannt, aber Vorschaufunktion ist nicht verfügbar. Bitte melden.";
-   }catch(e){if(status)status.textContent="Upload-Fehler: "+e.message;}
-  });
- };
- if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
-})();
-</script><script>
+<script>
 window.sensopedUploadDebug=function(input){
  var out=document.getElementById("sensopedUploadDebug"),testImg=document.getElementById("sensopedUploadDebugImg");
  var status=document.getElementById("footprintAssignStatus"),mainImg=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator"),tools=document.getElementById("footprintTools");
  try{
-  var f=input&&input.files&&input.files[0];if(!f){out.textContent="Keine Datei ausgewählt.";return;}
-  footprintSelectedFile=f;window.footprintSelectedFile=f;
-  out.textContent="Datei erkannt: "+f.name+" – wird in die Hauptvorschau übernommen…";
+  var f=input&&input.files&&input.files[0];if(!f){if(out)out.textContent="Keine Datei ausgewählt.";return;}
+  window.footprintSelectedFile=f;
+  out.textContent="Datei ausgewählt: "+f.name+" – Bild wird angezeigt.";
   var url=URL.createObjectURL(f);
-  testImg.style.display="block";testImg.onload=function(){out.textContent="✅ Upload funktioniert: "+f.name;};
+  testImg.style.display="block";testImg.onload=function(){out.textContent="✅ Foto erfolgreich geladen: "+f.name;};
+  testImg.onerror=function(){out.textContent="❌ Bild kann nicht angezeigt werden.";};
+  testImg.src=url;
+  if(mainImg&&wrap){
+   wrap.style.display="block";mainImg.style.display="block";
+   mainImg.onload=function(){
+    if(status)status.textContent="✅ Foto in der Hauptvorschau: "+f.name;
+    var markup=document.getElementById("footprintMarkup");if(markup&&mainImg.naturalWidth&&mainImg.naturalHeight)markup.setAttribute("viewBox","0 0 1000 "+Math.round(1000*mainImg.naturalHeight/mainImg.naturalWidth));
+    if(tools)tools.style.display="block";if(typeof drawFootMarks==="function")drawFootMarks();
+   };
+   mainImg.onerror=function(){if(status)status.textContent="Hauptvorschau fehlgeschlagen; das Testbild oben bleibt sichtbar.";};
+   mainImg.src=url;
+  }
+  if(status){status.style.display="block";status.textContent="Bild wird übernommen: "+f.name;}
+ }catch(e){if(out)out.textContent="Uploadfehler: "+e.message;if(status)status.textContent="Uploadfehler: "+e.message;}
+};
   testImg.onerror=function(){out.textContent="⚠️ Datei gewählt, Vorschau-Test fehlgeschlagen.";};
   testImg.src=url;
   if(mainImg&&wrap){
