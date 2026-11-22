@@ -114,6 +114,16 @@ h2{border-bottom-color:#b8d9d7}
 <p class="small note">Die Berichte sind Vorschläge auf Grundlage der eingegebenen Befunde. Bitte vor Weitergabe prüfen und medizinisch bestätigen.</p>
 <button onclick="createReports()">Patientenbericht und Fachbericht erstellen</button>
 </div>
+
+<div class="card">
+<h2>8. KI-Bilder und Video</h2>
+<p>Dieser Bereich ist als nächster Entwicklungsschritt vorgesehen: Bilderkennung, Video-Ganganalyse, unterstützende Messwerte und strukturierte KI-Auswertung.</p>
+<p class="small">KI-Ausgaben sind unterstützende Hinweise. Die Beurteilung und Freigabe erfolgt durch den Untersucher.</p><button type="button" class="green" onclick="createExamSummary()">✨ Untersuchungszusammenfassung erstellen</button><div id="examSummaryOutput" class="result" style="display:none"></div>
+</div>
+<div class="card">
+<h2>Untersuchung abschließen &amp; Berichte erstellen</h2>
+<p>Alle Untersuchungsergebnisse sammeln, überprüfen und die Berichte erstellen.</p>
+</div>
 <div class="card" id="patientReportCard">
 <h2>Patientenbericht – verständlich erklärt</h2><div id="patientOutput" class="result" style="display:none"></div>
 <div class="patientReportActions"><button class="light" onclick="copyText('patientOutput')">📋 Bericht kopieren</button><button class="light" onclick="printPatientReport()">📄 PDF erstellen / drucken</button><button class="patientLaunch" onclick="launchPatientView()">✨ PatientenView auf dem iPad starten</button></div>
@@ -122,11 +132,6 @@ h2{border-bottom-color:#b8d9d7}
 <h2>Fachbericht</h2><div id="doctorOutput" class="result" style="display:none"></div>
 <button class="secondary" onclick="copyText('doctorOutput')">Fachbericht kopieren</button>
 <button class="green" onclick="printReports()">Berichte drucken</button>
-</div>
-<div class="card">
-<h2>8. KI-Bilder und Video</h2>
-<p>Dieser Bereich ist als nächster Entwicklungsschritt vorgesehen: Bilderkennung, Video-Ganganalyse, unterstützende Messwerte und strukturierte KI-Auswertung.</p>
-<p class="small">KI-Ausgaben sind unterstützende Hinweise. Die Beurteilung und Freigabe erfolgt durch den Untersucher.</p><button type="button" class="green" onclick="createExamSummary()">✨ Untersuchungszusammenfassung erstellen</button><div id="examSummaryOutput" class="result" style="display:none"></div>
 </div>
 <div class="card"><p class="small">SENSOPED AI – Untersuchung und Dokumentation. Patienteninformationen und Befunde bitte verantwortungsvoll behandeln.</p></div>
 </div>
