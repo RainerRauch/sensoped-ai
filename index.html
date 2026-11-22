@@ -782,5 +782,17 @@ window.openTransferredFootprintBySide=function(side){
  const s=document.getElementById('footToolStatus');if(s)s.textContent='Werkzeug auswählen, danach direkt auf dem Bild ziehen.';
 })();
 </script>
+
+<script>
+/* Definitive pointer rebind: explicitly route touch/mouse drawing into existing mark model */
+(function(){const svg=document.getElementById('footprintMarkup');if(!svg)return;svg.style.pointerEvents='auto';svg.style.touchAction='none';svg.setAttribute('pointer-events','all');let active=null;
+function xy(e){const r=svg.getBoundingClientRect();const vb=svg.viewBox.baseVal;return{x:(e.clientX-r.left)/r.width*vb.width,y:(e.clientY-r.top)/r.height*vb.height};}
+function down(e){if(!footTool||footTool==='edit')return;e.preventDefault();e.stopImmediatePropagation();saveFootUndo();const p=xy(e);if(footTool==='pen'){const m={type:'pen',x:0,y:0,path:'M '+p.x+' '+p.y,lock:false};footMarks.push(m);footSelected=footMarks.length-1;active='pen';}else{const m={type:footTool,x:p.x,y:p.y,rx:0,ry:0,rot:0,lock:false};footMarks.push(m);footSelected=footMarks.length-1;active='shape';window._drawStart=p;}try{svg.setPointerCapture(e.pointerId);}catch(_){}drawFootMarks();}
+function move(e){if(!active)return;e.preventDefault();e.stopImmediatePropagation();const p=xy(e),m=footMarks[footSelected];if(!m)return;if(active==='pen')m.path+=' L '+p.x+' '+p.y;else{m.rx=p.x-window._drawStart.x;m.ry=p.y-window._drawStart.y;if(m.type==='circle'){const rad=Math.max(Math.abs(m.rx),Math.abs(m.ry));m.rx=rad;m.ry=rad;}}drawFootMarks();}
+function up(e){if(active){e.preventDefault();active=null;window._drawStart=null;}}
+svg.addEventListener('pointerdown',down,{capture:true});svg.addEventListener('pointermove',move,{capture:true});svg.addEventListener('pointerup',up,{capture:true});svg.addEventListener('pointercancel',up,{capture:true});
+const status=document.getElementById('footToolStatus');if(status)status.textContent='Zeichenfläche aktiv. Werkzeug auswählen und direkt auf dem Bild ziehen.';
+})();
+</script>
 </body>
 </html>
