@@ -60,7 +60,7 @@ button.secondary{background:#244e61}button.green{background:#287d69}button.light
 </div>
 <div class="card formcard">
 <h2>4. Bewegungs- und Ganganalyse</h2>
-<label>Gangbild</label><textarea id="gait" placeholder="Beobachtungen beim Gehen"></textarea>
+<label>Video der Ganganalyse</label><div class="grid"><button type="button" class="cameraBtn" onclick="document.getElementById('gaitVideoInput').click()">🎥 Video aufnehmen / auswählen</button><button type="button" class="cameraBtn" onclick="document.getElementById('gaitFileInput').click()">📎 Datei hinzufügen</button></div><input id="gaitVideoInput" type="file" accept="video/*" capture="environment" onchange="previewGaitMedia(this)" style="display:none"><input id="gaitFileInput" type="file" accept="video/*,image/*,.pdf,.doc,.docx" onchange="previewGaitMedia(this)" style="display:none"><p id="gaitMediaName" class="small"></p><video id="gaitVideoPreview" controls playsinline style="display:none;max-width:100%;margin-top:10px;border-radius:10px"></video><img id="gaitImagePreview" alt="Ganganalyse-Datei" style="display:none;max-width:100%;margin-top:10px;border-radius:10px"><label>Gangbild</label><textarea id="gait" placeholder="Beobachtungen beim Gehen"></textarea>
 <div class="grid"><div><label>Knieachse</label><textarea id="knee" placeholder="Beobachtung der Knieachse"></textarea></div><div><label>Beweglichkeit</label><textarea id="movement" placeholder="Beweglichkeit / Einschränkungen"></textarea></div></div>
 <label>Weitere Beobachtungen</label><textarea id="observations" placeholder="Weitere Untersuchungsergebnisse"></textarea>
 </div>
@@ -92,6 +92,7 @@ button.secondary{background:#244e61}button.green{background:#287d69}button.light
 <div class="card"><p class="small">SENSOPED AI – Untersuchung und Dokumentation. Patienteninformationen und Befunde bitte verantwortungsvoll behandeln.</p></div>
 </div>
 <script>
+function previewGaitMedia(input){const f=input.files&&input.files[0];if(!f)return;document.getElementById("gaitMediaName").textContent="Ausgewählt: "+f.name;const v=document.getElementById("gaitVideoPreview"),im=document.getElementById("gaitImagePreview");v.style.display="none";im.style.display="none";v.removeAttribute("src");im.removeAttribute("src");const url=URL.createObjectURL(f);if(f.type.startsWith("video/")){v.src=url;v.style.display="block";}else if(f.type.startsWith("image/")){im.src=url;im.style.display="block";}else{document.getElementById("gaitMediaName").textContent="Datei ausgewählt: "+f.name+" (Vorschau nicht verfügbar)";}}
 async function readDocument(input){
  const file=input.files&&input.files[0]; if(!file)return;
  const status=document.getElementById("ocrStatus");status.textContent="Rezept wird gelesen und Daten werden übernommen…";
