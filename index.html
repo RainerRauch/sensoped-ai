@@ -195,13 +195,21 @@ window.openTransferredFootprint=function(i){
  const it=(window._sensopedTransferred||[])[i];if(!it){alert('Foto nicht gefunden. Bitte Fotos erneut übernehmen.');return;}
  const img=document.getElementById('footprintPreview'),wrap=document.getElementById('footprintAnnotator'),tools=document.getElementById('footprintTools'),status=document.getElementById('footprintAssignStatus');
  if(!img||!wrap){alert('Der eigentliche Blauabdruck-Bereich fehlt im HTML.');return;}
- // Force the actual examination step containing the footprint editor to be visible.
+ // Relocate the actual image-marking workspace into a dedicated visible blueprint box,
+ // avoiding the guided-step card visibility/navigation issue on mobile.
  const targetCard=wrap.closest('.formcard');
- document.querySelectorAll('.container .formcard').forEach(card=>card.style.display='block');
- document.querySelectorAll('.container>.card:not(.formcard)').forEach(el=>el.style.display='block');
+ const transferPanel=document.getElementById('blueprintTransferPanel');
+ let workspace=document.getElementById('blueprintActualWorkspace');
+ if(!workspace&&transferPanel){
+   workspace=document.createElement('div');workspace.id='blueprintActualWorkspace';
+   workspace.style.cssText='display:block!important;visibility:visible;border:3px solid #176b72;border-radius:18px;padding:14px;margin:14px 0;background:#fff';
+   workspace.innerHTML='<h3>🦶 Blauabdruck – Arbeitsbereich</h3><p>Hier wird der übernommene Fußabdruck angezeigt und bearbeitet.</p>';
+   transferPanel.appendChild(workspace);
+ }
+ if(workspace){workspace.style.display='block';workspace.style.visibility='visible';workspace.appendChild(wrap);if(tools)workspace.appendChild(tools);}
  if(targetCard){targetCard.style.display='block';targetCard.hidden=false;}
- wrap.style.display='block';wrap.hidden=false;img.style.display='block';img.hidden=false;
- if(tools){tools.style.display='block';tools.hidden=false;}
+ wrap.style.display='block';wrap.hidden=false;wrap.style.visibility='visible';img.style.display='block';img.hidden=false;img.style.visibility='visible';
+ if(tools){tools.style.display='block';tools.hidden=false;tools.style.visibility='visible';}
  const sel=document.getElementById('footprintSide');if(sel)sel.value=it.side;
  document.querySelectorAll('#footprintSideCards button').forEach(btn=>btn.classList.toggle('selected',btn.dataset.side===it.side));
  img.onload=function(){const svg=document.getElementById('footprintMarkup');if(svg&&img.naturalWidth&&img.naturalHeight)svg.setAttribute('viewBox','0 0 1000 '+Math.round(1000*img.naturalHeight/img.naturalWidth));if(typeof drawFootMarks==='function')drawFootMarks();};
