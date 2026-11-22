@@ -31,6 +31,10 @@ button.secondary{background:var(--navy)}button.green{background:var(--green)}but
 #footPhotoGrid>div{background:#fbfdfe}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:16px}header h1{font-size:24px}.container{padding:10px}.wizardNav button{min-width:90px}}
 @media print{header,.formcard,button,.small.note{display:none!important}.container{max-width:none;padding:0}.card{box-shadow:none;border:0}.result{background:white}}
+
+/* SENSOPED premium patient-view */
+.patientLaunch{background:linear-gradient(115deg,#0b4f59,#168c91,#43c6b6)!important;box-shadow:0 8px 24px #0b4f5930,inset 0 1px 0 #ffffff55;letter-spacing:.2px;transition:transform .18s,box-shadow .18s}.patientLaunch:hover{transform:translateY(-2px);box-shadow:0 12px 30px #0b4f5940}.patientLaunch:active{transform:scale(.98)}
+#patientView{display:none;position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at top,#164e57,#061d29 70%);color:#f3fbfc;overflow:auto;padding:24px;font-family:Arial,sans-serif}#patientView .pvWrap{max-width:900px;margin:auto}#patientView h1{font-size:clamp(28px,5vw,42px);color:#fff;margin:8px 0}#patientView h2{color:#80e2d4}#patientView .pvCard{background:#ffffff12;border:1px solid #ffffff22;border-radius:20px;padding:20px;margin:16px 0;box-shadow:0 12px 40px #0002}#patientView .pvText{white-space:pre-wrap;line-height:1.65;font-size:18px}#patientView button{background:linear-gradient(120deg,#19a69a,#51d2bd);color:#082d35;max-width:360px;font-weight:800}#patientView .pvClose{background:#ffffff22;color:white;border:1px solid #ffffff35}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>\n</head>
 <body>
@@ -93,7 +97,7 @@ button.secondary{background:var(--navy)}button.green{background:var(--green)}but
 </div>
 <div class="card">
 <h2>Patientenbericht – verständlich erklärt</h2><div id="patientOutput" class="result" style="display:none"></div>
-<button class="light" onclick="copyText('patientOutput')">Patientenbericht kopieren</button>
+<button class="light" onclick="copyText('patientOutput')">Patientenbericht kopieren</button><button class="patientLaunch" onclick="launchPatientView()">✨ PatientenView auf dem iPad starten</button>
 </div>
 <div class="card">
 <h2>Fachbericht</h2><div id="doctorOutput" class="result" style="display:none"></div>
@@ -227,7 +231,7 @@ function createReports(){
  "Was wir untersucht haben:\n"+
  "Rechter Fuß: "+val("right")+"\n"+
  "Linker Fuß: "+val("left")+"\n"+
- "Art des Fußabdrucks: "+val("footprintType")+"\n"+"Manuelle Untersuchung rechts: "+val("manualRight")+" – "+val("manualRightNotes")+"\n"+\n+"Manuelle Untersuchung links: "+val("manualLeft")+" – "+val("manualLeftNotes")+"\n"+
+ "Art des Fußabdrucks: "+val("footprintType")+"\n"+"Manuelle Untersuchung rechts: "+val("manualRight")+" – "+val("manualRightNotes")+"\n"+"Manuelle Untersuchung links: "+val("manualLeft")+" – "+val("manualLeftNotes")+"\n"+
  "Fußstellung: "+val("foot")+"\n"+
  "Weitere Fußbefunde: "+val("footnotes")+"\n\n"+
  "Beim Gehen und Bewegen:\n"+
@@ -251,8 +255,12 @@ function createReports(){
  const p=document.getElementById("patientOutput"),d=document.getElementById("doctorOutput");
  p.innerText=patient;d.innerText=doctor;p.style.display="block";d.style.display="block";
 }
+function launchPatientView(){if(!document.getElementById("patientOutput").innerText)createReports();document.getElementById("pvReport").textContent=document.getElementById("patientOutput").innerText;document.getElementById("patientView").style.display="block";document.body.style.overflow="hidden";}
+function closePatientView(){document.getElementById("patientView").style.display="none";document.body.style.overflow="";}
 function copyText(id){const t=document.getElementById(id).innerText;if(!t){alert("Bitte zuerst die Berichte erstellen.");return}navigator.clipboard.writeText(t).then(()=>alert("Bericht kopiert.")).catch(()=>alert("Kopieren nicht möglich. Bitte Text markieren und kopieren."))}
 function printReports(){if(!document.getElementById("patientOutput").innerText)createReports();window.print()}
 </script>
+
+<div id="patientView"><div class="pvWrap"><p style="color:#80e2d4;font-weight:700;letter-spacing:2px">SENSOPED · IHRE PERSÖNLICHE ANALYSE</p><h1>Ihre Füße. Ihre Analyse.</h1><p>Hier sehen Sie die Ergebnisse Ihrer Untersuchung in verständlicher Form.</p><div class="pvCard"><h2>Ihre Untersuchung</h2><div id="pvReport" class="pvText"></div></div><div class="pvCard"><h2>Was bedeutet das?</h2><p>Die dokumentierten Beobachtungen und Empfehlungen wurden gemeinsam mit Ihrem Untersucher besprochen. Die Zusammenhänge und Ziele sind individuell und können im Gespräch erläutert werden.</p></div><button class="pvClose" onclick="closePatientView()">← Zur Untersuchung zurück</button></div></div>
 </body>
 </html>
