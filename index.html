@@ -350,16 +350,25 @@ function setupGuidedExam(){
  cards.forEach((card,n)=>{if(card.querySelector('.guidedNav'))return;const nav=document.createElement('div');nav.className='guidedNav';nav.innerHTML='<button type="button" class="back">▶ Start</button><span class="stepMeta">'+(n+1)+'. '+labels[n]+'</span><button type="button" class="next">Weiter →</button>';nav.querySelector('.back').addEventListener('click',()=>show(overview?current:current-1));nav.querySelector('.next').addEventListener('click',()=>{if(overview){show(current)}else if(current===cards.length-1){showOverview()}else show(current+1)});card.appendChild(nav);});show(0);
 }
 window.addEventListener('DOMContentLoaded',setupGuidedExam);
-\nfunction selectFootprintType(btn){const type=btn.dataset.type;const select=document.getElementById("footprintType");if(select)select.value=type;document.querySelectorAll(".footprintTypeTile").forEach(tile=>tile.classList.toggle("selected",tile===btn));}\nwindow.addEventListener("DOMContentLoaded",()=>{const select=document.getElementById("footprintType");if(select){const initial=document.querySelector(".footprintTypeTile[data-type="+JSON.stringify(select.value)+"]");if(initial)initial.classList.add("selected");}});\n\nfunction testMicrophone(){
+\nfunction selectFootprintType(btn){const type=btn.dataset.type;const select=document.getElementById("footprintType");if(select)select.value=type;document.querySelectorAll(".footprintTypeTile").forEach(tile=>tile.classList.toggle("selected",tile===btn));}\nwindow.addEventListener("DOMContentLoaded",()=>{const select=document.getElementById("footprintType");if(select){const initial=document.querySelector(".footprintTypeTile[data-type="+JSON.stringify(select.value)+"]");if(initial)initial.classList.add("selected");}});\n\nasync function testMicrophone(){
  const status=document.getElementById("microphoneTestStatus");
+ if(!status){alert("Statusfeld fehlt.");return;}
+ status.style.cssText="display:block;background:#123b5d;color:#fff!important;padding:12px;border-radius:12px;margin:12px 0;font-size:16px;line-height:1.4";
+ status.textContent="Mikrofontest wird gestartet…";status.scrollIntoView({behavior:"smooth",block:"center"});
+ if(!window.isSecureContext){status.textContent="Fehler: Mikrofon benötigt HTTPS.";return;}
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!window.isSecureContext){status.textContent="Mikrofon benötigt eine sichere HTTPS-Verbindung.";return;}
- if(!SR){status.textContent="Spracherkennung wird in diesem Browser nicht unterstützt. Bitte Chrome verwenden.";return;}
+ try{
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){status.textContent="Dieser Browser stellt keine Mikrofonfreigabe bereit. Bitte die Seite in Chrome öffnen.";return;}
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  stream.getTracks().forEach(t=>t.stop());
+  status.textContent="Mikrofonzugriff ist erlaubt. Spracherkennung wird geprüft…";
+ }catch(e){status.textContent="Mikrofonzugriff nicht erlaubt: "+(e.name==="NotAllowedError"?"Bitte Website-Berechtigung für Mikrofon erlauben.":e.message||e.name);return;}
+ if(!SR){status.textContent="Mikrofonzugriff funktioniert, aber Spracherkennung wird von diesem Browser nicht unterstützt. Bitte Google Chrome verwenden.";return;}
  const rec=new SR();rec.lang="de-DE";rec.interimResults=true;rec.continuous=false;
- status.textContent="Mikrofon wird gestartet – bitte jetzt einen Satz sprechen.";
- rec.onresult=e=>{let s="";for(let i=e.resultIndex;i<e.results.length;i++)s+=e.results[i][0].transcript;status.textContent="✅ Mikrofon funktioniert: "+s;};
- rec.onerror=e=>{const m={"not-allowed":"Mikrofonzugriff verweigert. Bitte die Website-Berechtigung erlauben.","service-not-allowed":"Spracherkennung blockiert. Chrome und Internet verwenden.","audio-capture":"Kein Mikrofon gefunden.","network":"Internetverbindung zum Spracherkennungsdienst prüfen.","no-speech":"Keine Sprache erkannt. Bitte erneut versuchen."};status.textContent="Mikrofontest: "+(m[e.error]||e.error||"Fehler");};
- rec.onend=()=>{};try{rec.start();}catch(e){status.textContent="Mikrofonstart fehlgeschlagen. Bitte Berechtigung prüfen."}
+ status.textContent="🎙️ Bitte jetzt sprechen: „Der Patient klagt über Schmerzen im rechten Fuß.“";
+ rec.onresult=e=>{let s="";for(let i=e.resultIndex;i<e.results.length;i++)s+=e.results[i][0].transcript;status.textContent="✅ Erkannt: "+s;};
+ rec.onerror=e=>{const m={"not-allowed":"Mikrofonfreigabe für Spracherkennung verweigert.","service-not-allowed":"Spracherkennung blockiert. Chrome und Internetverbindung prüfen.","audio-capture":"Kein Mikrofon gefunden.","network":"Netzwerkfehler beim Spracherkennungsdienst.","no-speech":"Keine Sprache erkannt. Bitte erneut versuchen."};status.textContent="Spracherkennung: "+(m[e.error]||e.error||"Fehler");};
+ rec.onend=()=>{};try{rec.start();}catch(e){status.textContent="Start fehlgeschlagen: "+(e.message||e);}
 }
 </script>
 <script>
