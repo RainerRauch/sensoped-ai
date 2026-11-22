@@ -668,12 +668,12 @@ window.transferFootprintsToBlueprint=function(){
  const sources=[['right','assignedFootRight','RECHTER FUSS'],['left','assignedFootLeft','LINKER FUSS'],['both','assignedFootBoth','BEIDE FÜSSE']];
  const items=sources.map(([side,id,label])=>{const im=document.getElementById(id);let src=im&&im.src&&im.style.display!=='none'&&im.src!=='about:blank'?im.src:'';if(!src&&window.sensopedFootImages)src=window.sensopedFootImages[side]||'';return src?{side,label,src}:null;}).filter(Boolean);
  if(!items.length){if(status)status.textContent='Noch keine gespeicherten Fußabdrücke vorhanden.';return;}
+ window._sensopedTransferred=items;
  let box=document.getElementById('blueprintStableDisplay');
- if(!box){box=document.createElement('section');box.id='blueprintStableDisplay';box.style.cssText='display:block!important;visibility:visible;background:#fff;border:3px solid #176b72;border-radius:20px;padding:16px;margin:16px 0;color:#17445e';box.innerHTML='<h3>🦶 Blauabdruck – Bilder</h3><div id="blueprintStableImages" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px"></div>';panel.insertAdjacentElement('afterend',box);}
+ if(!box){box=document.createElement('section');box.id='blueprintStableDisplay';box.style.cssText='display:block!important;visibility:visible;background:#fff;border:3px solid #176b72;border-radius:20px;padding:16px;margin:16px 0;color:#17445e';box.innerHTML='<h3>🦶 Blauabdruck – Auswahl für den Arbeitsbereich</h3><div id="blueprintStableImages" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px"></div>';panel.insertAdjacentElement('afterend',box);}
  const grid=document.getElementById('blueprintStableImages');grid.replaceChildren();
- items.forEach(it=>{const card=document.createElement('div');card.style.cssText='border:1px solid #d1e4e5;border-radius:15px;padding:10px;text-align:center;background:#f5fbfb';const heading=document.createElement('strong');heading.textContent=it.label;card.appendChild(heading);const image=document.createElement('img');image.src=it.src;image.alt=it.label;image.style.cssText='display:block;width:100%;height:auto;max-height:500px;object-fit:contain;margin:10px auto;border-radius:12px';card.appendChild(image);grid.appendChild(card);});
+ items.forEach((it,i)=>{const card=document.createElement('div');card.style.cssText='border:1px solid #d1e4e5;border-radius:15px;padding:10px;text-align:center;background:#f5fbfb';const heading=document.createElement('strong');heading.textContent=it.label;card.appendChild(heading);const image=document.createElement('img');image.src=it.src;image.alt=it.label;image.style.cssText='display:block;width:100%;height:auto;max-height:500px;object-fit:contain;margin:10px auto;border-radius:12px';card.appendChild(image);const btn=document.createElement('button');btn.type='button';btn.textContent='✏️ Diesen Abdruck im Arbeitsbereich öffnen';btn.style.cssText='width:100%;margin-top:8px';btn.onclick=()=>window.openTransferredFootprint(i);card.appendChild(btn);grid.appendChild(card);});
  box.style.display='block';box.style.visibility='visible';box.scrollIntoView({behavior:'smooth',block:'start'});
- if(status)status.textContent='✓ '+items.length+' Fußabdruckbild(er) direkt im Blauabdruck-Kasten angezeigt.';
-};
-</script></body>
+ if(status)status.textContent='✓ '+items.length+' Bild(er) bereit. Wählen Sie den gewünschten Fußabdruck zum Markieren.';
+};</script></body>
 </html>
