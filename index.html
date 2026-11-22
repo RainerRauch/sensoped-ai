@@ -93,7 +93,7 @@ button.secondary{background:var(--navy)}button.green{background:var(--green)}but
 <label>Empfohlene Versorgung</label><select id="therapy"><option>Keine Auswahl</option><option>Sensomotorische Einlage</option><option>Orthopädische Einlage</option><option>Orthopädische Schuhe</option><option>Schuhzurichtung</option><option>Individuelle Kombination</option><option>Weitere Versorgung</option></select>
 <label>Behandlungs- / Versorgungsziel</label><textarea id="goal" placeholder="Ziel und gewünschte funktionelle Verbesserung"></textarea>
 <label>Besondere Hinweise</label><textarea id="extra" placeholder="Optional"></textarea>
-<button type="button" class="green" onclick="generateSupplyLogic()">✨ Versorgungslogik aus Befunden ableiten</button><div id="supplyLogicOutput" class="result" style="display:none"></div>
+<button type="button" class="green" onclick="generateSupplyLogic()">✨ Versorgungslogik aus Befunden ableiten</button><div id="supplyLogicOutput" class="result" style="display:none"></div><button type="button" class="secondary" onclick="prepareConstructionSpec()">🛠️ Konstruktionsblatt für Werkstatt vorbereiten</button><label>Werkstatt- / Konstruktionsvorschlag (Entwurf)</label><textarea id="constructionSpec" placeholder="Hier wird ein strukturiertes Konstruktionsblatt vorbereitet. Bauteile und technische Umsetzung bitte fachlich festlegen und freigeben." rows="8"></textarea><p class="small">Entwurf aus dokumentierten Befunden – keine automatische Bauteilauswahl. Konstrukteur prüft, ergänzt und gibt frei.</p>
 </div>
 <div class="card formcard">
 <h2>7. Berichte erstellen</h2>
@@ -259,6 +259,13 @@ function generateSupplyLogic(){
  if(!right.length&&!left.length&&!global.length)result+="\n☐ Befunde manuell bewerten und Versorgungsziel festlegen.";
  result+="\n\nVersorgungsart (Auswahl): "+selected+"\n\nDiese strukturierte Liste beruht ausschließlich auf Schlagworten in den dokumentierten Texten. Sie ist keine Diagnose und keine automatische Bauteil- oder Einlagenkonstruktion. Seitenzuordnung und Versorgung müssen vom Untersucher bestätigt werden.";
  out.textContent=result;out.style.display="block";out.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function prepareConstructionSpec(){
+ const right=[val("right"),val("manualRight"),val("manualRightNotes")].filter(x=>x!=="Keine Angabe"&&x!=="Keine Auswahl").join(" | ");
+ const left=[val("left"),val("manualLeft"),val("manualLeftNotes")].filter(x=>x!=="Keine Angabe"&&x!=="Keine Auswahl").join(" | ");
+ const spec="SENSOPED – WERKSTATT / KONSTRUKTIONSBLATT (ENTWURF)\\n\\nPatient / Kennung: "+val("name")+" | "+val("mpg")+"\\n\\nVersorgungsart: "+val("therapy")+"\\n\\nBESCHWERDEN / ANLASS\\n"+val("complaints")+"\\n\\nRECHTS – dokumentierte Befunde\\n"+(right||"Keine Angabe")+"\\n\\nLINKS – dokumentierte Befunde\\n"+(left||"Keine Angabe")+"\\n\\nSTATIK / FUSSSTELLUNG\\n"+val("foot")+" | "+val("postureAnalysis")+"\\n\\nGANG / BEWEGUNG / KNIEACHSE\\n"+val("gait")+"\\n"+val("movement")+"\\n"+val("knee")+"\\n"+val("observations")+"\\n\\nVERSORGUNGSZIELE\\n"+val("goal")+"\\n\\nKONSTRUKTION – fachlich durch Konstrukteur auszufüllen\\nRechts: Modell / Grundelement / Bauteile / Korrektur- oder Entlastungsbereiche / Material / Stärke / Hinweise\\n\\nLinks: Modell / Grundelement / Bauteile / Korrektur- oder Entlastungsbereiche / Material / Stärke / Hinweise\\n\\nZusätzliche Hinweise: "+val("extra")+"\\n\\nFreigabe Konstrukteur / Untersucher: ____________________\\n\\nDieses Blatt ist eine strukturierte Arbeitsgrundlage. Keine automatische Diagnose oder verbindliche Konstruktion.";
+ document.getElementById("constructionSpec").value=spec;
+ document.getElementById("constructionSpec").scrollIntoView({behavior:"smooth",block:"center"});
 }
 function createReports(){
  const patient="SENSOPED – Ihr Untersuchungsergebnis\n\n"+
