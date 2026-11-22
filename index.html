@@ -115,7 +115,7 @@ html,body{width:100%;max-width:100%;overflow-x:hidden!important}
 .cameraBtn{width:100%;max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere}
 @media(max-width:600px){.footprintVisual{gap:7px!important}.footprintVisual .fpVisualTile{padding:7px!important}}
 </style>
-<style>.footSideCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}.footSideCards button{margin:0;min-width:0;min-height:94px;padding:12px 5px;background:#f2f8fa;color:#16485b;border:2px solid #c9e1e4;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:22px}.footSideCards button strong{font-size:14px}.footSideCards button small{font-size:11px;color:#58747b}.footSideCards button.selected{background:#d9efec;border-color:#176b72;box-shadow:0 0 0 3px #176b7220;color:#075b61}@media(max-width:400px){.footSideCards{gap:5px}.footSideCards button{min-height:85px;padding:8px 3px}}</style><script>function chooseFootprintSide(side){const s=document.getElementById("footprintSide");if(s)s.value=side;document.querySelectorAll("#footprintSideCards button").forEach(b=>b.classList.toggle("selected",b.dataset.side===side));}</script></head>
+<style>.footSideCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}.footSideCards button{margin:0;min-width:0;min-height:94px;padding:12px 5px;background:#f2f8fa;color:#16485b;border:2px solid #c9e1e4;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:22px}.footSideCards button strong{font-size:14px}.footSideCards button small{font-size:11px;color:#58747b}.footSideCards button.selected{background:#d9efec;border-color:#176b72;box-shadow:0 0 0 3px #176b7220;color:#075b61}@media(max-width:400px){.footSideCards{gap:5px}.footSideCards button{min-height:85px;padding:8px 3px}}</style><script>function chooseFootprintSide(side){const s=document.getElementById("footprintSide");if(s)s.value=side;document.querySelectorAll("#footprintSideCards button").forEach(b=>b.classList.toggle("selected",b.dataset.side===side));const img=document.getElementById("footprintPreview");if(img&&img.src&&img.src!==""){if(typeof assignFootprintImage==="function")assignFootprintImage();}}</script></head>
 <body>
 <header class="sensopedHero">
 <div class="heroBrand"><div class="heroMark">SENSOPED<br><span>AI</span></div><div class="heroTag">FOOT &amp; GAIT<br>INTELLIGENCE</div><div class="demoTag">● Untersuchung</div></div>
@@ -344,6 +344,7 @@ function previewFootprint(input){
    if(markup&&img.naturalWidth&&img.naturalHeight)markup.setAttribute("viewBox","0 0 1000 "+Math.round(1000*img.naturalHeight/img.naturalWidth));
    if(tools)tools.style.display="block";
    if(typeof drawFootMarks==="function")drawFootMarks();
+   if(typeof assignFootprintImage==="function")assignFootprintImage();
   };
   img.onerror=function(){status.textContent="❌ Dieses Bildformat kann im Browser nicht angezeigt werden. Bitte Screenshot oder JPG/PNG verwenden.";};
   img.src=window.footprintPreviewURL;
