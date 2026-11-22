@@ -320,34 +320,32 @@ function assignFootprintImage(){
 }
 function transferFootPhoto(n){const src=document.getElementById("footPhotoPreview"+n).src;if(!src||src.endsWith("#")||!document.getElementById("footPhotoPreview"+n).style.display||document.getElementById("footPhotoPreview"+n).style.display==="none"){document.getElementById("footprintAssignStatus").textContent="Bitte zuerst Foto "+n+" aufnehmen oder auswählen.";return}footprintSelectedFile=null;footprintSelectedLabel="Fotodokumentation Foto "+n;const img=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator");img.onload=()=>{document.getElementById("footprintMarkup").setAttribute("viewBox","0 0 1000 "+Math.round(1000*img.naturalHeight/img.naturalWidth));document.getElementById("footprintTools").style.display="block";drawFootMarks()};img.src=src;wrap.style.display="block";document.getElementById("footprintAssignStatus").textContent="Foto "+n+" aus der Fotodokumentation übernommen. Jetzt Seite auswählen und zuordnen."}
 function previewFootprint(input){
+ const status=document.getElementById("footprintAssignStatus");
+ const img=document.getElementById("footprintPreview");
+ const wrap=document.getElementById("footprintAnnotator");
+ const tools=document.getElementById("footprintTools");
  try{
-  const f=input&&input.files&&input.files[0];if(!f)return;
-  const status=document.getElementById("footprintAssignStatus"),img=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator");
-  if(!status||!img||!wrap){alert("Bildvorschau-Bereich fehlt. Bitte Seite neu laden.");return;}
-  const isImage=(f.type&&f.type.indexOf("image/")===0)||/\.(jpg|jpeg|png|gif|webp|heic|heif)$/i.test(f.name||"");
-  if(!isImage){status.style.display="block";status.textContent="Bitte ein Bild auswählen (JPG, PNG oder HEIC).";input.value="";return;}
+  const f=input && input.files && input.files.length ? input.files[0] : null;
+  if(!f){if(status)status.textContent="Keine Datei ausgewählt.";return;}
+  if(!status||!img||!wrap){alert("Vorschau-Bereich nicht gefunden.");return;}
   footprintSelectedFile=f;window.footprintSelectedFile=f;
-  status.style.cssText="display:block;margin:12px 0;padding:14px;border-radius:14px;background:#d9efec;color:#075b61;border:2px solid #176b72;font-weight:700;";
-  status.textContent="Bild wird geladen: "+f.name+"…";
-  wrap.style.display="block";img.style.display="block";img.removeAttribute("src");
-  const reader=new FileReader();
-  reader.onload=function(ev){
-   if(!ev.target||!ev.target.result){status.textContent="Das Bild konnte nicht gelesen werden. Bitte erneut auswählen.";return;}
-   img.onload=function(){
-    status.textContent="✅ Bild erfolgreich angezeigt: "+f.name+" ("+Math.round(f.size/1024)+" KB). Seite auswählen bzw. Zuordnung bestätigen.";
-    const markup=document.getElementById("footprintMarkup"),tools=document.getElementById("footprintTools");
-    if(markup&&img.naturalWidth&&img.naturalHeight)markup.setAttribute("viewBox","0 0 1000 "+Math.round(1000*img.naturalHeight/img.naturalWidth));
-    if(tools)tools.style.display="block";
-    if(typeof drawFootMarks==="function")drawFootMarks();
-    wrap.scrollIntoView({behavior:"smooth",block:"center"});
-   };
-   img.onerror=function(){status.textContent="❌ Das Foto konnte nicht angezeigt werden. Bitte JPG oder PNG erneut auswählen.";wrap.style.display="none";};
-   img.src=ev.target.result;
+  status.style.display="block";
+  status.textContent="Datei ausgewählt: "+f.name+" – "+Math.round(f.size/1024)+" KB. Vorschau wird geladen…";
+  wrap.style.display="block";img.style.display="block";
+  if(window.footprintPreviewURL){try{URL.revokeObjectURL(window.footprintPreviewURL)}catch(e){}}
+  window.footprintPreviewURL=URL.createObjectURL(f);
+  img.onload=function(){
+   status.textContent="✅ Bild geladen: "+f.name+". Bitte Seite RECHTS, LINKS oder BEIDE auswählen und zuordnen.";
+   const markup=document.getElementById("footprintMarkup");
+   if(markup&&img.naturalWidth&&img.naturalHeight)markup.setAttribute("viewBox","0 0 1000 "+Math.round(1000*img.naturalHeight/img.naturalWidth));
+   if(tools)tools.style.display="block";
+   if(typeof drawFootMarks==="function")drawFootMarks();
   };
-  reader.onerror=function(){status.textContent="❌ Datei konnte nicht gelesen werden. Bitte erneut auswählen.";wrap.style.display="none";};
-  reader.readAsDataURL(f);
- }catch(err){console.error(err);const s=document.getElementById("footprintAssignStatus");if(s)s.textContent="Fehler beim Laden des Bildes. Bitte Seite neu laden und erneut auswählen.";}
-}function lockFootMark(){if(footSelected<0)return;footMarks[footSelected].lock=!footMarks[footSelected].lock;drawFootMarks();document.getElementById("footToolStatus").textContent=footMarks[footSelected].lock?"Markierung fixiert.":"Markierung wieder beweglich."}
+  img.onerror=function(){status.textContent="❌ Dieses Bildformat kann im Browser nicht angezeigt werden. Bitte Screenshot oder JPG/PNG verwenden.";};
+  img.src=window.footprintPreviewURL;
+ }catch(err){console.error(err);if(status)status.textContent="❌ Fehler beim Bild: "+(err&&err.message?err.message:"unbekannt");}
+}
+function lockFootMark(){if(footSelected<0)return;footMarks[footSelected].lock=!footMarks[footSelected].lock;drawFootMarks();document.getElementById("footToolStatus").textContent=footMarks[footSelected].lock?"Markierung fixiert.":"Markierung wieder beweglich."}
 function deleteFootMark(){if(footSelected<0)return;footMarks.splice(footSelected,1);footSelected=-1;drawFootMarks()}
 function clearFootMarks(){saveFootUndo();footMarks=[];footSelected=-1;drawFootMarks()}
 const footSvg=document.getElementById("footprintMarkup");
