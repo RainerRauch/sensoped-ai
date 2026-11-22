@@ -353,32 +353,30 @@ window.addEventListener('DOMContentLoaded',setupGuidedExam);
 \nfunction selectFootprintType(btn){const type=btn.dataset.type;const select=document.getElementById("footprintType");if(select)select.value=type;document.querySelectorAll(".footprintTypeTile").forEach(tile=>tile.classList.toggle("selected",tile===btn));}\nwindow.addEventListener("DOMContentLoaded",()=>{const select=document.getElementById("footprintType");if(select){const initial=document.querySelector(".footprintTypeTile[data-type="+JSON.stringify(select.value)+"]");if(initial)initial.classList.add("selected");}});\n\nwindow.testMicrophone=function(){
  const status=document.getElementById("microphoneTestStatus");
  if(!status){alert("Statusfeld fehlt.");return;}
- status.style.display="block";
  status.style.cssText="display:block;background:#123b5d;color:white;padding:14px;border-radius:12px;font-size:16px;margin:12px 0;";
- status.textContent="Mikrofon wird gestartet. Bitte sprechen Sie…";
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){
-   status.textContent="Dieser Browser bietet keine eingebaute Spracherkennung. Mikrofonzugriff ist ggf. möglich, aber Sprache-zu-Text wird hier nicht unterstützt.";
-   return;
+ status.textContent="1/2: Prüfe Mikrofonzugriff…";
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+  status.textContent="Fehler: Chrome stellt den Mikrofonzugriff auf dieser Seite nicht bereit. Bitte die App direkt über HTTPS öffnen.";
+  return;
  }
- try{
-   const rec=new SR();
-   window._sensopedMicRecognition=rec;
-   rec.lang="de-DE";rec.interimResults=true;rec.continuous=false;rec.maxAlternatives=1;
-   rec.onstart=function(){status.textContent="🎙️ Mikrofon aktiv – bitte jetzt einen Satz sprechen.";};
-   rec.onresult=function(e){let t="";for(let i=0;i<e.results.length;i++){t+=e.results[i][0].transcript;}status.textContent="✅ Erkannt: "+t;};
-   rec.onerror=function(e){
-     const messages={not-allowed:"Mikrofonzugriff wurde vom Browser blockiert. Bitte Website-Mikrofon erlauben.",service-not-allowed:"Der Spracherkennungsdienst ist nicht verfügbar oder blockiert.",network:"Keine Verbindung zum Spracherkennungsdienst.",no-speech:"Keine Sprache erkannt. Bitte erneut testen.",audio-capture:"Kein Mikrofon gefunden.",aborted:"Test abgebrochen."};
-     status.textContent="⚠️ "+(messages[e.error]||("Fehler: "+e.error));
-   };
-   rec.onend=function(){if(status.textContent.indexOf("Mikrofon aktiv")===0)status.textContent="Test beendet – es wurde keine Sprache erkannt. Bitte erneut testen.";};
+ navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+  stream.getTracks().forEach(function(t){t.stop();});
+  status.textContent="✅ Mikrofonzugriff funktioniert! 2/2: Starte Spracherkennung…";
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){status.textContent="✅ Mikrofonzugriff funktioniert. Allerdings fehlt in diesem Browser die Spracherkennung (SpeechRecognition).";return;}
+  try{
+   var rec=new SR();window._sensopedMicRecognition=rec;
+   rec.lang="de-DE";rec.interimResults=true;rec.continuous=false;
+   rec.onstart=function(){status.textContent="🎙️ Mikrofon aktiv – bitte jetzt sprechen.";};
+   rec.onresult=function(ev){var t="";for(var i=0;i<ev.results.length;i++)t+=ev.results[i][0].transcript;status.textContent="✅ Sprache erkannt: "+t;};
+   rec.onerror=function(ev){status.textContent="Mikrofonzugriff ist OK, aber Spracherkennung meldet: "+ev.error;};
+   rec.onend=function(){if(status.textContent.indexOf("Mikrofon aktiv")===0)status.textContent="Mikrofon ist OK, aber es wurde keine Sprache erkannt.";};
    rec.start();
- }catch(e){status.textContent="Startfehler: "+e.message;}
+  }catch(err){status.textContent="Mikrofon ist OK. Spracherkennung-Startfehler: "+err.message;}
+ }).catch(function(err){
+  status.textContent="❌ Mikrofonzugriff scheitert: "+err.name+" – "+err.message;
+ });
 };
-document.addEventListener("DOMContentLoaded",function(){
- const b=document.querySelector('button[onclick*="testMicrophone"]');
- if(b){b.onclick=null;b.addEventListener("click",window.testMicrophone);}
-});
 </script>
 <script>
 window.createReports=function(){
