@@ -311,22 +311,16 @@ function chooseFootprintSide(side){
 }
 function assignFootprintImage(){
  const status=document.getElementById("footprintAssignStatus");
- const side=document.getElementById("footprintSide")?.value;
- const mainImg=document.getElementById("footprintPreview");
- const testImg=document.getElementById("sensopedUploadDebugImg");
- const file=window.footprintSelectedFile||footprintSelectedFile;
- let source="";
- if(file && mainImg && mainImg.src && mainImg.src!=="") source=mainImg.src;
- if(!source && testImg && testImg.src && testImg.style.display!=="none") source=testImg.src;
- if(!source && mainImg && mainImg.src && mainImg.style.display!=="none") source=mainImg.src;
- if(!source){if(status){status.style.display="block";status.textContent="Bitte zuerst ein Foto auswählen."; }return;}
- if(!side){if(status){status.style.display="block";status.textContent="Bitte RECHTS, LINKS oder BEIDE auswählen."; }return;}
+ const side=(document.getElementById("footprintSide")||{}).value;
+ const source=(document.getElementById("footprintPreview")||{}).src||((document.getElementById("sensopedUploadDebugImg")||{}).src)||"";
+ if(!source){if(status)status.textContent="Bitte erst ein Foto laden.";return;}
+ if(!side){if(status)status.textContent="Bitte RECHTS, LINKS oder BEIDE auswählen.";return;}
  const gallery=document.getElementById("assignedFootprintGallery");
- function place(imgId,emptyId){const img=document.getElementById(imgId),empty=document.getElementById(emptyId);if(img){img.onload=function(){img.style.display="block";};img.onerror=function(){if(status)status.textContent="Bild konnte im Zielfeld nicht geladen werden.";};img.src=source;img.style.display="block";}if(empty)empty.style.display="none";}
- if(side==="right"||side==="both")place("assignedFootRight","assignedFootRightEmpty");
- if(side==="left"||side==="both")place("assignedFootLeft","assignedFootLeftEmpty");
- if(gallery){gallery.style.display="grid";gallery.style.visibility="visible";gallery.scrollIntoView({behavior:"smooth",block:"start"});}
- if(status){status.style.cssText="display:block;margin:12px 0;padding:14px;border-radius:14px;background:#d9efec;color:#075b61;border:2px solid #176b72;font-weight:700;";status.textContent="✅ Bild erfolgreich zugeordnet: "+(side==="right"?"RECHTER FUSS":side==="left"?"LINKER FUSS":"BEIDE FÜSSE")+".";}
+ const ids=side==="both"?["assignedFootRight","assignedFootLeft"]:side==="right"?["assignedFootRight"]:["assignedFootLeft"];
+ const empties=side==="both"?["assignedFootRightEmpty","assignedFootLeftEmpty"]:side==="right"?["assignedFootRightEmpty"]:["assignedFootLeftEmpty"];
+ ids.forEach((id,i)=>{const im=document.getElementById(id),em=document.getElementById(empties[i]);if(im){im.src=source;im.style.display="block";im.removeAttribute("hidden");}if(em)em.style.display="none";});
+ if(gallery){gallery.style.display="grid";gallery.style.visibility="visible";gallery.scrollIntoView({behavior:"smooth",block:"center"});}
+ if(status){status.style.display="block";status.textContent="✓ Automatisch übertragen in: "+(side==="right"?"RECHTER FUSS":side==="left"?"LINKER FUSS":"BEIDE FÜSSE");}
 }
 function transferFootPhoto(n){const src=document.getElementById("footPhotoPreview"+n).src;if(!src||src.endsWith("#")||!document.getElementById("footPhotoPreview"+n).style.display||document.getElementById("footPhotoPreview"+n).style.display==="none"){document.getElementById("footprintAssignStatus").textContent="Bitte zuerst Foto "+n+" aufnehmen oder auswählen.";return}footprintSelectedFile=null;footprintSelectedLabel="Fotodokumentation Foto "+n;const img=document.getElementById("footprintPreview"),wrap=document.getElementById("footprintAnnotator");img.onload=()=>{document.getElementById("footprintMarkup").setAttribute("viewBox","0 0 1000 "+Math.round(1000*img.naturalHeight/img.naturalWidth));document.getElementById("footprintTools").style.display="block";drawFootMarks()};img.src=src;wrap.style.display="block";document.getElementById("footprintAssignStatus").textContent="Foto "+n+" aus der Fotodokumentation übernommen. Jetzt Seite auswählen und zuordnen."}
 function previewFootprint(input){
