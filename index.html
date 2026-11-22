@@ -607,5 +607,20 @@ window.analyzeSavedFootprints=async function(){
   status.textContent="✓ "+items.length+" gespeicherte(s) Bild(er) ausgewertet. Bitte die Hinweise fachlich überprüfen.";
  }catch(e){status.textContent="KI-Auswertung fehlgeschlagen: "+(e.message||"Verbindung prüfen");}
 };
+</script><script>
+/* Definitive gallery-to-annotator selection */
+window.chooseFootprintSide=async function(side){
+ const sel=document.getElementById('footprintSide');if(sel)sel.value=side;
+ document.querySelectorAll('#footprintSideCards button').forEach(b=>b.classList.toggle('selected',b.dataset.side===side));
+ const ids={right:'assignedFootRight',left:'assignedFootLeft',both:'assignedFootBoth'},labels={right:'Rechter Fuß',left:'Linker Fuß',both:'Beide Füße'};
+ const img=document.getElementById(ids[side]),main=document.getElementById('footprintPreview'),wrap=document.getElementById('footprintAnnotator'),tools=document.getElementById('footprintTools'),status=document.getElementById('footprintAssignStatus');
+ let src=img&&img.src&&img.style.display!=='none'?img.src:'';
+ if(!src){try{const db=await new Promise((resolve,reject)=>{const req=indexedDB.open('SensopedFootprintsDB',1);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});const blob=await new Promise((resolve,reject)=>{const req=db.transaction('images','readonly').objectStore('images').get(side);req.onsuccess=()=>resolve(req.result&&req.result.blob);req.onerror=()=>reject(req.error);});if(blob)src=URL.createObjectURL(blob);}catch(e){}}
+ if(!src){if(status)status.textContent='Noch kein Foto für '+labels[side]+' gespeichert.';return;}
+ if(main){main.onload=function(){const svg=document.getElementById('footprintMarkup');if(svg&&main.naturalWidth&&main.naturalHeight)svg.setAttribute('viewBox','0 0 1000 '+Math.round(1000*main.naturalHeight/main.naturalWidth));if(typeof drawFootMarks==='function')drawFootMarks();};main.src=src;main.style.display='block';main.hidden=false;}
+ if(wrap){wrap.style.display='block';wrap.hidden=false;}if(tools){tools.style.display='block';tools.hidden=false;}
+ if(status)status.textContent='✓ '+labels[side]+' ausgewählt – dieses gespeicherte Bild wird angezeigt.';
+ if(wrap)wrap.scrollIntoView({behavior:'smooth',block:'center'});
+};
 </script></body>
 </html>
