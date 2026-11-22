@@ -201,8 +201,8 @@ window.openTransferredFootprint=function(i){
  document.querySelectorAll('#footprintSideCards button').forEach(btn=>btn.classList.toggle('selected',btn.dataset.side===it.side));
  img.onload=function(){const svg=document.getElementById('footprintMarkup');if(svg&&img.naturalWidth&&img.naturalHeight)svg.setAttribute('viewBox','0 0 1000 '+Math.round(1000*img.naturalHeight/img.naturalWidth));if(typeof drawFootMarks==='function')drawFootMarks();};
  img.onerror=function(){if(status)status.textContent='Fehler: Bild konnte nicht im Bearbeitungsfeld geladen werden.';alert('Bild konnte nicht im Blauabdruck geladen werden.');};
- img.src=it.src;selectFootprintTypeByType('Blauabdruck');
- if(status)status.textContent='Foto wird geöffnet: '+it.label;
+ img.src=it.src;if(typeof window.selectFootprintTypeByType==='function'){window.selectFootprintTypeByType('Blauabdruck');}else{const typeSel=document.getElementById('footprintType');if(typeSel)typeSel.value='Blauabdruck';document.querySelectorAll('.fpVisualTile').forEach(tile=>tile.classList.toggle('selected',tile.dataset.type==='Blauabdruck'));}
+ if(status)status.textContent='✓ Foto in der eigentlichen Blauabdruck-Markierungsfläche geöffnet: '+it.label;
  wrap.scrollIntoView({behavior:'smooth',block:'center'});
  }catch(err){alert('Fehler beim Öffnen: '+err.message);}
 };</script><div class="footprintVisual" aria-label="Bildkacheln der vier Fußabdruckmethoden">
