@@ -231,23 +231,33 @@ async function analyzeFootprintImage(){document.getElementById("footprintAIStatu
 function val(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():"Keine Angabe"}
 
 function generateSupplyLogic(){
- const source=[val("complaints"),val("right"),val("left"),val("manualRightNotes"),val("manualLeftNotes"),val("manualRight"),val("manualLeft"),val("foot"),val("footnotes"),val("gait"),val("knee"),val("movement"),val("observations"),val("postureAnalysis")].join(" ").toLowerCase();
- const rules=[
- {keys:["senkfuß","plattfuß","abgesenkt","gewölbe"],label:"Fußgewölbe / Gewölbestatik",goal:"Unterstützung und Kontrolle der Gewölbestatik prüfen."},
- {keys:["hohlfuß","cavus"],label:"Hochgewölbter Fuß",goal:"Druckverteilung und Anpassung an die Fußform prüfen."},
- {keys:["pronation","proniert","valgus","knick"],label:"Pronation / Rückfußstellung",goal:"Kontrolle der Rückfuß- und Bewegungsstellung prüfen."},
- {keys:["supination","supiniert","varus"],label:"Supination / Varusstellung",goal:"Belastungsverteilung und Stabilisierung prüfen."},
- {keys:["schmerz","druck","reiz","belastung"],label:"Beschwerden / Druckbelastung",goal:"Druckentlastung und passende Belastungsführung prüfen."},
- {keys:["eingeschränkt","beweglichkeit","steif","versteift"],label:"Beweglichkeit",goal:"Bewegungsspielraum und funktionelle Unterstützung berücksichtigen."},
- {keys:["knee","knieachse","valg","var"],label:"Knieachse / Bewegungskette",goal:"Fußbezogene Einflussmöglichkeiten auf die Bewegungskette untersuchen."},
- {keys:["gang","abroll","schritt"],label:"Gangbild",goal:"Versorgungsziel mit den beobachteten Abroll- und Bewegungsmustern abgleichen."}
- ];
- const matched=rules.filter(r=>r.keys.some(k=>source.includes(k)));
  const out=document.getElementById("supplyLogicOutput");
  const selected=val("therapy");
- let result="VORSCHLAG – fachlich zu prüfen\n\n";
- if(!matched.length){result+="Aus den derzeit dokumentierten Texten konnten keine klaren Schlagwort-Hinweise erkannt werden. Befunde ergänzen oder Versorgung manuell festlegen.\n";}else{result+="Erkannte Themen (nur anhand eingegebener Begriffe):\n"+matched.map(r=>"• "+r.label+"\n  "+r.goal).join("\n\n")+"\n\n";}
- result+="\nAusgewählte Versorgungsart: "+selected+"\n\nDie Hinweise sind keine Diagnose und keine automatische Einlagenkonstruktion. Sie dienen als Prüfliste. Die konkrete Versorgung und Bauteile werden vom Untersucher/ Konstrukteur festgelegt.";
+ const rightSource=[val("right"),val("manualRight"),val("manualRightNotes"),val("foot"),val("footnotes")].join(" ").toLowerCase();
+ const leftSource=[val("left"),val("manualLeft"),val("manualLeftNotes"),val("foot"),val("footnotes")].join(" ").toLowerCase();
+ const shared=[val("complaints"),val("gait"),val("knee"),val("movement"),val("observations"),val("postureAnalysis")].join(" ").toLowerCase();
+ const rules=[
+ {keys:["senkfuß","plattfuß","abgesenkt","gewölbe"],label:"Gewölbestatik",goal:"Gewölbeunterstützung und statische Führung prüfen."},
+ {keys:["hohlfuß","cavus"],label:"Hochgewölbter Fuß",goal:"Druckverteilung, Kontaktfläche und Anpassung prüfen."},
+ {keys:["pronation","proniert","valgus","knick"],label:"Pronation / Knickstellung",goal:"Rückfußführung und Stabilität im Belastungsverlauf prüfen."},
+ {keys:["supination","supiniert","varus"],label:"Supination / Varusstellung",goal:"Belastungsverteilung und Stabilisierung prüfen."},
+ {keys:["schmerz","druck","reiz","belastung"],label:"Beschwerden / Druck",goal:"Lokale Entlastung und Belastungssteuerung prüfen."},
+ {keys:["eingeschränkt","beweglichkeit","steif","versteift"],label:"Beweglichkeit",goal:"Bewegungsfunktion und erforderliche Freiräume berücksichtigen."},
+ {keys:["hallux","zehe","metatars"],label:"Vorfuß / Zehen",goal:"Vorfußbelastung, Zehenfunktion und Druckverteilung prüfen."}
+ ];
+ function matches(source){return rules.filter(r=>r.keys.some(k=>source.includes(k)));}
+ const right=matches(rightSource),left=matches(leftSource),global=matches(shared);
+ const gaitHints=[];
+ if(["gang","abroll","schritt"].some(k=>shared.includes(k)))gaitHints.push("Gang-/Abrollverhalten: Versorgungsziele mit den beobachteten Bewegungsmustern abgleichen.");
+ if(["knieachse","knie","valg","var"].some(k=>shared.includes(k)))gaitHints.push("Knieachse / Bewegungskette: mögliche fußbezogene Einflussmöglichkeiten fachlich prüfen.");
+ let result="STRUKTURIERTE BEFUNDBEZOGENE PRÜFLISTE\n— Vorschlag zur fachlichen Kontrolle —\n\n";
+ result+="RECHTS\n"+(right.length?right.map(r=>"• "+r.label+"\n  Ziel: "+r.goal).join("\n\n"):"• Noch keine eindeutigen Schlagwort-Hinweise erkannt. Befund prüfen/ergänzen.")+"\n\n";
+ result+="LINKS\n"+(left.length?left.map(r=>"• "+r.label+"\n  Ziel: "+r.goal).join("\n\n"):"• Noch keine eindeutigen Schlagwort-Hinweise erkannt. Befund prüfen/ergänzen.")+"\n\n";
+ result+="ÜBERGREIFENDE BEWEGUNGSBEFUNDE\n"+(gaitHints.length?gaitHints.map(x=>"• "+x).join("\n"):"• Keine eindeutigen Schlagwort-Hinweise in Gang-/Bewegungsfeldern erkannt.")+"\n\n";
+ if(global.length)result+="Weitere in allgemeinen Befundtexten erkannte Themen (Seitenzuordnung nicht sicher):\n"+global.map(r=>"• "+r.label+": "+r.goal).join("\n")+"\n\n";
+ result+="MÖGLICHE VERSORGUNGSZIELE ZUR AUSWAHL\n"+[...new Set([...right,...left,...global].map(r=>r.goal))].map(x=>"☐ "+x).join("\n");
+ if(!right.length&&!left.length&&!global.length)result+="\n☐ Befunde manuell bewerten und Versorgungsziel festlegen.";
+ result+="\n\nVersorgungsart (Auswahl): "+selected+"\n\nDiese strukturierte Liste beruht ausschließlich auf Schlagworten in den dokumentierten Texten. Sie ist keine Diagnose und keine automatische Bauteil- oder Einlagenkonstruktion. Seitenzuordnung und Versorgung müssen vom Untersucher bestätigt werden.";
  out.textContent=result;out.style.display="block";out.scrollIntoView({behavior:"smooth",block:"center"});
 }
 function createReports(){
