@@ -766,5 +766,21 @@ window.openTransferredFootprintBySide=function(side){
  if(status)status.textContent='✓ '+it.label+' wurde im Markierungsbereich geöffnet.';workspace.scrollIntoView({behavior:'smooth',block:'start'});
 };window.openTransferredFootprint=function(i){const it=(window._sensopedTransferred||[])[i];if(it)window.openTransferredFootprintBySide(it.side);};
 </script>
+
+<script>
+/* SENSOPED drawing-tool repair: rebind pointer handlers and make tool feedback visible */
+(function(){
+ const oldSvg=document.getElementById('footprintMarkup');if(!oldSvg)return;
+ const svg=oldSvg.cloneNode(true);oldSvg.parentNode.replaceChild(svg,oldSvg);svg.style.touchAction='none';
+ function point(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());return{x:q.x,y:q.y};}
+ window.setFootTool=function(t){footTool=t;const names={lotline:'Lotlinie',axis:'Gestrichelte Achse',pen:'Freihand',arrow:'Pfeil',circle:'Kreis',ellipse:'Ellipse',edit:'Formen bearbeiten'};const s=document.getElementById('footToolStatus');if(s)s.textContent='✓ '+(names[t]||t)+' ausgewählt. Jetzt direkt auf dem Bild beginnen und ziehen.';svg.style.cursor=t==='edit'?'move':'crosshair';};
+ window.drawFootMarks=function(){svg.innerHTML='';footMarks.forEach((m,i)=>{const g=document.createElementNS(svg.namespaceURI,'g');g.setAttribute('transform','translate('+m.x+' '+m.y+') rotate('+(m.rot||0)+')');let sh;if(m.type==='pen'){sh=document.createElementNS(svg.namespaceURI,'path');sh.setAttribute('d',m.path||'');sh.setAttribute('fill','none');}else if(['lotline','axis','arrow'].includes(m.type)){sh=document.createElementNS(svg.namespaceURI,'line');sh.setAttribute('x1',0);sh.setAttribute('y1',0);sh.setAttribute('x2',m.rx||0);sh.setAttribute('y2',m.ry||0);if(m.type==='axis')sh.setAttribute('stroke-dasharray','14 10');if(m.type==='arrow')sh.setAttribute('marker-end','url(#footArrow)');}else{sh=document.createElementNS(svg.namespaceURI,m.type==='circle'?'circle':'ellipse');sh.setAttribute('fill','none');if(m.type==='circle')sh.setAttribute('r',Math.max(Math.abs(m.rx||0),Math.abs(m.ry||0)));else{sh.setAttribute('rx',Math.abs(m.rx||0));sh.setAttribute('ry',Math.abs(m.ry||0));}}
+ sh.setAttribute('stroke',m.lock?'#555':'#e53935');sh.setAttribute('stroke-width','5');sh.setAttribute('stroke-linecap','round');sh.setAttribute('stroke-linejoin','round');g.appendChild(sh);svg.appendChild(g);});};
+ let gesture=null;svg.addEventListener('pointerdown',function(e){if(e.target!==svg||!footTool||footTool==='edit')return;e.preventDefault();e.stopPropagation();saveFootUndo();const p=point(e);let m;if(footTool==='pen'){m={type:'pen',x:0,y:0,path:'M '+p.x+' '+p.y,lock:false};gesture={kind:'pen',m};}else{m={type:footTool,x:p.x,y:p.y,rx:0,ry:0,rot:0,lock:false};gesture={kind:'shape',m,start:p};}footMarks.push(m);footSelected=footMarks.length-1;svg.setPointerCapture(e.pointerId);window.drawFootMarks();},{passive:false});
+ svg.addEventListener('pointermove',function(e){if(!gesture)return;e.preventDefault();const p=point(e),m=gesture.m;if(gesture.kind==='pen')m.path+=' L '+p.x+' '+p.y;else{m.rx=p.x-gesture.start.x;m.ry=p.y-gesture.start.y;if(m.type==='circle'){const r=Math.max(Math.abs(m.rx),Math.abs(m.ry));m.rx=r;m.ry=r;} }window.drawFootMarks();},{passive:false});
+ function finish(){gesture=null;}svg.addEventListener('pointerup',finish);svg.addEventListener('pointercancel',finish);
+ const s=document.getElementById('footToolStatus');if(s)s.textContent='Werkzeug auswählen, danach direkt auf dem Bild ziehen.';
+})();
+</script>
 </body>
 </html>
