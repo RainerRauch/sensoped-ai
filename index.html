@@ -185,7 +185,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden!important}
  const button=document.createElement('button');button.type='button';button.textContent='⬇️ Im Blauabdruck öffnen';button.style.cssText='width:100%;margin-top:8px';button.addEventListener('click',()=>window.openTransferredFootprint(i));card.appendChild(button);preview.appendChild(card);});
  }
  const panel=document.getElementById('blueprintTransferPanel');if(panel){panel.style.display='block';panel.style.visibility='visible';panel.scrollIntoView({behavior:'smooth',block:'center'});}
- if(status)status.textContent='✓ '+items.length+' Foto(s) geladen. Die Vorschau sollte jetzt sichtbar sein.';
+ if(status)status.textContent='✓ '+items.length+' Foto(s) geladen. Öffne jetzt automatisch den eigentlichen Blauabdruck-Arbeitsbereich.';
+ // Automatically open the first transferred image in the actual footprint workspace,
+ // rather than leaving the user only in the handoff preview.
+ if(items.length)window.openTransferredFootprint(0);
 };
 window.openTransferredFootprint=function(i){
  try{
