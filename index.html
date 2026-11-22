@@ -167,32 +167,36 @@ html,body{width:100%;max-width:100%;overflow-x:hidden!important}
 <h3>3.1 Fußabdruck</h3>
 <h3>🦶 Gespeicherte Fußabdrücke – rechts, links und beide</h3><p class="small">Die drei zugeordneten Bilder werden hier direkt oben angezeigt.</p><div id="assignedFootprintGallery" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0"><div style="border:2px solid #176b72;border-radius:14px;padding:10px;background:#f1faf9"><strong>🦶 RECHTER FUSS</strong><input id="directFootRight" type="file" accept="image/*" style="display:none" onchange="sensopedDirectSideUpload(this,'right')"><button type="button" class="cameraBtn" onclick="document.getElementById('directFootRight').click()">📷 / 📁 Rechts hochladen</button><img id="assignedFootRight" alt="Rechter Fußabdruck" style="display:none;width:100%;height:auto;margin-top:8px;border-radius:10px"><p id="assignedFootRightEmpty" class="small">Noch kein Bild gespeichert.</p></div><div style="border:2px solid #176b72;border-radius:14px;padding:10px;background:#f1faf9"><strong>🦶 LINKER FUSS</strong><input id="directFootLeft" type="file" accept="image/*" style="display:none" onchange="sensopedDirectSideUpload(this,'left')"><button type="button" class="cameraBtn" onclick="document.getElementById('directFootLeft').click()">📷 / 📁 Links hochladen</button><img id="assignedFootLeft" alt="Linker Fußabdruck" style="display:none;width:100%;height:auto;margin-top:8px;border-radius:10px"><p id="assignedFootLeftEmpty" class="small">Noch kein Bild gespeichert.</p></div><div style="grid-column:1/-1;border:2px solid #176b72;border-radius:14px;padding:10px;background:#f1faf9"><strong>🦶 BEIDE FÜSSE</strong><input id="directFootBoth" type="file" accept="image/*" style="display:none" onchange="sensopedDirectSideUpload(this,'both')"><button type="button" class="cameraBtn" onclick="document.getElementById('directFootBoth').click()">📷 / 📁 Beide Füße hochladen</button><img id="assignedFootBoth" alt="Beide Fußabdrücke" style="display:none;width:100%;height:auto;margin-top:8px;border-radius:10px"><p id="assignedFootBothEmpty" class="small">Noch kein Bild gespeichert.</p></div></div>
 <div id="blueprintTransferPanel" style="border:3px dashed #287b6b;border-radius:18px;padding:16px;margin:16px 0;background:#effaf7"><h3>📥 Fotos in den Blauabdruckbereich ablegen</h3><p class="small">Übernehmen Sie die gespeicherten Bilder von rechts, links oder beiden Füßen in die Untersuchung.</p><button type="button" class="cameraBtn" onclick="transferFootprintsToBlueprint()">📥 Fotos in Blauabdruck übernehmen</button><div id="blueprintTransferPreview" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px"><div><strong>Rechts</strong><img id="blueprintTransferRight" alt="Blauabdruck rechts" style="display:none;width:100%;height:auto;border-radius:12px;margin-top:8px"></div><div><strong>Links</strong><img id="blueprintTransferLeft" alt="Blauabdruck links" style="display:none;width:100%;height:auto;border-radius:12px;margin-top:8px"></div><div style="grid-column:1/-1"><strong>Beide Füße</strong><img id="blueprintTransferBoth" alt="Blauabdruck beide Füße" style="display:none;width:100%;height:auto;border-radius:12px;margin-top:8px"></div></div><p id="blueprintTransferStatus" style="font-weight:700;color:#176b72"></p></div><script>window.transferFootprintsToBlueprint=function(){
- const sides=['right','left','both'],items=[];
- sides.forEach(s=>{const key=s==='right'?'Right':s==='left'?'Left':'Both';const img=document.getElementById('assignedFoot'+key);const src=(window.sensopedFootImages&&window.sensopedFootImages[s])||(img&&img.style.display!=='none'?img.src:'');if(src)items.push({side:s,label:s==='right'?'RECHTER FUSS':s==='left'?'LINKER FUSS':'BEIDE FÜSSE',src});});
- const status=document.getElementById('blueprintTransferStatus');
- if(!items.length){if(status)status.textContent='Keine Bilder gefunden. Bitte oben erst einen Fußabdruck hochladen.';return;}
- selectFootprintTypeByType('Blauabdruck');
- const panel=document.getElementById('blueprintTransferPanel');if(panel){panel.style.display='block';panel.style.visibility='visible';}
- const preview=document.getElementById('blueprintTransferPreview');if(preview){
-   preview.innerHTML='<p style="grid-column:1/-1;font-weight:800;color:#fff;text-align:center">Bilder übertragen – Bild antippen, um es unten im Blauabdruck zu öffnen</p>';
-   items.forEach((it,i)=>{const card=document.createElement('div');card.style.cssText='background:white;border-radius:16px;padding:10px;color:#17445e;text-align:center';
-    card.innerHTML='<strong>'+it.label+'</strong><img style="display:block;width:100%;max-height:320px;object-fit:contain;border-radius:12px;margin-top:8px" src="'+it.src+'"><button type="button" style="margin-top:8px" onclick="openTransferredFootprint('+i+')">⬇️ Im Blauabdruck öffnen</button>';preview.appendChild(card);});
- }
+ const preview=document.getElementById('blueprintTransferPreview'),status=document.getElementById('blueprintTransferStatus');
+ const items=[];
+ [['right','Right','RECHTER FUSS'],['left','Left','LINKER FUSS'],['both','Both','BEIDE FÜSSE']].forEach(([side,key,label])=>{
+  const img=document.getElementById('assignedFoot'+key);
+  let src=img&&img.src&&img.src!=='about:blank'&&img.style.display!=='none'?img.src:'';
+  if(!src&&window.sensopedFootImages)src=window.sensopedFootImages[side]||'';
+  if(src)items.push({side,label,src});
+ });
+ if(!items.length){if(status)status.textContent='❗ Kein Foto sichtbar. Bitte laden Sie zuerst ein Bild oben hoch.';return;}
  window._sensopedTransferred=items;
- if(status)status.textContent='✓ '+items.length+' Bild(er) bereit. Tippe bei dem gewünschten Fuß auf „Im Blauabdruck öffnen“.';
- panel&&panel.scrollIntoView({behavior:'smooth',block:'center'});
+ if(preview){preview.replaceChildren();preview.style.display='grid';preview.style.visibility='visible';
+ items.forEach((it,i)=>{const card=document.createElement('div');card.style.cssText='grid-column:auto;background:#fff;border-radius:16px;padding:10px;color:#17445e;text-align:center';
+ const title=document.createElement('strong');title.textContent=it.label;card.appendChild(title);
+ const image=document.createElement('img');image.src=it.src;image.alt=it.label;image.style.cssText='display:block;width:100%;max-height:340px;object-fit:contain;margin:8px auto;border-radius:12px';card.appendChild(image);
+ image.onerror=()=>{if(status)status.textContent='Ein gespeichertes Foto kann nicht geladen werden. Bitte das Bild erneut hochladen.';};
+ const button=document.createElement('button');button.type='button';button.textContent='⬇️ Im Blauabdruck öffnen';button.style.cssText='width:100%;margin-top:8px';button.addEventListener('click',()=>window.openTransferredFootprint(i));card.appendChild(button);preview.appendChild(card);});
+ }
+ const panel=document.getElementById('blueprintTransferPanel');if(panel){panel.style.display='block';panel.style.visibility='visible';panel.scrollIntoView({behavior:'smooth',block:'center'});}
+ if(status)status.textContent='✓ '+items.length+' Foto(s) geladen. Die Vorschau sollte jetzt sichtbar sein.';
 };
 window.openTransferredFootprint=function(i){
  const it=(window._sensopedTransferred||[])[i];if(!it)return;
+ const img=document.getElementById('footprintPreview'),wrap=document.getElementById('footprintAnnotator'),tools=document.getElementById('footprintTools'),status=document.getElementById('footprintAssignStatus');
+ if(!img||!wrap){if(status)status.textContent='Blauabdruck-Bildfeld fehlt.';return;}
  const sel=document.getElementById('footprintSide');if(sel)sel.value=it.side;
  document.querySelectorAll('#footprintSideCards button').forEach(b=>b.classList.toggle('selected',b.dataset.side===it.side));
- const img=document.getElementById('footprintPreview'),wrap=document.getElementById('footprintAnnotator'),tools=document.getElementById('footprintTools'),status=document.getElementById('footprintAssignStatus');
- if(!img||!wrap){if(status)status.textContent='Der eigentliche Blauabdruck-Bildbereich wurde nicht gefunden.';return;}
- wrap.style.display='block';img.style.display='block';img.onload=function(){const svg=document.getElementById('footprintMarkup');if(svg&&img.naturalWidth&&img.naturalHeight)svg.setAttribute('viewBox','0 0 1000 '+Math.round(1000*img.naturalHeight/img.naturalWidth));if(tools)tools.style.display='block';if(typeof drawFootMarks==='function')drawFootMarks();if(typeof assignFootprintImage==='function')assignFootprintImage();};
- img.onerror=function(){if(status)status.textContent='Bild konnte im Blauabdruck nicht geladen werden.';};
- img.src=it.src;
- if(status)status.textContent='✓ '+it.label+' wurde in den eigentlichen Blauabdruck geladen. Jetzt markieren.';
- const cards=[...document.querySelectorAll('.formcard')];const target=document.getElementById('footprintAnnotator');target&&target.scrollIntoView({behavior:'smooth',block:'center'});
+ wrap.style.display='block';img.style.display='block';img.onload=function(){const svg=document.getElementById('footprintMarkup');if(svg&&img.naturalWidth&&img.naturalHeight)svg.setAttribute('viewBox','0 0 1000 '+Math.round(1000*img.naturalHeight/img.naturalWidth));if(tools)tools.style.display='block';if(typeof drawFootMarks==='function')drawFootMarks();};
+ img.onerror=function(){if(status)status.textContent='❌ Das Foto konnte im Blauabdruck nicht geöffnet werden.';};
+ img.src=it.src;selectFootprintTypeByType('Blauabdruck');wrap.scrollIntoView({behavior:'smooth',block:'center'});
+ if(status)status.textContent='✓ '+it.label+' geöffnet. Sie können jetzt markieren.';
 };</script><div class="footprintVisual" aria-label="Bildkacheln der vier Fußabdruckmethoden">
 <button type="button" class="fpVisualTile" data-type="Blauabdruck" onclick="selectFootprintTypeByType(this.dataset.type)"><img class="footprintMethodImage" src="assets/fussabdruck-blau.jpg" alt="Blauer Fußabdruck auf Papier"/><strong>Blauabdruck</strong><small>Statischer Abdruck</small></button>
 <button type="button" class="fpVisualTile" data-type="3D-Scan" onclick="selectFootprintTypeByType(this.dataset.type)"><img class="footprintMethodImage" src="assets/fuss-scan-3d-3.jpg" alt="Optische dreidimensionale Fußerfassung"/><strong>3D-Scan</strong><small>Digitale 3D-Erfassung</small></button>
