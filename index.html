@@ -809,5 +809,31 @@ wrap.addEventListener('dblclick',function(e){e.preventDefault();zoom();});wrap.a
 const status=document.getElementById('footToolStatus');if(status)status.textContent='Werkzeug antippen, dann auf dem Abdruck ziehen. Zweimal tippen: vergrößern/verkleinern.';
 })();
 </script>
+<script>
+/* FINAL SENSOPED blueprint drawing repair: consolidate competing controllers */
+(function(){
+ const old=document.getElementById('footprintMarkup'); if(!old)return;
+ const svg=old.cloneNode(false); old.replaceWith(svg); svg.style.pointerEvents='all';svg.style.touchAction='none';svg.style.userSelect='none';
+ let active=null,start=null;
+ window.setFootTool=function(t){footTool=t;window.footTool=t;const s=document.getElementById('footToolStatus');if(s)s.textContent='Werkzeug aktiv: '+t+' — direkt auf dem Bild ziehen.';svg.style.cursor=t==='edit'?'move':'crosshair';};
+ window.setFootColor=function(c){footColor=c;window.footColor=c;document.querySelectorAll('.footColorChoice').forEach(b=>b.style.outline=b.dataset.color===c?'3px solid #173d50':'none');const s=document.getElementById('footToolStatus');if(s)s.textContent='Stiftfarbe gewählt: '+c;};
+ function xy(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const m=svg.getScreenCTM();if(!m)return{x:0,y:0};const q=p.matrixTransform(m.inverse());return{x:q.x,y:q.y};}
+ window.drawFootMarks=function(){svg.replaceChildren();(footMarks||[]).forEach((m,i)=>{const g=document.createElementNS(svg.namespaceURI,'g');g.setAttribute('transform','translate('+(m.x||0)+' '+(m.y||0)+') rotate('+(m.rot||0)+')');let sh;
+ if(m.type==='pen'){sh=document.createElementNS(svg.namespaceURI,'path');sh.setAttribute('d',m.path||'');sh.setAttribute('fill','none');}
+ else if(['lotline','axis','arrow'].includes(m.type)){sh=document.createElementNS(svg.namespaceURI,'line');sh.setAttribute('x1','0');sh.setAttribute('y1','0');sh.setAttribute('x2',m.rx||0);sh.setAttribute('y2',m.ry||0);if(m.type==='axis')sh.setAttribute('stroke-dasharray','14 10');if(m.type==='arrow')sh.setAttribute('marker-end','url(#footArrow)');}
+ else{sh=document.createElementNS(svg.namespaceURI,m.type==='circle'?'circle':'ellipse');sh.setAttribute('fill','none');if(m.type==='circle')sh.setAttribute('r',Math.max(Math.abs(m.rx||0),Math.abs(m.ry||0)));else{sh.setAttribute('rx',Math.abs(m.rx||0));sh.setAttribute('ry',Math.abs(m.ry||0));}}
+ sh.setAttribute('stroke',m.lock?'#555':(m.color||footColor||'#e53935'));sh.setAttribute('stroke-width','5');sh.setAttribute('stroke-linecap','round');sh.setAttribute('stroke-linejoin','round');g.appendChild(sh);svg.appendChild(g);});};
+ function down(e){if(e.pointerType==='mouse'&&e.button!==0)return;if(!footTool||footTool==='edit')return;e.preventDefault();e.stopPropagation();saveFootUndo();start=xy(e);if(footTool==='pen'){const m={type:'pen',x:0,y:0,path:'M '+start.x+' '+start.y,lock:false,color:footColor};footMarks.push(m);active='pen';}else{const m={type:footTool,x:start.x,y:start.y,rx:0,ry:0,rot:0,lock:false,color:footColor};footMarks.push(m);active='shape';}footSelected=footMarks.length-1;try{svg.setPointerCapture(e.pointerId);}catch(_){}drawFootMarks();}
+ function move(e){if(!active)return;e.preventDefault();const p=xy(e),m=footMarks[footSelected];if(!m)return;if(active==='pen')m.path+=' L '+p.x+' '+p.y;else{m.rx=p.x-start.x;m.ry=p.y-start.y;if(m.type==='lotline'){m.rx=0;}if(m.type==='circle'){const r=Math.max(Math.abs(m.rx),Math.abs(m.ry));m.rx=r;m.ry=r;}}drawFootMarks();}
+ function up(e){if(!active)return;active=null;start=null;try{svg.releasePointerCapture(e.pointerId);}catch(_){} }
+ svg.addEventListener('pointerdown',down,{passive:false});svg.addEventListener('pointermove',move,{passive:false});svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);svg.addEventListener('lostpointercapture',up);
+ const tools=document.getElementById('footprintTools');const wrap=document.getElementById('footprintAnnotator');const img=document.getElementById('footprintPreview');
+ function expose(){if(tools){tools.style.display='block';tools.hidden=false;}if(wrap){wrap.style.display='block';wrap.hidden=false;}if(img&&img.naturalWidth&&img.naturalHeight)svg.setAttribute('viewBox','0 0 1000 '+Math.round(1000*img.naturalHeight/img.naturalWidth));}
+ if(img){img.addEventListener('load',expose);if(img.src&&img.complete)expose();}
+ if(tools){tools.style.display='block';tools.hidden=false;}
+ const status=document.getElementById('footToolStatus');if(status)status.textContent='Farben auswählen, Werkzeug antippen und auf dem Bild ziehen.';
+})();
+</script>
+
 </body>
 </html>
