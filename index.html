@@ -622,5 +622,26 @@ window.chooseFootprintSide=async function(side){
  if(status)status.textContent='✓ '+labels[side]+' ausgewählt – dieses gespeicherte Bild wird angezeigt.';
  if(wrap)wrap.scrollIntoView({behavior:'smooth',block:'center'});
 };
-</script></body>
+</script>
+<script>
+/* Direct transfer into the active guided examination card */
+window.openTransferredFootprint=function(i){
+ try{
+  const it=(window._sensopedTransferred||[])[i];if(!it){alert('Foto nicht gefunden. Bitte Fotos erneut übernehmen.');return;}
+  const img=document.getElementById('footprintPreview'),wrap=document.getElementById('footprintAnnotator'),tools=document.getElementById('footprintTools'),status=document.getElementById('footprintAssignStatus');
+  if(!img||!wrap){alert('Der Blauabdruck-Bereich fehlt.');return;}
+  const container=document.querySelector('.container');const cards=container?[...container.querySelectorAll('.formcard')]:[];const target=wrap.closest('.formcard');const step=cards.indexOf(target);
+  if(step>=0){const nav=document.querySelector('#workflowButtons button[data-step="'+step+'"]');if(nav)nav.click();else{cards.forEach((card,n)=>card.style.display=n===step?'block':'none');}}
+  else{wrap.style.display='block';wrap.hidden=false;}
+  wrap.style.display='block';wrap.hidden=false;img.style.display='block';img.hidden=false;if(tools){tools.style.display='block';tools.hidden=false;}
+  const sel=document.getElementById('footprintSide');if(sel)sel.value=it.side;document.querySelectorAll('#footprintSideCards button').forEach(b=>b.classList.toggle('selected',b.dataset.side===it.side));
+  img.onload=function(){const svg=document.getElementById('footprintMarkup');if(svg&&img.naturalWidth&&img.naturalHeight)svg.setAttribute('viewBox','0 0 1000 '+Math.round(1000*img.naturalHeight/img.naturalWidth));if(typeof drawFootMarks==='function')drawFootMarks();};
+  img.onerror=function(){if(status)status.textContent='Fehler: Bild konnte nicht geladen werden.';};img.src=it.src;
+  if(typeof window.selectFootprintTypeByType==='function')window.selectFootprintTypeByType('Blauabdruck');else{const s=document.getElementById('footprintType');if(s)s.value='Blauabdruck';}
+  if(status)status.textContent='✓ '+it.label+' direkt im Untersuchungsbereich Blauabdruck geöffnet.';
+  if(target)target.scrollIntoView({behavior:'smooth',block:'start'});else wrap.scrollIntoView({behavior:'smooth',block:'center'});
+ }catch(err){alert('Fehler beim Öffnen: '+err.message);}
+};
+</script>
+</body>
 </html>
