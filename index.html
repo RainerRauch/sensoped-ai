@@ -485,5 +485,20 @@ window.createReports=function(){
  p.textContent=patient;d.textContent=doctor;p.style.display="block";d.style.display="block";
  const pc=document.getElementById("patientReportCard");if(pc)pc.style.display="block";p.scrollIntoView({behavior:"smooth",block:"start"});
 };
+</script><script>
+(function(){
+ const boot=function(){
+  const input=document.getElementById("footprintUpload");
+  const status=document.getElementById("footprintAssignStatus");
+  if(!input)return;
+  input.addEventListener("change",function(){
+   const f=this.files&&this.files[0];
+   if(status)status.textContent=f?"JavaScript-Test: Datei erkannt ("+f.name+"). Lade Vorschau…":"Keine Datei ausgewählt.";
+   try{if(typeof previewFootprint==="function")previewFootprint(this);else if(status)status.textContent="Datei erkannt, aber Vorschaufunktion ist nicht verfügbar. Bitte melden.";
+   }catch(e){if(status)status.textContent="Upload-Fehler: "+e.message;}
+  });
+ };
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
+})();
 </script></body>
 </html>
