@@ -512,6 +512,7 @@ window.sensopedUploadDebug=function(input){
     var markup=document.getElementById("footprintMarkup");
     if(markup&&mainImg.naturalWidth&&mainImg.naturalHeight)markup.setAttribute("viewBox","0 0 1000 "+Math.round(1000*mainImg.naturalHeight/mainImg.naturalWidth));
     if(tools)tools.style.display="block";if(typeof drawFootMarks==="function")drawFootMarks();
+    if(typeof assignFootprintImage==="function")assignFootprintImage();
    };
    mainImg.onerror=function(){if(status)status.textContent="Hauptvorschau fehlgeschlagen; das Testbild oben bleibt sichtbar.";};
    mainImg.src=url;
