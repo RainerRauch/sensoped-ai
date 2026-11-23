@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/sensoped-ai/',
+  base: process.env.GITHUB_PAGES === 'true' ? '/sensoped-ai/' : '/',
 });
