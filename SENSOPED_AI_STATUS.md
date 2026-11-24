@@ -73,3 +73,7 @@ Stand: 24. November 2026
 ## Pages-Workflow neu strukturiert (24.11.2026)
 - Workflow Commit `84c7fc3f0ae7d177804d6ff3f6c57cecbe4f6f0e`: Build und Deploy nun getrennte Jobs mit explizitem `needs: build`, Upload Pages Artifact v4, Prüfung auf `dist/index.html` und Deploy-Job mit `pages: write`/`id-token: write`.
 - Ziel: Deployment-Schritt sauber abgrenzen und Fehler diagnostizierbarer machen. Pages-Einstellung `Settings > Pages > Source = GitHub Actions` muss ggf. vom Repo-Owner geprüft werden; nicht per Repository-API verfügbar über die Verbindung.
+
+
+## Diagnose Pages-Workflow (24.11.2026)
+- Pages-Job scheiterte in `actions/setup-node@v4`, vor Installation und Build; die Schritte danach wurden übersprungen. Die Workflow-Konfiguration verwendete `cache: npm`, obwohl kein npm lockfile im Branch vorhanden ist. Cache-Konfiguration entfernt (Commit `56fae26a165f38027d573fb93af0af273bdb248b`). Erneuter Lauf wird durch Commit ausgelöst; noch nicht bestätigt.
