@@ -1,0 +1,43 @@
+name: Verify SENSOPED AI backup integrity
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [sensoped-ai-neuentwicklung]
+    paths:
+      - ".github/workflows/verify-backup.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout development branch
+        uses: actions/checkout@v4
+        with:
+          ref: sensoped-ai-neuentwicklung
+          fetch-depth: 0
+      - name: Confirm restore branches exist
+        run: |
+          git branch -r | grep -E 'origin/backup/sensoped-ai-2026-11-24|origin/backup-2026-11-24-sensoped-ai'
+      - name: Check key app files
+        run: |
+          test -f src/App.jsx
+          test -f src/main.jsx
+          test -f src/style.css
+          test -f package.json
+          test -f worker.js
+      - name: Build current app
+        run: |
+          npm install
+          npm run build
+      - name: Confirm dated backup tags (if any)
+        run: |
+          TAGS=$(git tag -l 'backup-*')
+          if [ -z "$TAGS" ]; then
+            echo "No dated backup tags yet; daily workflow still needs its first successful run."
+          else
+            echo "$TAGS"
+          fi
