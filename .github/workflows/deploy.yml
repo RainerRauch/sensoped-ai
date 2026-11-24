@@ -15,7 +15,7 @@ jobs:
   deploy:
     runs-on: ubuntu-24.04
     environment:
-      name: sensoped-ai-deployment
+      name: sensoped-ai-preview
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
