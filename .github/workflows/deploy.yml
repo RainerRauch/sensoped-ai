@@ -1,7 +1,5 @@
 name: Deploy SENSOPED AI prototype
 on:
-  push:
-    branches: [sensoped-ai-neuentwicklung]
   workflow_dispatch:
 permissions:
   contents: read
