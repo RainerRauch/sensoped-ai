@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/publish-sensoped-development.yml
-      # Deployment follows the development branch content.
+      # Single deployment path; development content is checked out below.
   workflow_dispatch:
 permissions:
   contents: read
