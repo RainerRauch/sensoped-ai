@@ -91,3 +91,11 @@ Stand: 24. November 2026
 - Neue Workflow-Datei `.github/workflows/verify-backup.yml` hinzugefügt (Commit `4efca82d`).
 - Prüft Sicherungszweige, wichtige App-Dateien und führt einen erneuten npm-Build aus; listet vorhandene Backup-Tags oder weist darauf hin, dass noch keine vorhanden sind.
 - Workflow-Lauf ist durch Push ausgelöst; Ergebnis steht noch aus.
+
+
+## Aktueller Testlauf (24.11.2026, Commit `7890a0bb`)
+- Verify-dev Run `45490797266`: erfolgreich; Build und Upload des Preview-Artefakts bestätigt.
+- Pages Run `45490797284`: Build-Job erfolgreich (Vite-Build, Output-Prüfung, configure-pages, Upload Pages-Artefakt). Deploy-Job fehlgeschlagen.
+- Deploy-Job Logs über GitHub-API-Verbindung nicht abrufbar (404 BlobNotFound). Ursache damit nicht eindeutig belegt.
+- Pages-Repository-Einstellung Settings > Pages > Source = GitHub Actions bleibt zu überprüfen. Zugriff auf diese Einstellung hier nicht möglich.
+- Verify-backup Run `45490784517`: erfolgreich.
