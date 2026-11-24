@@ -2,3 +2,5 @@
 .recordrow{display:flex;align-items:center;gap:12px;justify-content:space-between;border-top:1px solid #e8eeee;padding:16px 4px;flex-wrap:wrap}.recordrow div{flex:1;min-width:150px}.recordrow small{display:block;color:#91a2a4;font-size:12px;margin-top:5px}.privacylist li{margin:10px 0;color:#63797d;font-size:13px;line-height:1.5}@media(max-width:650px){.recordrow{align-items:flex-start}.recordrow button{font-size:12px;padding:9px}}
 
 select{width:100%;padding:12px;border:1px solid #dce7e7;border-radius:10px;font:14px DM Sans;margin-top:7px;background:white;color:#20343a}.formgrid select+textarea{margin-top:10px}
+
+.sidepanel{margin-top:14px;padding:16px;background:#f8fbfb;border:1px solid #dbe7e7;border-radius:14px}.sidepanel .wide{margin:12px 0}.sidepanel h3{color:#174d56;margin-top:4px}.bilateral textarea{min-height:64px}
