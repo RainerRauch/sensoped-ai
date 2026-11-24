@@ -42,3 +42,9 @@ Stand: 24. November 2026
 4. App-Funktionen einzeln testen.
 5. Worker-Verbindung und API-Funktionen testen.
 6. Sicherheits-/Datenschutzprüfung vor klinischer Nutzung.
+
+
+## Weitere Sicherheitsverbesserung (24.11.2026)
+- `worker.js` wurde angepasst: unbekannte POST-Routen werden jetzt ausdrücklich mit 404 abgewiesen statt versehentlich auf die Bildanalyse zu fallen.
+- Änderung Commit `7121343936bcb6026130c20c69b841e3290fbb2c`; Build-Workflow nach dieser Änderung noch ausstehend.
+- Weitere offene Sicherheitsprüfung: CORS-Origin, Eingabegrößen/Validierung, Datenschutz und Worker/API-Live-Tests.
