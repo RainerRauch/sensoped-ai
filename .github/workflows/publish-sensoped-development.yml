@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/publish-sensoped-development.yml
-      # Central deployment publishes the latest development branch code.
+      # Central deployment publishes the latest development branch code; source is dev branch.
   workflow_dispatch:
 permissions:
   contents: read
