@@ -1,9 +1,10 @@
 export default {
  async fetch(request, env) {
   const corsHeaders=cors(request, env);
+  const url=new URL(request.url);
+  if (request.method === "GET" && url.pathname.endsWith("/health")) return json({status:"ok",service:"SENSOPED AI Worker",message:"Worker erreichbar; KI-Schlüsselstatus wird nicht offengelegt."},200,corsHeaders);
   if (request.method === "OPTIONS") return new Response(null,{status:204,headers:corsHeaders});
   if (request.method !== "POST") return json({error:"POST only"},405,corsHeaders);
-  const url=new URL(request.url);
   const route=url.pathname.endsWith("/transcribe")?"/transcribe":url.pathname.endsWith("/interpret")?"/interpret":"/image";
   if (!env.OPENAI_API_KEY) return json({error:"API key missing"},500,corsHeaders);
   try {
