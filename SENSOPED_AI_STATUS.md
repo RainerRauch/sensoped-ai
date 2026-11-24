@@ -21,13 +21,19 @@ Stand: 24. November 2026
 - Worker (Transkription, Interpretation, Bildanalyse) nicht live verifiziert.
 - Vercel-Verbindung derzeit nicht bestätigt.
 - GitHub Pages Deployment-Konfiguration/Branch-Zuordnung genauer prüfen.
-- ZIP- und HTML-Backups inventarisieren, bevor etwas gelöscht wird.
+- Erste Inventur im Hauptzweig (main): mehrere datierte HTML-Sicherungen und mindestens vier ZIP-Dateien vorhanden; vollständige Inventur noch offen. Nichts löschen.
 
 ## Technische Hinweise
 - Demo-Daten werden im Browser-/Sitzungsspeicher gehalten. Keine echten Patientendaten verwenden.
 - AI-Ausgaben sind Entwürfe und müssen fachlich überprüft werden.
 - Datenschutz, Zugriffskontrollen, Auditierung, Einwilligung und Sicherheitsmaßnahmen sind nicht produktionsreif.
 - README enthält veraltete Verweise auf den entfernten deploy-worker Workflow.
+
+## Prüfungsfortschritt (24.11.2026)
+- Workflow-Dateien erneut geprüft: Daily Backup erzeugt täglich einen Git-Tag auf dem Arbeitsbranch und hat auch manuellen Start (workflow_dispatch).
+- Der Backup-Workflow ist technisch plausibel, aber ein erfolgreicher Lauf und ein Restore-Test sind noch nicht bestätigt.
+- GitHub Pages Workflow in diesem Branch ist auf main beschränkt; der aktuelle React/Vite-Arbeitsbranch wird damit nicht automatisch veröffentlicht. Die tatsächliche Pages-Zuordnung muss geprüft werden.
+- Im main-Zweig sichtbar: mehrere HTML-Sicherungen und ZIP-Dateien; keine Löschung.
 
 ## Nächste Schritte
 1. Backup-Lauf und Restore-Test.
