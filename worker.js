@@ -1,6 +1,8 @@
 export default {
  async fetch(request, env) {
   const corsHeaders=cors(request, env);
+  const origin=request.headers.get("Origin");
+  if(origin && (!env.ALLOWED_ORIGIN || origin !== env.ALLOWED_ORIGIN)) return json({error:"Origin not allowed; configure ALLOWED_ORIGIN to the exact app origin."},403,corsHeaders);
   const url=new URL(request.url);
   if (request.method === "GET" && url.pathname.endsWith("/health")) return json({status:"ok",service:"SENSOPED AI Worker",message:"Worker erreichbar; KI-Schlüsselstatus wird nicht offengelegt."},200,corsHeaders);
   if (request.method === "OPTIONS") return new Response(null,{status:204,headers:corsHeaders});
@@ -37,5 +39,5 @@ export default {
   } catch(e){return json({error:e.message||"Unexpected error"},500,corsHeaders)}
  }
 };
-function cors(request,env){return {"Access-Control-Allow-Origin":env.ALLOWED_ORIGIN||"*","Access-Control-Allow-Headers":"Content-Type","Access-Control-Allow-Methods":"POST,OPTIONS","Vary":"Origin"}}
+function cors(request,env){const headers={"Access-Control-Allow-Headers":"Content-Type","Access-Control-Allow-Methods":"POST,OPTIONS","Vary":"Origin"};if(env.ALLOWED_ORIGIN)headers["Access-Control-Allow-Origin"]=env.ALLOWED_ORIGIN;return headers}
 function json(value,status=200,headers){return new Response(JSON.stringify(value),{status,headers:{...(headers||cors()),"Content-Type":"application/json"}})}
