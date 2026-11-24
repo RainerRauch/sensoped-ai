@@ -1,29 +1,11 @@
-name: Deploy SENSOPED AI website to GitHub Pages
+name: Legacy SENSOPED site (deployment disabled)
 on:
-  push:
-    branches: [main]
-    paths:
-      - index.html
-      - .github/workflows/deploy-pages.yml
   workflow_dispatch:
 permissions:
   contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: pages
-  cancel-in-progress: true
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  notice:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Prevent legacy site from overwriting the development deployment
+        run: echo "Legacy deployment is disabled. GitHub Pages is published by publish-sensoped-development.yml."
