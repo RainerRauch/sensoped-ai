@@ -77,3 +77,11 @@ Stand: 24. November 2026
 
 ## Diagnose Pages-Workflow (24.11.2026)
 - Pages-Job scheiterte in `actions/setup-node@v4`, vor Installation und Build; die Schritte danach wurden übersprungen. Die Workflow-Konfiguration verwendete `cache: npm`, obwohl kein npm lockfile im Branch vorhanden ist. Cache-Konfiguration entfernt (Commit `56fae26a165f38027d573fb93af0af273bdb248b`). Erneuter Lauf wird durch Commit ausgelöst; noch nicht bestätigt.
+
+
+## Erneuter Pages-Test nach Cache-Korrektur (24.11.2026)
+- Cache-Konfiguration aus `setup-node` entfernt (Commit `56fae26a...`).
+- Pages-Build Run `45490476357`: Build-Job erfolgreich, inklusive Installieren, Vite-Build, `dist/index.html`-Prüfung und Upload des Pages-Artefakts.
+- Deploy-Job danach weiterhin fehlgeschlagen. Jobdetails abrufbar, vollständige Logs jedoch nicht. Pages-Source-Einstellung `GitHub Actions` bleibt vom Repository-Owner in Settings > Pages zu kontrollieren.
+- Verify-Workflow auf Commit `6fa10cb3` hat Build und Upload des Preview-Artefakts erfolgreich abgeschlossen.
+- Inventur: zwei Backup-Branches vorhanden (`backup/sensoped-ai-2026-11-24` und `backup-2026-11-24-sensoped-ai`); auf Backup-Branch fünf HTML-Sicherungen und sechs ZIP-Dateien, darunter eine ZIP mit ca. 20,8 MB. Keine Dateien gelöscht oder verändert.
