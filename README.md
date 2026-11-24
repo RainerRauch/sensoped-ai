@@ -21,7 +21,7 @@ In Cloudflare Worker settings, configure the secret:
 Optional Worker variable:
 - `ALLOWED_ORIGIN`: the exact deployed website origin (e.g. your GitHub Pages origin). If unset, the Worker currently allows any origin; setting this is recommended.
 
-After a successful deployment, copy the Worker URL into the AI endpoint field in the app, with `/interpret` appended for interpretation requests.
+After a successful deployment, enter the Worker URL in the AI endpoint field in the app, ending in `/interpret`. Use the new **Worker-Verbindung testen** button (the app checks the `/health` route) before requesting an interpretation. This health check only verifies reachability, not API-key validity.
 
 ## Deployment and validation
 - Worker deployment has not yet been live-tested.
