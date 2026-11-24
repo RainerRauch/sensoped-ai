@@ -45,3 +45,5 @@ jobs:
         uses: actions/deploy-pages@v4
 
 # deployment trigger update
+
+# Trigger build after development JSX simplification
