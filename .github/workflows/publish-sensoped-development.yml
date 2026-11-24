@@ -10,7 +10,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: sensoped-ai-preview-pages
+  group: pages
   cancel-in-progress: false
 jobs:
   build-and-deploy:
