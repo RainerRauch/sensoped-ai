@@ -2,7 +2,7 @@ name: Deploy SENSOPED AI Worker
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [sensoped-ai-neuentwicklung]
     paths:
       - worker.js
       - wrangler.toml
