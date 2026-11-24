@@ -18,8 +18,8 @@ Required repository secrets:
 In Cloudflare Worker settings, configure the secret:
 - `OPENAI_API_KEY`
 
-Optional Worker variable:
-- `ALLOWED_ORIGIN`: the exact deployed website origin (e.g. your GitHub Pages origin). If unset, the Worker currently allows any origin; setting this is recommended.
+Required Worker variable:
+- `ALLOWED_ORIGIN`: the exact deployed website origin (e.g. your GitHub Pages origin), without a path. Browser requests with a different Origin are rejected; browser requests are rejected if this variable is unset.
 
 After a successful deployment, enter the Worker URL in the AI endpoint field in the app, ending in `/interpret`. Use the new **Worker-Verbindung testen** button (the app checks the `/health` route) before requesting an interpretation. This health check only verifies reachability, not API-key validity.
 
@@ -43,4 +43,4 @@ After a successful deployment, enter the Worker URL in the AI endpoint field in 
 5. Worker veröffentlichen und die URL mit `/health` im Browser prüfen. Erwartet wird eine JSON-Antwort mit `status: ok`.
 6. Worker-URL in der App eintragen und Verbindung testen. Anschließend Bildanalyse und Befundinterpretation nur mit Testdaten prüfen.
 
-**Sicherheit:** Der aktuelle Worker-Code verwendet bei fehlender `ALLOWED_ORIGIN` noch einen Wildcard-CORS-Wert. Vor einem realen Patienteneinsatz muss dies verbindlich eingeschränkt und die gesamte App sicherheits-/datenschutzrechtlich geprüft werden. Der Prototyp ist nicht für echte Patientendaten freigegeben.
+**Sicherheit:** Browserzugriffe sind nun auf die exakt konfigurierte `ALLOWED_ORIGIN` begrenzt. Fehlt die Variable, werden browser-originierte Requests abgewiesen. Das ist keine Authentifizierung: Vor einem realen Patienteneinsatz muss die gesamte App sicherheits-/datenschutzrechtlich geprüft werden. Der Prototyp ist nicht für echte Patientendaten freigegeben.
