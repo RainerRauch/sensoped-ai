@@ -32,3 +32,15 @@ After a successful deployment, enter the Worker URL in the AI endpoint field in 
 - Not a diagnostic device.
 - AI findings, recommendations and generated reports require professional review.
 - Prototype does not yet provide compliant medical-data storage, access control, audit logging, consent management, or comprehensive security protections.
+
+
+## Konkrete Einrichtung (Worker)
+
+1. Cloudflare Dashboard öffnen und einen Worker mit dem Namen `sensoped-ai-analysis` anlegen oder den vorhandenen Worker auswählen.
+2. `worker.js` aus diesem Branch als Worker-Code verwenden.
+3. Unter Settings / Variables and Secrets das Secret `OPENAI_API_KEY` hinterlegen (niemals in GitHub oder in die App eintragen).
+4. Variable `ALLOWED_ORIGIN` auf die exakte Website-Origin setzen, von der die App läuft (ohne Pfad, z. B. `https://example.pages.dev`).
+5. Worker veröffentlichen und die URL mit `/health` im Browser prüfen. Erwartet wird eine JSON-Antwort mit `status: ok`.
+6. Worker-URL in der App eintragen und Verbindung testen. Anschließend Bildanalyse und Befundinterpretation nur mit Testdaten prüfen.
+
+**Sicherheit:** Der aktuelle Worker-Code verwendet bei fehlender `ALLOWED_ORIGIN` noch einen Wildcard-CORS-Wert. Vor einem realen Patienteneinsatz muss dies verbindlich eingeschränkt und die gesamte App sicherheits-/datenschutzrechtlich geprüft werden. Der Prototyp ist nicht für echte Patientendaten freigegeben.
