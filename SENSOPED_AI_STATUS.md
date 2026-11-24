@@ -48,3 +48,10 @@ Stand: 24. November 2026
 - `worker.js` wurde angepasst: unbekannte POST-Routen werden jetzt ausdrücklich mit 404 abgewiesen statt versehentlich auf die Bildanalyse zu fallen.
 - Änderung Commit `7121343936bcb6026130c20c69b841e3290fbb2c`; Build-Workflow nach dieser Änderung noch ausstehend.
 - Weitere offene Sicherheitsprüfung: CORS-Origin, Eingabegrößen/Validierung, Datenschutz und Worker/API-Live-Tests.
+
+
+## GitHub Pages Veröffentlichungsweg angepasst (24.11.2026)
+- Workflow `.github/workflows/deploy-pages.yml` auf den Entwicklungsbranch `sensoped-ai-neuentwicklung` umgestellt.
+- Workflow baut nun Vite mit `GITHUB_PAGES=true` und veröffentlicht den Inhalt von `dist` statt versehentlich das Repository-Verzeichnis.
+- Commit: `3fb59e7ca44422e9f47c39bb51d34f912b6702b9`.
+- Die Änderung ist gespeichert; tatsächliche Pages-Bereitstellung und Pages-Konfiguration müssen noch durch einen erfolgreichen Lauf bestätigt werden.
