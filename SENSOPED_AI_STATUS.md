@@ -1,0 +1,38 @@
+# SENSOPED AI – Kontrollübersicht
+Stand: 24. November 2026
+
+## Aktueller Arbeitsstand
+- Repository: https://github.com/RainerRauch/sensoped-ai
+- Arbeitsbranch: sensoped-ai-neuentwicklung
+- App: https://rainerrauch.github.io/sensoped-ai/
+- Wiederherstellungsbranch: backup/sensoped-ai-2026-11-24
+- Backup-Workflow: .github/workflows/daily-backup.yml
+
+## Bestätigt
+- GitHub Actions Build für Commit 9002f1b7cbb2f70fb269d28ada4aa80a978f9c4b erfolgreich (24.11.2026).
+- Installieren, Build und Preview-Artefakt hochladen erfolgreich.
+- Backup-Workflow im Branch aufgenommen.
+- Drei alte Deployment-Workflows entfernt: deploy-preview-pages.yml, deploy-worker.yml und deploy.yml.
+- Wiederherstellungsbranch erstellt.
+
+## Noch zu prüfen
+- Der tägliche Tag-Backup-Workflow hat noch keinen bestätigten Lauf; Tag-Erstellung und Wiederherstellung müssen getestet werden.
+- App vom Nutzer geöffnet, aber nicht vollständig funktional getestet.
+- Worker (Transkription, Interpretation, Bildanalyse) nicht live verifiziert.
+- Vercel-Verbindung derzeit nicht bestätigt.
+- GitHub Pages Deployment-Konfiguration/Branch-Zuordnung genauer prüfen.
+- ZIP- und HTML-Backups inventarisieren, bevor etwas gelöscht wird.
+
+## Technische Hinweise
+- Demo-Daten werden im Browser-/Sitzungsspeicher gehalten. Keine echten Patientendaten verwenden.
+- AI-Ausgaben sind Entwürfe und müssen fachlich überprüft werden.
+- Datenschutz, Zugriffskontrollen, Auditierung, Einwilligung und Sicherheitsmaßnahmen sind nicht produktionsreif.
+- README enthält veraltete Verweise auf den entfernten deploy-worker Workflow.
+
+## Nächste Schritte
+1. Backup-Lauf und Restore-Test.
+2. GitHub Pages/Deployment verifizieren.
+3. Backups und alte Dateien inventarisieren.
+4. App-Funktionen einzeln testen.
+5. Worker-Verbindung und API-Funktionen testen.
+6. Sicherheits-/Datenschutzprüfung vor klinischer Nutzung.
