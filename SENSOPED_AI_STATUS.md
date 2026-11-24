@@ -62,3 +62,9 @@ Stand: 24. November 2026
 - Das bestätigt den Build des Entwicklungsbranches, nicht automatisch die Live-Veröffentlichung via GitHub Pages oder Vercel.
 - Inventar `main`: fünf ältere HTML-Sicherungen und sechs ZIP-Dateien; unverändert, nichts gelöscht.
 - Daily-backup Workflow geprüft: täglich 02:00 UTC sowie manuell, erstellt datierte Git-Tags. Tag-Erstellung und Restore sind weiterhin nicht praktisch bestätigt.
+
+
+## GitHub Pages Fehlersuche (24.11.2026)
+- Vite-Build/Preview-Artefakt im Verify-Workflow ist erfolgreich.
+- Pages-Deploy-Workflow wurde bei mehreren Commits unmittelbar als `failure` beendet (zuletzt Run `45490188248`, Job `138786115151`). Die Details/Logs waren über die verfügbaren GitHub-Schnittstellen nicht abrufbar.
+- Ursache ist daher noch nicht bestätigt. Zu prüfen sind Repository Pages-Konfiguration/Permissions/Environment `github-pages`; nicht als Code-Buildfehler werten.
