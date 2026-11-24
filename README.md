@@ -9,7 +9,7 @@ Prototype branch: `sensoped-ai-neuentwicklung`
 - **Do not enter real patient data in this prototype.** Storage and privacy safeguards are not production-ready.
 
 ## Worker deployment
-The GitHub Actions workflow `.github/workflows/deploy-worker.yml` deploys `worker.js` when changes are pushed to this branch.
+Worker deployment is currently not configured via the removed GitHub workflow. `worker.js` is present, but deployment and live testing remain pending.
 
 Required repository secrets:
 - `CLOUDFLARE_API_TOKEN`
@@ -25,7 +25,7 @@ After a successful deployment, enter the Worker URL in the AI endpoint field in 
 
 ## Deployment and validation
 - Worker deployment has not yet been live-tested.
-- The GitHub Pages preview workflow is manual (`workflow_dispatch`) and builds this branch's React/Vite app.
+- The `verify-dev.yml` workflow builds the React/Vite app on branch pushes and uploads a preview artifact. A Pages deployment from this development branch is not yet confirmed.
 - Review the Actions tab for successful build/deployment runs before testing.
 
 ## Safety / limitations
