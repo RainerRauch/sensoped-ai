@@ -55,3 +55,7 @@ Stand: 24. November 2026
 - Workflow baut nun Vite mit `GITHUB_PAGES=true` und veröffentlicht den Inhalt von `dist` statt versehentlich das Repository-Verzeichnis.
 - Commit: `3fb59e7ca44422e9f47c39bb51d34f912b6702b9`.
 - Die Änderung ist gespeichert; tatsächliche Pages-Bereitstellung und Pages-Konfiguration müssen noch durch einen erfolgreichen Lauf bestätigt werden.
+
+
+## Audit Fortsetzung – Workflowprüfung (24.11.2026)
+- GitHub Actions Lauf `45490029220` für Commit `55f0f3235d23299fd3ae89ed021f7d8ac6677153` läuft. Setup, Checkout und Node erfolgreich; Install dependencies noch in Bearbeitung; Build und Artefakt-upload ausstehend.
