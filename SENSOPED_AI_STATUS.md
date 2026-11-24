@@ -58,4 +58,7 @@ Stand: 24. November 2026
 
 
 ## Audit Fortsetzung – Workflowprüfung (24.11.2026)
-- GitHub Actions Lauf `45490029220` für Commit `55f0f3235d23299fd3ae89ed021f7d8ac6677153` läuft. Setup, Checkout und Node erfolgreich; Install dependencies noch in Bearbeitung; Build und Artefakt-upload ausstehend.
+- GitHub Actions Lauf `45490029220` für Commit `55f0f3235d23299fd3ae89ed021f7d8ac6677153` ist erfolgreich abgeschlossen. Alle Schritte einschließlich Vite-Build und Upload des Test-Artefakts `sensoped-ai-development-preview` erfolgreich. Das Artefakt ist befristet bis 8.12.2026 verfügbar.
+- Das bestätigt den Build des Entwicklungsbranches, nicht automatisch die Live-Veröffentlichung via GitHub Pages oder Vercel.
+- Inventar `main`: fünf ältere HTML-Sicherungen und sechs ZIP-Dateien; unverändert, nichts gelöscht.
+- Daily-backup Workflow geprüft: täglich 02:00 UTC sowie manuell, erstellt datierte Git-Tags. Tag-Erstellung und Restore sind weiterhin nicht praktisch bestätigt.
