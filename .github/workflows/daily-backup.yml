@@ -1,0 +1,29 @@
+name: Daily SENSOPED AI backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          ref: sensoped-ai-neuentwicklung
+          fetch-depth: 0
+
+      - name: Create dated restore tag
+        run: |
+          TAG="backup-$(date -u +%Y-%m-%d)"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Backup tag $TAG already exists; leaving it unchanged."
+            exit 0
+          fi
+          git tag "$TAG" HEAD
+          git push origin "$TAG"
