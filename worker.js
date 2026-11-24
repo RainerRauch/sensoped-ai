@@ -5,7 +5,8 @@ export default {
   if (request.method === "GET" && url.pathname.endsWith("/health")) return json({status:"ok",service:"SENSOPED AI Worker",message:"Worker erreichbar; KI-Schlüsselstatus wird nicht offengelegt."},200,corsHeaders);
   if (request.method === "OPTIONS") return new Response(null,{status:204,headers:corsHeaders});
   if (request.method !== "POST") return json({error:"POST only"},405,corsHeaders);
-  const route=url.pathname.endsWith("/transcribe")?"/transcribe":url.pathname.endsWith("/interpret")?"/interpret":"/image";
+  const route=url.pathname.endsWith("/transcribe")?"/transcribe":url.pathname.endsWith("/interpret")?"/interpret":url.pathname.endsWith("/image")?"/image":null;
+  if(!route)return json({error:"Unknown route"},404,corsHeaders);
   if (!env.OPENAI_API_KEY) return json({error:"API key missing"},500,corsHeaders);
   try {
    if(route==="/transcribe"){
