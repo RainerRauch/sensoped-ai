@@ -5,6 +5,7 @@ Prototype branch: `sensoped-ai-neuentwicklung`
 ## Status
 - Guided examination workflow and report draft.
 - Worker routes: transcription, text interpretation and image-based footprint support.
+- Worker hardening: exact route matching, findings-object validation, basic payload-size check and separation of system instructions from user-provided finding data.
 - AI outputs are assistance drafts only and must be reviewed by a qualified practitioner.
 - **Do not enter real patient data in this prototype.** Storage and privacy safeguards are not production-ready.
 
