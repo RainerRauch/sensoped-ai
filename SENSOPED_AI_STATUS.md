@@ -85,3 +85,9 @@ Stand: 24. November 2026
 - Deploy-Job danach weiterhin fehlgeschlagen. Jobdetails abrufbar, vollständige Logs jedoch nicht. Pages-Source-Einstellung `GitHub Actions` bleibt vom Repository-Owner in Settings > Pages zu kontrollieren.
 - Verify-Workflow auf Commit `6fa10cb3` hat Build und Upload des Preview-Artefakts erfolgreich abgeschlossen.
 - Inventur: zwei Backup-Branches vorhanden (`backup/sensoped-ai-2026-11-24` und `backup-2026-11-24-sensoped-ai`); auf Backup-Branch fünf HTML-Sicherungen und sechs ZIP-Dateien, darunter eine ZIP mit ca. 20,8 MB. Keine Dateien gelöscht oder verändert.
+
+
+## Backup-Integritätsprüfung ergänzt (24.11.2026)
+- Neue Workflow-Datei `.github/workflows/verify-backup.yml` hinzugefügt (Commit `4efca82d`).
+- Prüft Sicherungszweige, wichtige App-Dateien und führt einen erneuten npm-Build aus; listet vorhandene Backup-Tags oder weist darauf hin, dass noch keine vorhanden sind.
+- Workflow-Lauf ist durch Push ausgelöst; Ergebnis steht noch aus.
