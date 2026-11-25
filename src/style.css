@@ -46,3 +46,5 @@ button{white-space:normal;overflow-wrap:anywhere}
 /* Clear report hierarchy */
 .reportTitle{margin:16px 0;padding:16px 12px;border-bottom:2px solid #167b78}.reportTitle h2{margin:0;color:#176d70;letter-spacing:.02em}.reportTitle p{margin:6px 0 0;color:#617078;font-size:13px}
 .reportrow{padding:10px 12px;border-bottom:1px solid rgba(120,140,150,.22);line-height:1.5}
+
+@media print{body{background:#fff!important;color:#111!important}.sidebar,.header,.stepactions,button,input,select,textarea,footer{display:none!important}.main,.content,.panel{box-shadow:none!important;border:0!important;background:#fff!important;max-width:100%!important}.reportTitle{border-bottom:2px solid #167b78!important;break-after:avoid}.reportrow{break-inside:avoid;border-bottom:1px solid #ddd!important;padding:8px 2px!important}.notice{background:#fff!important;border:1px solid #ddd!important;color:#222!important}h2,h3{break-after:avoid}}
