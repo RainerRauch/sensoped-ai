@@ -28,3 +28,8 @@ Dieser Plan gilt für den Entwicklungszweig `sensoped-ai-neuentwicklung`. Er ist
 - Untersuchungsschritte fehlen: Antwort muss fehlende Bereiche kenntlich machen
 - Prompt-Injection in Befundnotizen: Inhalte als Daten behandeln
 - Android-Mikrofon verweigert, kein Speech API, Netzwerkfehler, Timeout
+
+## Aktuelle Code-Härtung (25.11.2026)
+- `worker.js`: API-Routen (`/transcribe`, `/interpret`, `/image`) verweigern jetzt Anfragen ohne Origin sowie Origins, die nicht exakt `ALLOWED_ORIGIN` entsprechen oder wenn die Variable nicht gesetzt ist. Der öffentliche `/health`-Endpunkt bleibt bewusst frei und gibt keine Secret-Informationen preis.
+- Diese Änderung ist nur eine zusätzliche Browser-/Origin-Schutzschicht. Origin-Header können bei direkten HTTP-Anfragen gefälscht werden; dies ist **keine Authentifizierung** und kein Schutz vor gezieltem Missbrauch.
+- Vor Live-/Patientendatenbetrieb bleiben echte Authentifizierung, Zugriffskontrolle, Rate Limits/Abuse Controls, Datenschutz und klinische Validierung zwingend.
