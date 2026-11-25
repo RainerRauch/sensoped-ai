@@ -42,3 +42,7 @@ button{white-space:normal;overflow-wrap:anywhere}
 /* Compact accessible navigation for phone layouts */
 .mobileNav{display:none}
 @media(max-width:650px){header{gap:8px}.mobileNav{display:block;width:auto;max-width:48%;min-width:120px;margin:0;padding:8px;font-size:14px;min-height:40px}.crumb{font-size:11px;flex:1;min-width:0}.headerpill{white-space:nowrap;font-size:9px;padding:6px 8px}}
+
+/* Clear report hierarchy */
+.reportTitle{margin:16px 0;padding:16px 12px;border-bottom:2px solid #167b78}.reportTitle h2{margin:0;color:#176d70;letter-spacing:.02em}.reportTitle p{margin:6px 0 0;color:#617078;font-size:13px}
+.reportrow{padding:10px 12px;border-bottom:1px solid rgba(120,140,150,.22);line-height:1.5}
