@@ -20,6 +20,17 @@ jobs:
         with:
           node-version: 20
 
+      - name: Validate deployment configuration
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          APP_ORIGIN: ${{ vars.SENSOPED_AI_PREVIEW_ORIGIN }}
+        run: |
+          test -n "$CF_TOKEN" || (echo "Missing CLOUDFLARE_API_TOKEN" && exit 1)
+          test -n "$CF_ACCOUNT" || (echo "Missing CLOUDFLARE_ACCOUNT_ID" && exit 1)
+          test -n "$APP_ORIGIN" || (echo "Missing SENSOPED_AI_PREVIEW_ORIGIN" && exit 1)
+          case "$APP_ORIGIN" in https://*) ;; *) echo "Origin must start with https://" && exit 1 ;; esac
+
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
