@@ -33,3 +33,9 @@ Dieser Plan gilt für den Entwicklungszweig `sensoped-ai-neuentwicklung`. Er ist
 - `worker.js`: API-Routen (`/transcribe`, `/interpret`, `/image`) verweigern jetzt Anfragen ohne Origin sowie Origins, die nicht exakt `ALLOWED_ORIGIN` entsprechen oder wenn die Variable nicht gesetzt ist. Der öffentliche `/health`-Endpunkt bleibt bewusst frei und gibt keine Secret-Informationen preis.
 - Diese Änderung ist nur eine zusätzliche Browser-/Origin-Schutzschicht. Origin-Header können bei direkten HTTP-Anfragen gefälscht werden; dies ist **keine Authentifizierung** und kein Schutz vor gezieltem Missbrauch.
 - Vor Live-/Patientendatenbetrieb bleiben echte Authentifizierung, Zugriffskontrolle, Rate Limits/Abuse Controls, Datenschutz und klinische Validierung zwingend.
+
+## Zusätzliche Worker-Härtung (25.11.2026)
+- Antworten des Workers erhalten `Cache-Control: no-store`, `X-Content-Type-Options: nosniff` und `Referrer-Policy: no-referrer`.
+- Audio-Upload: leere Dateien und unterstützungsfremde Audio-MIME-Typen werden abgewiesen; bestehende 25-MB-Grenze bleibt.
+- Bild-Upload: zusätzliche Prüfung der geschätzten dekodierten Größe (10 MB Grenze) neben der Payload-Grenze.
+- Diese Prüfungen sind defensive Eingabevalidierung, ersetzen keine Authentifizierung, Cloudflare Rate Limits/Durable-Object-Limits oder klinische Freigabe.
