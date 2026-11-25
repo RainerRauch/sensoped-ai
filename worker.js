@@ -2,9 +2,12 @@ export default {
  async fetch(request, env) {
   const corsHeaders=cors(request, env);
   const origin=request.headers.get("Origin");
-  if(origin && (!env.ALLOWED_ORIGIN || origin !== env.ALLOWED_ORIGIN)) return json({error:"Origin not allowed; configure ALLOWED_ORIGIN to the exact app origin."},403,corsHeaders);
   const url=new URL(request.url);
+  // Health endpoint deliberately stays public and reveals no secret status.
   if (request.method === "GET" && url.pathname === "/health") return json({status:"ok",service:"SENSOPED AI Worker",message:"Worker erreichbar; KI-Schlüsselstatus wird nicht offengelegt."},200,corsHeaders);
+  // API routes require a configured exact origin. CORS is not authentication,
+  // but missing/mismatched browser origins are rejected as a basic hardening step.
+  if(!env.ALLOWED_ORIGIN || !origin || origin !== env.ALLOWED_ORIGIN) return json({error:"Origin not allowed; API requires the exact configured app origin."},403,corsHeaders);
   if (request.method === "OPTIONS") return new Response(null,{status:204,headers:corsHeaders});
   if (request.method !== "POST") return json({error:"POST only"},405,corsHeaders);
   const route=url.pathname === "/transcribe"?"/transcribe":url.pathname === "/interpret"?"/interpret":url.pathname === "/image"?"/image":null;
