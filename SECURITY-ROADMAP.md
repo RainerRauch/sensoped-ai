@@ -39,3 +39,7 @@ Dieser Plan gilt für den Entwicklungszweig `sensoped-ai-neuentwicklung`. Er ist
 - Audio-Upload: leere Dateien und unterstützungsfremde Audio-MIME-Typen werden abgewiesen; bestehende 25-MB-Grenze bleibt.
 - Bild-Upload: zusätzliche Prüfung der geschätzten dekodierten Größe (10 MB Grenze) neben der Payload-Grenze.
 - Diese Prüfungen sind defensive Eingabevalidierung, ersetzen keine Authentifizierung, Cloudflare Rate Limits/Durable-Object-Limits oder klinische Freigabe.
+
+## Interpretations-Input validiert
+- `/interpret` akzeptiert höchstens 120 Befundfelder, Feldnamen bis 120 Zeichen, einfache skalare Werte (Text/Zahl/Boolean/null) statt verschachtelter Strukturen, Textfelder bis 5.000 Zeichen und insgesamt bis 50 KB Befunddaten.
+- Validierung reduziert unkontrollierte Payloads und verhindert, dass komplexe JSON-Strukturen ungewollt in den Prompt gelangen. Keine Authentifizierung oder Missbrauchsschutz damit ersetzt.
