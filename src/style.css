@@ -23,3 +23,18 @@ select{width:100%;padding:12px;border:1px solid #dce7e7;border-radius:10px;font:
   .notice{line-height:1.55}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* SENSOPED mobile viewport and control overflow safeguards */
+html,body,#root{width:100%;max-width:100%;overflow-x:hidden}
+.shell,main,.content,.panel,.formgrid,.panelhead{min-width:0;max-width:100%}
+img,video,canvas,svg{max-width:100%}
+button{white-space:normal;overflow-wrap:anywhere}
+@media(max-width:650px){
+  .content{width:100%;padding:12px}
+  .panel{width:100%;overflow-wrap:anywhere}
+  .panelhead>*{max-width:100%}
+  .stepactions{width:100%;flex-wrap:wrap}
+  .stepactions button{width:100%;flex:1 1 100%}
+  .primary,.secondary{max-width:100%;white-space:normal;text-align:center}
+  .steps{max-width:100%}
+}
