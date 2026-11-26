@@ -50,3 +50,24 @@ button{white-space:normal;overflow-wrap:anywhere}
 @media print{body{background:#fff!important;color:#111!important}.sidebar,.header,.stepactions,button,input,select,textarea,footer{display:none!important}.main,.content,.panel{box-shadow:none!important;border:0!important;background:#fff!important;max-width:100%!important}.reportTitle{border-bottom:2px solid #167b78!important;break-after:avoid}.reportrow{break-inside:avoid;border-bottom:1px solid #ddd!important;padding:8px 2px!important}.notice{background:#fff!important;border:1px solid #ddd!important;color:#222!important}h2,h3{break-after:avoid}}
 
 .reportSection{margin:18px 0 5px;padding:7px 10px;background:rgba(22,123,120,.08);border-left:3px solid #167b78;color:#176d70;font-size:16px;break-after:avoid}
+
+.patientView{padding:24px;background:#f9fbfb}
+.patientIntro{padding:16px 18px;background:#eaf5f3;border-radius:14px;color:#34555a;line-height:1.6}
+.patientMeta{margin-top:8px;color:#174d56}
+.patientGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+.patientCard{background:#fff;border:1px solid #dce8e8;border-radius:16px;padding:18px;min-width:0;break-inside:avoid}
+.patientCard h3{margin:0 0 12px;color:#174d56;font:700 17px Manrope}
+.patientCard p{line-height:1.6;color:#405b60;overflow-wrap:anywhere}
+.patientSides{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.patientSides>div{padding:12px;background:#f3f7f7;border-radius:12px;min-width:0}
+.patientSides b{display:block;color:#167b78;margin-bottom:6px}
+.patientSides p{font-size:13px;margin:8px 0}
+.patientExplain{font-size:13px;color:#667d81}
+.patientMedia{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.patientMedia figure{margin:0;min-width:0}
+.patientMedia img,.patientCard video{width:100%;max-height:360px;object-fit:contain;border-radius:10px;background:#f3f7f7}
+.patientMedia figcaption{font-size:12px;color:#567175;margin-top:6px}
+.patientReview{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:16px 0}
+.patientReview label{display:flex;align-items:center;gap:10px;flex:1 1 100%;font-size:13px;line-height:1.5}
+@media(max-width:650px){.patientGrid{grid-template-columns:1fr}.patientView{padding:12px}.patientCard{padding:14px}.patientSides{gap:8px}.patientReview button{flex:1 1 100%}}
+@media print{.patientView{background:white;padding:0}.patientReview{display:none!important}.patientCard{border:1px solid #ddd}.patientGrid{grid-template-columns:1fr 1fr}.patientMedia img{max-height:300px}}
