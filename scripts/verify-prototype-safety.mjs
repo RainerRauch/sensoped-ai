@@ -69,6 +69,8 @@ const checks = [
 ]
 checks.push(["app text has no double-escaped line breaks", !source.includes("\\\\n")]);
 checks.push(["patient view does not invent an unmeasured 10m gait distance", source.includes("data.gaitDistance?data.gaitDistance+' m':data.gaitDistanceStatus==='10 m vor Ort gemessen und markiert'?'10 m':'Nicht dokumentiert') && !source.includes("data.gaitDistance||'10'")]);
+checks.push(["gait distance input has no assumed default", source.includes("value={data.gaitDistance??''}") && !source.includes("value={data.gaitDistance??'10'}")]);
+checks.push(["patient view reports only explicit gait distance", source.includes("data.gaitDistance?data.gaitDistance+' m':data.gaitDistanceStatus==='10 m vor Ort gemessen und markiert'?'10 m':'Nicht dokumentiert')]);
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
