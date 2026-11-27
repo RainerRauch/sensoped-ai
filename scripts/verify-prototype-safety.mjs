@@ -67,6 +67,7 @@ const checks = [
   ["manual privacy reset clears expiry", /function resetDemoSession\(\)[\s\S]*?sessionStorage\.removeItem\(\x27sensoped_demo_expiry\x27\)[\s\S]*?setDemoExpiry\(0\)/],
   ["eight-hour expiry is disclosed in the UI", source.includes("Demo-Daten werden nach 8 Stunden automatisch aus dieser Sitzung gelöscht.")],
 ]
+checks.push(["app text has no double-escaped line breaks", !source.includes("\\\\n")]);
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
