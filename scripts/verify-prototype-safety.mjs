@@ -57,6 +57,12 @@ const checks = [
   ["patient view displays per-image observation notes", source.includes("<b>Dokumentierte Beobachtung:</b> {data[\'imageFileNote\'+i]}")],
   ["patient view displays per-video observation notes", source.includes("<b>Dokumentierte Beobachtung:</b> {data[\'videoFileNote\'+i]}")],
   ["keyboard focus styling is defined", styleSource.includes(":focus-visible")],
+  ["demo session uses an eight-hour expiry", source.includes("const DEMO_SESSION_TTL=8*60*60*1000")],
+  ["legacy demo records without expiry are cleared", /function ensureDemoSession\(\)[\s\S]*?if\(!expiry\)\{if\(sessionStorage\.getItem\(\x27sensoped_demo_patients\x27\)\|\|sessionStorage\.getItem\(\x27sensoped_exam_draft\x27\)\)\{[\s\S]*?sessionStorage\.removeItem\(\x27sensoped_demo_patients\x27\)/],
+  ["expired demo session removes records, draft and expiry", /function ensureDemoSession\(\)[\s\S]*?if\(Date\.now\(\)>=expiry\)\{[\s\S]*?sessionStorage\.removeItem\(\x27sensoped_demo_expiry\x27\)/],
+  ["active demo session timer clears data and media", /useEffect\(\(\)=>\{if\(!demoExpiry\)return;const timer=window\.setTimeout\(\(\)=>\{[\s\S]*?setDemoExpiry\(0\);setMsg\(\x27Demo-Sitzung nach 8 Stunden automatisch gelöscht/],
+  ["manual privacy reset clears expiry", /function resetDemoSession\(\)[\s\S]*?sessionStorage\.removeItem\(\x27sensoped_demo_expiry\x27\)[\s\S]*?setDemoExpiry\(0\)/],
+  ["eight-hour expiry is disclosed in the UI", source.includes("Demo-Daten werden nach 8 Stunden automatisch aus dieser Sitzung gelöscht.")],
 ]
 const failures = [];
 for (const [name, pattern] of checks) {
