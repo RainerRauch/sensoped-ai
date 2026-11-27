@@ -35,10 +35,12 @@ const checks = [
   ["patient city label linked", /<label htmlFor="patient-city">Ort<\/label><input id="patient-city"/],
   ["patient phone label linked", /<label htmlFor="patient-phone">Telefon \(optional\)<\/label><input id="patient-phone"/],
   ["patient notes label linked", /<label htmlFor="patient-notes">Notiz \/ Anamnese kurz<\/label><textarea id="patient-notes"/],
+  ["filename sanitizer uses a single Unicode combining-mark escape", source.includes("normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'')")],
 ];
 const failures = [];
 for (const [name, pattern] of checks) {
-  if (!pattern.test(source)) failures.push(name);
+  const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
+  if (!passed) failures.push(name);
 }
 if (failures.length) {
   console.error("Prototype safety smoke checks failed:", failures.join(", "));
