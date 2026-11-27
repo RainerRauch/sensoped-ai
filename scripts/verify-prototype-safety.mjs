@@ -9,6 +9,8 @@ const checks = [
   ["video count limit", /count>=3/],
   ["video aggregate limit", /total\+file\.size>150\*1024\*1024/],
   ["individual photo limit", /file\.size>10\*1024\*1024/],
+  ["image uploads use analysis-compatible formats", /if\(!\['image\/png','image\/jpeg','image\/webp'\]\.includes\(file\.type\)\)/],
+  ["image file pickers restrict accepted formats", source.split('accept="image/png,image/jpeg,image/webp"').length-1===2],
   ["individual video limit", /file\.size>100\*1024\*1024/],
   ["media gate still present", /disabled=\{!mediaUseConfirmed\}/],
   ["patient approval resets on edits", source.includes("setPatientViewApproved(false);setAiBusy(false);},[current,data,imageFiles,videoFiles,mediaUseConfirmed])")],
