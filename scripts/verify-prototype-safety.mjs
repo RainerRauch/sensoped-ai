@@ -54,6 +54,8 @@ const checks = [
   ["filename sanitizer uses a single Unicode combining-mark escape", source.includes("normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'')")],
   ["worker image data URL validation uses a properly escaped slash", workerSource.includes("!/^data:image\\/(png|jpeg|webp);base64,/i.test(image)")],
   ["prototype status messages use polite live announcements", source.includes('role="status" aria-live="polite" aria-atomic="true"')],
+  ["patient view displays per-image observation notes", source.includes("<b>Dokumentierte Beobachtung:</b> {data[\'imageFileNote\'+i]}")],
+  ["patient view displays per-video observation notes", source.includes("<b>Dokumentierte Beobachtung:</b> {data[\'videoFileNote\'+i]}")],
   ["keyboard focus styling is defined", styleSource.includes(":focus-visible")],
 ]
 const failures = [];
