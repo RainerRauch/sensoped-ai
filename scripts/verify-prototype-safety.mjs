@@ -17,6 +17,11 @@ const checks = [
   ["saved image notes retained without media", /imageFiles\.length===0&&\/\^imageFileNote\\d\+\$\/.test\(k\)/],
   ["saved video notes retained without media", /videoFiles\.length===0&&\/\^videoFileNote\\d\+\$\/.test\(k\)/],
   ["video notes use readable labels", /Videodokumentation – Video/],
+  ["demo reset confirms before deletion", /function resetDemoSession\(\)\{if\(!window\.confirm\(/],
+  ["demo reset clears saved records and draft", /function resetDemoSession\(\)[\s\S]*?sessionStorage\.removeItem\(\x27sensoped_demo_patients\x27\)[\s\S]*?sessionStorage\.removeItem\(\x27sensoped_exam_draft\x27\)/],
+  ["demo reset revokes temporary media URLs", /function resetDemoSession\(\)[\s\S]*?imageFiles\.forEach\(f=>\{if\(f\.url\)URL\.revokeObjectURL\(f\.url\)\}\)[\s\S]*?videoFiles\.forEach\(f=>\{if\(f\.url\)URL\.revokeObjectURL\(f\.url\)\}\)/],
+  ["privacy page exposes reset action", /onClick=\{resetDemoSession\}[^>]*>Demo-Sitzung vollständig zurücksetzen/],
+  ["empty patient list removes session record", /if\(patients\.length\)\{sessionStorage\.setItem\(\x27sensoped_demo_patients\x27,JSON\.stringify\(patients\)\)\}else\{sessionStorage\.removeItem\(\x27sensoped_demo_patients\x27\)\}/],
 
 ];
 const failures = [];
