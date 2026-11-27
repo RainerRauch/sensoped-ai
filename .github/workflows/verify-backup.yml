@@ -6,6 +6,7 @@ on:
     branches: [sensoped-ai-neuentwicklung]
     paths:
       - ".github/workflows/verify-backup.yml"
+      - "scripts/verify-prototype-safety.mjs"
 
 permissions:
   contents: read
@@ -19,25 +20,28 @@ jobs:
         with:
           ref: sensoped-ai-neuentwicklung
           fetch-depth: 0
-      - name: Confirm restore branches exist
+      - name: Fetch dated restore snapshot
+        run: git fetch origin backup/sensoped-ai-neuentwicklung-2026-11-27-patient-view
+      - name: Confirm snapshot files exist
         run: |
-          git branch -r | grep -E 'origin/backup/sensoped-ai-2026-11-24|origin/backup-2026-11-24-sensoped-ai'
-      - name: Check key app files
+          SNAPSHOT=origin/backup/sensoped-ai-neuentwicklung-2026-11-27-patient-view
+          for path in src/App.jsx src/main.jsx src/style.css package.json worker.js; do
+            git cat-file -e "$SNAPSHOT:$path"
+          done
+      - name: Restore snapshot into temporary directory
         run: |
-          test -f src/App.jsx
-          test -f src/main.jsx
-          test -f src/style.css
-          test -f package.json
-          test -f worker.js
-      - name: Build current app
+          mkdir -p /tmp/sensoped-restore
+          git archive origin/backup/sensoped-ai-neuentwicklung-2026-11-27-patient-view | tar -x -C /tmp/sensoped-restore
+      - name: Build restored snapshot
+        working-directory: /tmp/sensoped-restore
         run: |
           npm install
           npm run build
-      - name: Confirm dated backup tags (if any)
+      - name: Confirm backup tags
         run: |
           TAGS=$(git tag -l 'backup-*')
           if [ -z "$TAGS" ]; then
-            echo "No dated backup tags yet; daily workflow still needs its first successful run."
+            echo "No dated backup tags yet."
           else
             echo "$TAGS"
           fi

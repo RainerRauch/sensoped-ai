@@ -1,8 +1,11 @@
 name: Daily SENSOPED AI backup
 
 on:
+  push:
+    branches:
+      - sensoped-ai-neuentwicklung
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 2 * * *' # Schedule is active only from the default branch.
   workflow_dispatch:
 
 permissions:
