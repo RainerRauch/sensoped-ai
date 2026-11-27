@@ -26,6 +26,7 @@ const checks = [
   ["image analysis requires media confirmation", /async function analyzeImage\(file,index\)\{if\(!mediaUseConfirmed\)/],
   ["saving exams with media requires confirmation", /function save\(\)[\s\S]*?if\(\(imageFiles\.length\|\|videoFiles\.length\)\&\&!mediaUseConfirmed\)/],
 
+  ["report export has a single async declaration", /\}async function exportReport\(\)\{try\{const imageData=await Promise\.all\(/],
 ];
 const failures = [];
 for (const [name, pattern] of checks) {
