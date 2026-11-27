@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 const source = readFileSync("src/App.jsx", "utf8");
+const workerSource = readFileSync("worker.js", "utf8");
 const checks = [
   ["photo helper exists", /function addImageFiles\(e\)/],
   ["video helper exists", /function addVideoFiles\(e\)/],
@@ -40,7 +41,8 @@ const checks = [
   ["patient phone label linked", /<label htmlFor="patient-phone">Telefon \(optional\)<\/label><input id="patient-phone"/],
   ["patient notes label linked", /<label htmlFor="patient-notes">Notiz \/ Anamnese kurz<\/label><textarea id="patient-notes"/],
   ["filename sanitizer uses a single Unicode combining-mark escape", source.includes("normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'')")],
-];
+  ["worker image data URL validation uses a properly escaped slash", workerSource.includes("!/^data:image\\/(png|jpeg|webp);base64,/i.test(image)")],
+]
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
