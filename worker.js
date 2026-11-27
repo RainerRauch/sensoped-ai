@@ -46,7 +46,7 @@ export default {
    }
    if(Number(request.headers.get("Content-Length")||0)>16000000)return json({error:"Request too large"},413,corsHeaders);
    const body=await request.json();const image=body?.image;
-   if(!image||typeof image!=="string"||!/^data:image\\/(png|jpeg|webp);base64,/i.test(image))return json({error:"Image must be a PNG, JPEG or WebP data URL"},400,corsHeaders);
+   if(!image||typeof image!=="string"||!/^data:image\/(png|jpeg|webp);base64,/i.test(image))return json({error:"Image must be a PNG, JPEG or WebP data URL"},400,corsHeaders);
    if(image.length>15*1024*1024)return json({error:"Image payload too large"},413,corsHeaders);
    const imageBytes=Math.floor((image.split(",")[1]||"").length*3/4);
    if(imageBytes>10*1024*1024)return json({error:"Image exceeds 10 MB decoded limit"},413,corsHeaders);
