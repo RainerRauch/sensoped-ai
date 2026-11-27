@@ -23,7 +23,7 @@ jobs:
 
       - name: Create dated restore tag
         run: |
-          TAG="backup-$(date -u +%Y-%m-%d)"
+          TAG="backup-$(date -u +%Y-%m-%d)-$(git rev-parse --short=12 HEAD)"
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Backup tag $TAG already exists; leaving it unchanged."
             exit 0
