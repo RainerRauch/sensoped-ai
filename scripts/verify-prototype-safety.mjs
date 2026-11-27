@@ -27,6 +27,14 @@ const checks = [
   ["saving exams with media requires confirmation", /function save\(\)[\s\S]*?if\(\(imageFiles\.length\|\|videoFiles\.length\)\&\&!mediaUseConfirmed\)/],
 
   ["report export has a single async declaration", /\}async function exportReport\(\)\{try\{const imageData=await Promise\.all\(/],
+  ["patient name label linked", /<label htmlFor="patient-name">Patient \/ Name<\/label><input id="patient-name"/],
+  ["patient birth label linked", /<label htmlFor="patient-birth">Geburtsdatum<\/label><input id="patient-birth"/],
+  ["patient MPG label linked", /<label htmlFor="patient-mpg">MPG-Nummer<\/label><input id="patient-mpg"/],
+  ["patient street label linked", /<label htmlFor="patient-street">Straße und Hausnummer<\/label><input id="patient-street"/],
+  ["patient postal label linked", /<label htmlFor="patient-zip">PLZ<\/label><input id="patient-zip"/],
+  ["patient city label linked", /<label htmlFor="patient-city">Ort<\/label><input id="patient-city"/],
+  ["patient phone label linked", /<label htmlFor="patient-phone">Telefon \(optional\)<\/label><input id="patient-phone"/],
+  ["patient notes label linked", /<label htmlFor="patient-notes">Notiz \/ Anamnese kurz<\/label><textarea id="patient-notes"/],
 ];
 const failures = [];
 for (const [name, pattern] of checks) {
