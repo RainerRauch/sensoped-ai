@@ -22,6 +22,8 @@ jobs:
         run: npm install
       - name: Build app
         run: npm run build
+      - name: Syntax-check Worker source
+        run: node --check worker.js
       - name: Verify prototype upload guardrails
         run: node scripts/verify-prototype-safety.mjs
       - name: Confirm build output
