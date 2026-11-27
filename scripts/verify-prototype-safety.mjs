@@ -38,6 +38,10 @@ const checks = [
   ["image analysis requires media confirmation", /async function analyzeImage\(file,index\)\{if\(!mediaUseConfirmed\)/],
   ["saving exams with media requires confirmation", /function save\(\)[\s\S]*?if\(\(imageFiles\.length\|\|videoFiles\.length\)\&\&!mediaUseConfirmed\)/],
 
+  ["openRecord restores saved media filenames as placeholders", source.includes("setImageFiles((r.media?.images||[]).map(name=>({name,url:null,file:null,saved:true})))") && source.includes("setVideoFiles((r.media?.videos||[]).map(name=>({name,url:null,size:0,saved:true})))")],
+  ["reopened patient view explains unavailable original media", source.includes("Originalbild nicht in der Demo-Sitzung gespeichert. Datei: {f.name}") && source.includes("Originalvideo nicht in der Demo-Sitzung gespeichert. Datei: {f.name}")],
+  ["report export avoids blank image sources for saved media", source.includes("imageData[i]?'<img src=\"'+imageData[i]+'\"") && source.includes("Originalbild nicht in der Demo-Sitzung gespeichert.")],
+  ["opening saved records resets media and patient-view approvals", source.includes("setMediaUseConfirmed(false);setPatientViewApproved(false);setStep(0);setPage('Untersuchung');setMsg('Gespeicherte Mediennamen wiederhergestellt.")],
   ["report export has a single async declaration", /\}async function exportReport\(\)\{try\{const imageData=await Promise\.all\(/],
   ["patient name label linked", /<label htmlFor="patient-name">Patient \/ Name<\/label><input id="patient-name"/],
   ["patient birth label linked", /<label htmlFor="patient-birth">Geburtsdatum<\/label><input id="patient-birth"/],
