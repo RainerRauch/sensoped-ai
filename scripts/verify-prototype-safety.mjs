@@ -13,6 +13,11 @@ const checks = [
   ["patient approval resets on edits", /setPatientViewApproved\(false\);\},\[current,data,imageFiles,videoFiles\]/],
   ["report values HTML-escaped", /String\(value\)\.replace\(/],
   ["media not persisted in session draft", /imageFiles:\[\],videoFiles:\[\]/],
+  ["report export reads images asynchronously", /async function exportReport\(\)\{try\{const imageData=await Promise\.all\(imageFiles\.map/],
+  ["saved image notes retained without media", /imageFiles\.length===0&&\/\^imageFileNote\\d\+\$\/.test\(k\)/],
+  ["saved video notes retained without media", /videoFiles\.length===0&&\/\^videoFileNote\\d\+\$\/.test\(k\)/],
+  ["video notes use readable labels", /Videodokumentation – Video/],
+
 ];
 const failures = [];
 for (const [name, pattern] of checks) {
