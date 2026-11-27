@@ -22,6 +22,7 @@ const checks = [
   ["demo reset revokes temporary media URLs", /function resetDemoSession\(\)[\s\S]*?imageFiles\.forEach\(f=>\{if\(f\.url\)URL\.revokeObjectURL\(f\.url\)\}\)[\s\S]*?videoFiles\.forEach\(f=>\{if\(f\.url\)URL\.revokeObjectURL\(f\.url\)\}\)/],
   ["privacy page exposes reset action", /onClick=\{resetDemoSession\}[^>]*>Demo-Sitzung vollständig zurücksetzen/],
   ["empty patient list removes session record", /if\(patients\.length\)\{sessionStorage\.setItem\(\x27sensoped_demo_patients\x27,JSON\.stringify\(patients\)\)\}else\{sessionStorage\.removeItem\(\x27sensoped_demo_patients\x27\)\}/],
+  ["reset clears patient search", /function resetDemoSession\(\)[\s\S]*?setPatientSearch\(''\)/],
 
 ];
 const failures = [];
