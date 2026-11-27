@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 const source = readFileSync("src/App.jsx", "utf8");
 const workerSource = readFileSync("worker.js", "utf8");
+const styleSource = readFileSync("src/style.css", "utf8");
 const checks = [
   ["photo helper exists", /function addImageFiles\(e\)/],
   ["video helper exists", /function addVideoFiles\(e\)/],
@@ -48,6 +49,8 @@ const checks = [
   ["patient notes label linked", /<label htmlFor="patient-notes">Notiz \/ Anamnese kurz<\/label><textarea id="patient-notes"/],
   ["filename sanitizer uses a single Unicode combining-mark escape", source.includes("normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'')")],
   ["worker image data URL validation uses a properly escaped slash", workerSource.includes("!/^data:image\\/(png|jpeg|webp);base64,/i.test(image)")],
+  ["prototype status messages use polite live announcements", source.includes('role="status" aria-live="polite" aria-atomic="true"')],
+  ["keyboard focus styling is defined", styleSource.includes(":focus-visible")],
 ]
 const failures = [];
 for (const [name, pattern] of checks) {
