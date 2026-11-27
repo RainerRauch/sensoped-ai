@@ -10,7 +10,7 @@ const checks = [
   ["individual photo limit", /file\.size>10\*1024\*1024/],
   ["individual video limit", /file\.size>100\*1024\*1024/],
   ["media gate still present", /disabled=\{!mediaUseConfirmed\}/],
-  ["patient approval resets on edits", source.includes("setPatientViewApproved(false);},[current,data,imageFiles,videoFiles,mediaUseConfirmed])")],
+  ["patient approval resets on edits", source.includes("setPatientViewApproved(false);setAiBusy(false);},[current,data,imageFiles,videoFiles,mediaUseConfirmed])")],
   ["report values HTML-escaped", /String\(value\)\.replace\(/],
   ["media not persisted in session draft", /imageFiles:\[\],videoFiles:\[\]/],
   ["report export reads images asynchronously", /async function exportReport\(\)\{try\{const imageData=await Promise\.all\(imageFiles\.map/],
