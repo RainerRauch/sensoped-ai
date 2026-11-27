@@ -23,6 +23,10 @@ const checks = [
   ["privacy page exposes reset action", /onClick=\{resetDemoSession\}[^>]*>Demo-Sitzung vollständig zurücksetzen/],
   ["empty patient list removes session record", /if\(patients\.length\)\{sessionStorage\.setItem\(\x27sensoped_demo_patients\x27,JSON\.stringify\(patients\)\)\}else\{sessionStorage\.removeItem\(\x27sensoped_demo_patients\x27\)\}/],
   ["reset clears patient search", /function resetDemoSession\(\)[\s\S]*?setPatientSearch\(''\)/],
+  ["AI image analysis uses request generation token", /const aiRequestId=useRef\\(0\\)/],
+  ["AI image results ignore stale request", /if\\(requestId!==aiRequestId\\.current\\)return;update\\('imageFileNote'\\+index,note\\)/],
+  ["AI image request final state guarded", /if\\(requestId===aiRequestId\\.current\\)setAiBusy\\(false\\)/],
+  ["AI requests invalidated on edits or consent change", /\\[current,data,imageFiles,videoFiles,mediaUseConfirmed\\]\\)/],
   ["image analysis requires media confirmation", /async function analyzeImage\(file,index\)\{if\(!mediaUseConfirmed\)/],
   ["saving exams with media requires confirmation", /function save\(\)[\s\S]*?if\(\(imageFiles\.length\|\|videoFiles\.length\)\&\&!mediaUseConfirmed\)/],
 
