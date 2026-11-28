@@ -26,6 +26,8 @@ jobs:
         run: node --check worker.js
       - name: Verify Worker routes and streaming body limits
         run: node scripts/verify-worker-input.mjs
+      - name: Verify Worker URL normalization
+        run: node scripts/verify-worker-url.mjs
       - name: Verify prototype upload guardrails
         run: node scripts/verify-prototype-safety.mjs
       - name: Confirm build output

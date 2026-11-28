@@ -32,7 +32,7 @@ const checks = [
   ["AI image analysis uses request generation token", source.includes("const aiRequestId=useRef(0)")],
   ["AI image analysis stores an abort controller", source.includes("aiAbortController.current=controller")],
   ["AI requests abort on stale exam edits", source.includes("if(aiAbortController.current){aiAbortController.current.abort();aiAbortController.current=null;}")],
-  ["image endpoint normalizes /image and /interpret suffixes", source.includes("replace(/(?:interpret|image)\\/?$/,'')")],
+  ["image endpoint uses shared URL normalizer", source.includes("resolveWorkerUrl(aiEndpoint,\'image\')")],
   ["image request checks token after file read", source.includes("if(requestId!==aiRequestId.current)return;const endpoint=")],
   ["AI image results ignore stale request", source.includes("if(requestId!==aiRequestId.current)return;update('imageFileNote'+index,note)")],
   ["AI image request final state guarded", source.includes("if(requestId===aiRequestId.current)setAiBusy(false)")],
@@ -93,7 +93,8 @@ const healthTestEnd=source.indexOf("async function runAIInterpretation(){",healt
 const healthTestSource=source.slice(healthTestStart,healthTestEnd);
 checks.push(["worker health check has an eight-second abort",healthTestStart>=0&&healthTestEnd>healthTestStart&&healthTestSource.includes("const controller=new AbortController();")&&healthTestSource.includes("setTimeout(()=>controller.abort(),8000)")&&healthTestSource.includes("clearTimeout(timeout)")]);
 checks.push(["worker health check reports timeout clearly",healthTestSource.includes("e.name==='AbortError'?'Zeitüberschreitung nach 8 Sekunden.")]);
-checks.push(["health URL strips route suffix and query/hash",healthTestSource.includes("base.pathname.replace(/\\/(?:interpret|image|transcribe|health)\\/?$/,'')")&&healthTestSource.includes("base.search='';base.hash='';")]);
+checks.push(["health endpoint uses shared URL normalizer",healthTestSource.includes("resolveWorkerUrl(aiEndpoint,\'health\')")]);
+checks.push(["interpret endpoint uses shared URL normalizer",source.includes("resolveWorkerUrl(aiEndpoint,\'interpret\')")]);
 checks.push(["patient report export requires explicit review", source.includes("async function exportReport(){if(reportMode==='patient'&&!patientViewApproved){setMsg('Bitte zuerst die Patientenansicht fachlich prüfen und freigeben.');return;}")]);
 checks.push(["report step links to patient view when approval is missing", source.includes("Fachliche Prüfung erforderlich")&&source.includes("onClick={()=>setPage(\'Patientenansicht\')}")]);
 
