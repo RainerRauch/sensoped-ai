@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs";
+import assert from "node:assert/strict";
+import { validateDemoImport } from "../src/demoImport.js";
 const source = readFileSync("src/App.jsx", "utf8");
 const workerSource = readFileSync("worker.js", "utf8");
 const styleSource = readFileSync("src/style.css", "utf8");
@@ -76,6 +78,8 @@ checks.push(["gait distance input has no assumed default", source.includes("valu
 checks.push(["gait-distance regex matches numeric digits", source.includes(String.raw`if(!/^\d+(?:[.,]\d+)?$/.test(gaitDistanceRaw)`)]);
 checks.push(["patient view prominently states demo-only and unvalidated AI", source.includes('className="prototypeSafetyBanner"' ) && source.includes("keine klinisch validierte KI-Auswertung.")]);
 checks.push(["exported report includes explicit demo-only warning", source.includes('class="prototypeSafetyBanner"') && source.includes("DEMO-ANWENDUNG – NICHT FÜR REALE PATIENTEN.")]);
+checks.push(["demo import validation is integrated", source.includes("validateDemoImport(parsed,patients)") && source.includes("file.size>2*1024*1024")]);
+checks.push(["demo import is available when patient list is empty", !source.includes("patients.length>0&&<label className=\"secondary\" style={{display:'inline-block',padding:10,borderRadius:8,cursor:'pointer'}}> <FileText size={16}/> Akten importieren"));
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
@@ -86,3 +90,19 @@ if (failures.length) {
   process.exit(1);
 }
 console.log("Prototype safety smoke checks passed:", checks.length);
+const importChecks = [];
+const record = (id=1) => ({id,patient:{name:"Demo",birth:"2000-01-01"},data:{complaints:"Test"},media:{images:[],videos:[]}});
+assert.equal(validateDemoImport({records:[record()] }).length,1); importChecks.push("valid record accepted");
+assert.equal(validateDemoImport({records:[record(2)]},[record(2)]).length,0); importChecks.push("existing ID skipped");
+assert.equal(validateDemoImport({records:[record(3),record(3)]}).length,1); importChecks.push("duplicate IDs in import skipped");
+assert.throws(()=>validateDemoImport({records:[{id:1,patient:{},data:{}}]})); importChecks.push("missing name rejected");
+assert.throws(()=>validateDemoImport({records:[{id:1,patient:{name:"Demo",nested:{}},data:{}}]})); importChecks.push("nested patient values rejected");
+assert.throws(()=>validateDemoImport({records:[{id:1,patient:{name:"Demo"},data:[]}]})); importChecks.push("array data rejected");
+assert.throws(()=>validateDemoImport({records:[{id:1,patient:{name:"Demo"},data:{nested:{x:1}}}]})); importChecks.push("nested clinical values rejected");
+assert.throws(()=>validateDemoImport({records:[{id:1,patient:{name:"Demo"},data:{note:"x".repeat(5001)}}]})); importChecks.push("oversized text rejected");
+assert.throws(()=>validateDemoImport({records:[{id:1,patient:{name:"Demo"},data:{},media:{images:Array(7).fill("x"),videos:[]}}]})); importChecks.push("excess image list rejected");
+assert.throws(()=>validateDemoImport({records:[{id:1,patient:{name:"Demo"},data:{},media:{images:[],videos:Array(4).fill("x")}}]})); importChecks.push("excess video list rejected");
+assert.throws(()=>validateDemoImport({records:Array(101).fill(null).map((_,i)=>record(i))})); importChecks.push("more than 100 records rejected");
+assert.throws(()=>validateDemoImport({records:[{id:Infinity,patient:{name:"Demo"},data:{}}]})); importChecks.push("invalid ID rejected");
+console.log("Demo import validation checks passed:", importChecks.length);
+
