@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { validateDemoImport, normalizeStoredDemoPatients } from "../src/demoImport.js";
+import { hasPatientProgressData } from "../src/patientProgress.js";
 const source = readFileSync("src/App.jsx", "utf8");
 const workerSource = readFileSync("worker.js", "utf8");
 const styleSource = readFileSync("src/style.css", "utf8");
@@ -102,6 +103,8 @@ checks.push(["patient view contains a data-only documentation overview", source.
 checks.push(["patient documentation overview has five sections", source.includes("label:'Beschwerden und Alltag'") && source.includes("label:'Fußbefund'") && source.includes("label:'Statik und Haltung'") && source.includes("label:'Gang und Bewegung'") && source.includes("label:'Auswertung und Bericht'")]);
 checks.push(["documentation overview responsive styles exist", styleSource.includes(".patientProgressGrid") && styleSource.includes("@media(max-width:650px){.patientProgress")]);
 
+checks.push(["documentation overview uses shared media-aware helper", source.includes("hasPatientProgressData(item.label,data,imageFiles,videoFiles)") && source.includes("import { hasPatientProgressData } from './patientProgress.js';")]);
+
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
@@ -139,3 +142,10 @@ assert.throws(()=>normalizeStoredDemoPatients([record(24),{id:25,patient:{name:"
 console.log("Demo import validation checks passed:", importChecks.length);
 
 
+
+assert.equal(hasPatientProgressData("Beschwerden und Alltag", {complaints:"Demo"}), true); 
+assert.equal(hasPatientProgressData("Fußbefund", {}, [{name:"footprint-demo.jpg"}]), true); 
+assert.equal(hasPatientProgressData("Statik und Haltung", {}, [{name:"statik-frontal-demo.jpg"}]), true); 
+assert.equal(hasPatientProgressData("Gang und Bewegung", {}, [], [{name:"10m-gang-demo.mp4"}]), true); 
+assert.equal(hasPatientProgressData("Gang und Bewegung", {}, [], []), false); 
+console.log("Patient documentation progress checks passed: 5");
