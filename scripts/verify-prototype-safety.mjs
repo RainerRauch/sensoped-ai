@@ -164,4 +164,4 @@ assert.equal(guessVideoView("gang-frontal-demo.mp4"), "Gang frontal");
 assert.equal(guessVideoView("gang-hinten-demo.mp4"), "Gang von hinten");
 assert.equal(guessVideoView("gang-seitlich-demo.mp4"), "Gang seitlich");
 assert.equal(guessVideoView("gang-profil-demo.mp4"), "Gang seitlich");
-console.log("Video filename classification checks passed: 5");
+console.log("Video filename classification checks passed: 7");
