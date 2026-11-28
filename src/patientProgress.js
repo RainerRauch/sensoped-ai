@@ -6,8 +6,8 @@ const SECTION_KEYS = {
   "Auswertung und Bericht": ["assessment", "recommendations", "summary", "doctorDiagnosis", "doctorNotes"]
 };
 
-const FOOT_VIEW = /(?:fuß|foot|sole|plantar|abdruck|rückfuß|vorfuß|zehen|heel|forefoot|footprint|instep|dorsal|seitenansicht)/i;
-const STATIC_VIEW = /(?:statik|stand|frontal|hinten|alignment|achsen|posterior|anterior)/i;
+const FOOT_VIEW = /(?:fuß|foot|sole|plantar|abdruck|rückfuß|vorfuß|zehen|heel|forefoot|footprint|instep|fußrücken)/i;
+const STATIC_VIEW = /(?:statik|stand|haltung|alignment|achsen|posture|postural|standbild|static)/i;
 
 function hasText(value) {
   return typeof value === "string" ? value.trim().length > 0 : value != null && String(value).trim().length > 0;
