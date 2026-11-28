@@ -68,6 +68,9 @@ const checks = [
   ["eight-hour expiry is disclosed in the UI", source.includes("Demo-Daten werden nach 8 Stunden automatisch aus dieser Sitzung gelöscht.")],
 ]
 checks.push(["app text has no double-escaped line breaks", !source.includes("\\\\n")]);
+checks.push(["save validates measured gait distance range and format", source.includes("const gaitDistanceRaw=String(data.gaitDistance??'').trim()") && source.includes("gaitDistanceValue<0.1||gaitDistanceValue>100")]);
+checks.push(["entered gait distance requires measured status", source.includes("Bitte die eingetragene Gangstrecke vor Ort als gemessen bestätigen.")]);
+checks.push(["10m measurement status must match numeric distance", source.includes("gaitDistanceValue!==10") && source.includes("gaitDistanceValue===10")]);
 checks.push(["patient view does not invent an unmeasured 10m gait distance", source.includes("data.gaitDistance?data.gaitDistance+\' m\':data.gaitDistanceStatus===\'10 m vor Ort gemessen und markiert\'") && source.includes(":\'Nicht dokumentiert\'") && !source.includes("data.gaitDistance||\'10\'")]);
 checks.push(["gait distance input has no assumed default", source.includes("value={data.gaitDistance??''}") && !source.includes("value={data.gaitDistance??'10'}")]);
 const failures = [];
