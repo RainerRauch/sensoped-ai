@@ -83,6 +83,8 @@ checks.push(["demo import is available when patient list is empty", !source.incl
 checks.push(["stored patient records normalized on read", /function readDemoPatients\(\)[\s\S]*?normalizeStoredDemoPatients\(parsed\)/]);
 checks.push(["corrupt stored patient list cleared", /function readDemoPatients\(\)[\s\S]*?sessionStorage\.removeItem\('sensoped_demo_patients'\)/]);
 
+checks.push(["corrupt demo storage recovery is disclosed", source.includes("sensoped_demo_storage_recovery") && source.includes("Beschädigte Demo-Akten")]);
+
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
@@ -111,10 +113,11 @@ assert.throws(()=>validateDemoImport({records:[{id:Infinity,patient:{name:"Demo"
 assert.throws(()=>validateDemoImport({records:[record(100),record(101)]},Array.from({length:99},(_,i)=>record(i+1)))); importChecks.push("session-wide record cap enforced");
 assert.equal(validateDemoImport({records:[record(100)]},Array.from({length:99},(_,i)=>record(i+1))).length,1); importChecks.push("remaining session capacity accepted");
 assert.throws(()=>validateDemoImport({records:[record()]},{})); importChecks.push("existing record list type checked");
-console.log("Demo import validation checks passed:", importChecks.length);
+
 assert.equal(normalizeStoredDemoPatients([record(20)]).length,1); importChecks.push("stored valid record normalized");
 assert.equal(normalizeStoredDemoPatients([record(21),record(21),record(22)]).length,2); importChecks.push("duplicate stored IDs normalized");
 assert.throws(()=>normalizeStoredDemoPatients({records:[record(23)]})); importChecks.push("non-array storage rejected");
 assert.throws(()=>normalizeStoredDemoPatients([record(24),{id:25,patient:{name:"Demo"},data:{nested:{bad:true}}}])); importChecks.push("corrupt stored record rejected");
+console.log("Demo import validation checks passed:", importChecks.length);
 
 
