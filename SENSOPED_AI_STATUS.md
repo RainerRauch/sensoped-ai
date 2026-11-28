@@ -99,3 +99,14 @@ Stand: 24. November 2026
 - Deploy-Job Logs über GitHub-API-Verbindung nicht abrufbar (404 BlobNotFound). Ursache damit nicht eindeutig belegt.
 - Pages-Repository-Einstellung Settings > Pages > Source = GitHub Actions bleibt zu überprüfen. Zugriff auf diese Einstellung hier nicht möglich.
 - Verify-backup Run `45490784517`: erfolgreich.
+
+
+## Entwicklungsupdate 28.11.2026 – Gangstrecke validiert
+
+- Die Eingabe der Gangstrecke wird beim Speichern geprüft: numerisches Format, Bereich 0,1–100 m, Messstatus erforderlich; die Kennzeichnung „10 m“ muss exakt mit 10 m übereinstimmen. Eine abweichende Strecke benötigt einen Zahlenwert und darf nicht als 10 m markiert sein.
+- Regressionchecks ergänzt; der aktuelle GitHub-Actions-Build und die Sicherheits-Smoke-Prüfung sind für Commit `5a01d09f` erfolgreich.
+- Lokaler Build des aktuellen Branches in einer isolierten Sandbox: 1.572 Module verarbeitet, Build erfolgreich; `npm run test:smoke` meldet 69 bestandene Prüfungen.
+- Interaktiver Headless-Test auf 390 × 844 px: 7,5 m mit „10 m“ wird blockiert; 7,5 m mit „abweichende Strecke gemessen“ lässt sich als Demo-Akte speichern; Datenschutz-Reset erfolgreich. Keine JavaScript-Fehler, fehlgeschlagenen Netzwerkrequests oder horizontalen Überläufe in diesem Test.
+- **Vercel-Preview für den korrigierten App-Commit ist noch nicht veröffentlicht.** Vercel meldet `api-deployments-free-per-day` (mehr als 100 Deployments/24 h). Der letzte READY-Preview-Stand ist `2d9e5972` und enthält noch nicht die korrigierte Regex; er ist daher nicht für den neuen Gangstrecken-Test geeignet.
+- Main bleibt bei `9f1001ad`; keine Zusammenführung, Production oder bestehende Domain verändert.
+- Grenzen: Der interaktive Test umfasst gezielt den Gangstrecken-/Speicher-/Reset-Pfad, nicht den vollständigen klinischen Workflow, Kamera oder Live-Worker. Nur fiktive Demo-Daten verwenden; keine klinische Validierung.
