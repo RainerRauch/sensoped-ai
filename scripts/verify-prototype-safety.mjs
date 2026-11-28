@@ -150,4 +150,5 @@ assert.equal(hasPatientProgressData("Gang und Bewegung", {}, [], [{name:"10m-gan
 assert.equal(hasPatientProgressData("Gang und Bewegung", {}, [], []), false); 
 assert.equal(hasPatientProgressData("Fußbefund", {imageFileView0:"Fuß von oben"}, [{name:"upload-demo.jpg"}]), true); 
 assert.equal(hasPatientProgressData("Statik und Haltung", {imageFileView0:"Statik – seitlich"}, [{name:"upload-demo.jpg"}]), true); 
-console.log("Patient documentation progress checks passed: 7");
+assert.equal(hasPatientProgressData("Statik und Haltung", {imageFileView0:"Statik – dorsal"}, [{name:"upload-demo.jpg"}]), true); 
+console.log("Patient documentation progress checks passed: 8");
