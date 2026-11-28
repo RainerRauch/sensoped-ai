@@ -76,3 +76,9 @@ button{white-space:normal;overflow-wrap:anywhere}
 :where(button,a,input,textarea,select,[tabindex]):focus-visible{outline:3px solid #28a18d;outline-offset:3px;box-shadow:0 0 0 2px rgba(40,161,141,.14)}
 :where(button,input,textarea,select):disabled{cursor:not-allowed}
 [role="status"]{overflow-wrap:anywhere}
+
+
+/* Prominent prototype-only warning in patient view and exported reports. */
+.prototypeSafetyBanner{border:2px solid #b65b36;background:#fff3eb;color:#59321f;border-radius:12px;padding:14px 16px;margin:14px 0;font-size:14px;line-height:1.55}
+.prototypeSafetyBanner strong{display:block;margin-bottom:4px;letter-spacing:.2px}
+@media(max-width:600px){.prototypeSafetyBanner{font-size:13px;padding:12px}}
