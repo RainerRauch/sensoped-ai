@@ -94,6 +94,7 @@ const healthTestSource=source.slice(healthTestStart,healthTestEnd);
 checks.push(["worker health check has an eight-second abort",healthTestStart>=0&&healthTestEnd>healthTestStart&&healthTestSource.includes("const controller=new AbortController();")&&healthTestSource.includes("setTimeout(()=>controller.abort(),8000)")&&healthTestSource.includes("clearTimeout(timeout)")]);
 checks.push(["worker health check reports timeout clearly",healthTestSource.includes("e.name==='AbortError'?'Zeitüberschreitung nach 8 Sekunden.")]);
 checks.push(["health URL strips route suffix and query/hash",healthTestSource.includes("base.pathname.replace(/\\/(?:interpret|image|transcribe|health)\\/?$/,'')")&&healthTestSource.includes("base.search='';base.hash='';")]);
+checks.push(["patient report export requires explicit review", source.includes("async function exportReport(){if(reportMode==='patient'&&!patientViewApproved){setMsg('Bitte zuerst die Patientenansicht fachlich prüfen und freigeben.');return;}")]);
 
 const failures = [];
 for (const [name, pattern] of checks) {
