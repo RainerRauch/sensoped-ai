@@ -95,6 +95,7 @@ checks.push(["worker health check has an eight-second abort",healthTestStart>=0&
 checks.push(["worker health check reports timeout clearly",healthTestSource.includes("e.name==='AbortError'?'Zeitüberschreitung nach 8 Sekunden.")]);
 checks.push(["health URL strips route suffix and query/hash",healthTestSource.includes("base.pathname.replace(/\\/(?:interpret|image|transcribe|health)\\/?$/,'')")&&healthTestSource.includes("base.search='';base.hash='';")]);
 checks.push(["patient report export requires explicit review", source.includes("async function exportReport(){if(reportMode==='patient'&&!patientViewApproved){setMsg('Bitte zuerst die Patientenansicht fachlich prüfen und freigeben.');return;}")]);
+checks.push(["report step links to patient view when approval is missing", source.includes("Fachliche Prüfung erforderlich")&&source.includes("onClick={()=>setPage(\'Patientenansicht\')}")]);
 
 const failures = [];
 for (const [name, pattern] of checks) {
