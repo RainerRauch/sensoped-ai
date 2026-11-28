@@ -82,3 +82,15 @@ button{white-space:normal;overflow-wrap:anywhere}
 .prototypeSafetyBanner{border:2px solid #b65b36;background:#fff3eb;color:#59321f;border-radius:12px;padding:14px 16px;margin:14px 0;font-size:14px;line-height:1.55}
 .prototypeSafetyBanner strong{display:block;margin-bottom:4px;letter-spacing:.2px}
 @media(max-width:600px){.prototypeSafetyBanner{font-size:13px;padding:12px}}
+
+.patientProgress{background:#fff;border:1px solid #dce8e8;border-radius:16px;padding:18px;margin:18px 0;break-inside:avoid}
+.patientProgress h3{margin:0 0 8px;color:#174d56;font:700 17px Manrope}
+.patientProgressGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px}
+.patientProgressItem{display:flex;align-items:center;gap:10px;min-width:0;border-radius:12px;padding:12px;background:#f3f7f7}
+.patientProgressItem>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.patientProgressItem strong{font-size:13px;color:#34555a}
+.patientProgressItem span:last-child{font-size:12px;color:#667d81}
+.patientProgressIndicator{width:10px;height:10px;border-radius:50%;background:#82999b;flex:0 0 10px}
+.patientProgressItem.documented{background:#eaf5f3}
+.patientProgressItem.documented .patientProgressIndicator{background:#167b78}
+@media(max-width:650px){.patientProgress{padding:14px}.patientProgressGrid{grid-template-columns:1fr}}
