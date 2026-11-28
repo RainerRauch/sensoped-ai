@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
-import { validateDemoImport } from "../src/demoImport.js";
+import { validateDemoImport, normalizeStoredDemoPatients } from "../src/demoImport.js";
 const source = readFileSync("src/App.jsx", "utf8");
 const workerSource = readFileSync("worker.js", "utf8");
 const styleSource = readFileSync("src/style.css", "utf8");
@@ -80,6 +80,9 @@ checks.push(["patient view prominently states demo-only and unvalidated AI", sou
 checks.push(["exported report includes explicit demo-only warning", source.includes('class="prototypeSafetyBanner"') && source.includes("DEMO-ANWENDUNG – NICHT FÜR REALE PATIENTEN.")]);
 checks.push(["demo import validation is integrated", source.includes("validateDemoImport(parsed,patients)") && source.includes("file.size>2*1024*1024")]);
 checks.push(["demo import is available when patient list is empty", !source.includes("patients.length>0&&<label className=\"secondary\" style={{display:'inline-block',padding:10,borderRadius:8,cursor:'pointer'}}> <FileText size={16}/> Akten importieren")]);
+checks.push(["stored patient records normalized on read", /function readDemoPatients\(\)[\s\S]*?normalizeStoredDemoPatients\(parsed\)/]);
+checks.push(["corrupt stored patient list cleared", /function readDemoPatients\(\)[\s\S]*?sessionStorage\.removeItem\('sensoped_demo_patients'\)/]);
+
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
@@ -109,4 +112,9 @@ assert.throws(()=>validateDemoImport({records:[record(100),record(101)]},Array.f
 assert.equal(validateDemoImport({records:[record(100)]},Array.from({length:99},(_,i)=>record(i+1))).length,1); importChecks.push("remaining session capacity accepted");
 assert.throws(()=>validateDemoImport({records:[record()]},{})); importChecks.push("existing record list type checked");
 console.log("Demo import validation checks passed:", importChecks.length);
+assert.equal(normalizeStoredDemoPatients([record(20)]).length,1); importChecks.push("stored valid record normalized");
+assert.equal(normalizeStoredDemoPatients([record(21),record(21),record(22)]).length,2); importChecks.push("duplicate stored IDs normalized");
+assert.throws(()=>normalizeStoredDemoPatients({records:[record(23)]})); importChecks.push("non-array storage rejected");
+assert.throws(()=>normalizeStoredDemoPatients([record(24),{id:25,patient:{name:"Demo"},data:{nested:{bad:true}}}])); importChecks.push("corrupt stored record rejected");
+
 

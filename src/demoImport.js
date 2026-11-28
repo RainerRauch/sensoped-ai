@@ -62,6 +62,11 @@ function validateRecord(record) {
   };
 }
 
+export function normalizeStoredDemoPatients(value) {
+  if (!Array.isArray(value)) throw new Error("Gespeicherte Demo-Akten müssen eine Liste sein.");
+  return validateDemoImport({ records: value }, []);
+}
+
 export function validateDemoImport(payload, existingRecords = []) {
   if (!isRecord(payload) || !Array.isArray(payload.records)) {
     throw new Error("Ungültige SENSOPED-Aktenstruktur.");
