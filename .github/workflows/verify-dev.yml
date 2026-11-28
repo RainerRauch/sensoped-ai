@@ -24,6 +24,8 @@ jobs:
         run: npm run build
       - name: Syntax-check Worker source
         run: node --check worker.js
+      - name: Verify Worker routes and streaming body limits
+        run: node scripts/verify-worker-input.mjs
       - name: Verify prototype upload guardrails
         run: node scripts/verify-prototype-safety.mjs
       - name: Confirm build output
