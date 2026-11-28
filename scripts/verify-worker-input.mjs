@@ -94,4 +94,4 @@ const directOversize = new Request("https://worker.test/body", {
 });
 await assert.rejects(() => readBodyLimited(directOversize, 32), error => error?.status === 413);
 
-console.log("Worker input and route tests passed: 10");
+console.log("Worker input and route tests passed: 11");
