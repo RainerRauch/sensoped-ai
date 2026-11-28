@@ -104,5 +104,9 @@ assert.throws(()=>validateDemoImport({records:[{id:1,patient:{name:"Demo"},data:
 assert.throws(()=>validateDemoImport({records:[{id:1,patient:{name:"Demo"},data:{},media:{images:[],videos:Array(4).fill("x")}}]})); importChecks.push("excess video list rejected");
 assert.throws(()=>validateDemoImport({records:Array(101).fill(null).map((_,i)=>record(i))})); importChecks.push("more than 100 records rejected");
 assert.throws(()=>validateDemoImport({records:[{id:Infinity,patient:{name:"Demo"},data:{}}]})); importChecks.push("invalid ID rejected");
+
+assert.throws(()=>validateDemoImport({records:[record(100),record(101)]},Array.from({length:99},(_,i)=>record(i+1)))); importChecks.push("session-wide record cap enforced");
+assert.equal(validateDemoImport({records:[record(100)]},Array.from({length:99},(_,i)=>record(i+1))).length,1); importChecks.push("remaining session capacity accepted");
+assert.throws(()=>validateDemoImport({records:[record()]},{})); importChecks.push("existing record list type checked");
 console.log("Demo import validation checks passed:", importChecks.length);
 
