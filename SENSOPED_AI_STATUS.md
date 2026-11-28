@@ -120,3 +120,14 @@ Stand: 24. November 2026
 - Korrektur der vorherigen Statusangaben: GitHub zeigt aktuell HEAD `24cad90`; frühere in Chatmeldungen genannte SHAs `5a01d09`, `d18c7c46` und mehrere spätere behauptete App-Commits sind in diesem aktuellen Branch-Stand nicht als HEAD bestätigt. Ein lokaler Clone ist in der aktuellen Arbeitsumgebung wegen DNS-Fehler `github.com` nicht möglich; deshalb wird kein neuer lokaler Browser-/E2E-Test behauptet. Das zuletzt dokumentierte 390×844-Interaktionstest-Ergebnis ist nicht durch einen aktuellen Workflow-Run belegt und wird hier nicht als verifiziert übernommen.
 - Vercel-Deployment `sensoped-ai-ucat` ist laut Vercel API READY für Commit `5e0395b`; es ist nicht der Branch-HEAD `24cad90`, dessen letzte Änderung nur die Smoke-Test-Assertion betrifft. Die App-UI auf `5e0395b` ist daher die letzte verifizierte veröffentlichte App-Version, nicht der aktuelle HEAD als gesamter Commit.
 - Main, Production und bestehende Domain bleiben unverändert.
+
+
+## Demo-Aktenimport abgesichert (28.11.2026, 03:31 UTC)
+- Import-Button ist auch bei leerer Sitzungsaktenliste verfügbar.
+- JSON-Import begrenzt auf 2 MB und maximal 100 Akten; validiert Patientenfelder, Befundwerte, IDs und Medienlisten vor dem Hinzufügen.
+- Maximal 6 Bild- und 3 Videodateinamen pro Akte; Originaldateien werden nicht importiert. Duplikate werden anhand der ID übersprungen.
+- Ungültige, verschachtelte oder zu große Feldwerte werden abgewiesen. Testfälle für gültige/ungültige Akten, Duplikate, Größenlimits und Medienlimits hinzugefügt.
+- GitHub Actions Verify-dev Run 46103264516 für Commit `fc8bd916a5b932452ee5d1bd5068840f99b7862c` erfolgreich: Vite-Build, Worker-Syntax, 73 Smoke-Checks und 12 Import-Validierungstests; Artifact `sensoped-ai-development-preview` bis 12.12.2026.
+- Verify-backup Run 46103264517 erfolgreich; Backup-Tag `backup-2026-11-28-fc8bd916a5b9` auf den geprüften Code-HEAD.
+- Vercel Preview-Checks für die verknüpften Projekte werden aktuell durch das Tageslimit (build-rate-limit) abgewiesen; daher keine neue Live-Preview verifiziert. Das GitHub Actions Build-Artefakt ist der verfügbare Teststand.
+- Main bleibt bei `9f1001adac6ac17e319479ae8dc55f4abdeae024`; keine Zusammenführung, Production oder bestehende Domain verändert.
