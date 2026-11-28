@@ -85,6 +85,9 @@ checks.push(["corrupt stored patient list cleared", /function readDemoPatients\(
 
 checks.push(["corrupt demo storage recovery is disclosed", source.includes("sensoped_demo_storage_recovery") && source.includes("Beschädigte Demo-Akten")]);
 
+checks.push(["saving new demo records validates against the session-wide cap", source.includes("const validated=validateDemoImport({records:[record]},patients)")]);
+checks.push(["saving new records preflights session storage before updating state", source.includes("sessionStorage.setItem('sensoped_demo_patients',JSON.stringify(nextPatients))") && source.includes("setPatients(nextPatients)")]);
+checks.push(["demo imports preflight session storage before updating state", source.includes("const next=[...incoming,...patients];try{sessionStorage.setItem('sensoped_demo_patients',JSON.stringify(next))") && source.includes("setPatients(next);setMsg(incoming.length+' geprüfte Demo-Akten importiert.');")]);
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
@@ -114,6 +117,7 @@ assert.throws(()=>validateDemoImport({records:[record(100),record(101)]},Array.f
 assert.equal(validateDemoImport({records:[record(100)]},Array.from({length:99},(_,i)=>record(i+1))).length,1); importChecks.push("remaining session capacity accepted");
 assert.throws(()=>validateDemoImport({records:[record()]},{})); importChecks.push("existing record list type checked");
 
+assert.throws(()=>validateDemoImport({records:[record(101)]},Array.from({length:100},(_,i)=>record(i+1)))); importChecks.push("save at full session cap rejected");
 assert.equal(normalizeStoredDemoPatients([record(20)]).length,1); importChecks.push("stored valid record normalized");
 assert.equal(normalizeStoredDemoPatients([record(21),record(21),record(22)]).length,2); importChecks.push("duplicate stored IDs normalized");
 assert.throws(()=>normalizeStoredDemoPatients({records:[record(23)]})); importChecks.push("non-array storage rejected");
