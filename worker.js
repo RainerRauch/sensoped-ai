@@ -15,7 +15,7 @@ export default {
   if (!env.OPENAI_API_KEY) return json({error:"API key missing"},500,corsHeaders);
   try {
    if(route==="/transcribe"){
-    const incoming=await request.formData();const audio=incoming.get("audio");
+    const formBytes=await readBodyLimited(request,26*1024*1024);const formHeaders=new Headers(request.headers);formHeaders.delete("content-length");const formRequest=new Request(request.url,{method:"POST",headers:formHeaders,body:formBytes});const incoming=await formRequest.formData();const audio=incoming.get("audio");
     if(!audio||typeof audio.arrayBuffer!=="function")return json({error:"Audio missing"},400,corsHeaders);
     if(audio.size===0)return json({error:"Audio file is empty"},400,corsHeaders);
     if(audio.size>25*1024*1024)return json({error:"Audio file too large (max 25 MB)"},413,corsHeaders);
@@ -26,9 +26,7 @@ export default {
     return json({text:raw.text||""},200,corsHeaders);
    }
    if(route==="/interpret"){
-    if(Number(request.headers.get("Content-Length")||0)>200000)return json({error:"Request too large"},413,corsHeaders);
-    const body=await request.json();
-    if(JSON.stringify(body).length>200000)return json({error:"Request too large"},413,corsHeaders);
+    const body=await readJsonLimited(request,200000);
     const findings=body?.findings;
     if(!findings||typeof findings!=="object"||Array.isArray(findings))return json({error:"Findings must be an object"},400,corsHeaders);
     const entries=Object.entries(findings);
@@ -44,8 +42,7 @@ export default {
     const raw=await api.json();if(!api.ok)return json({error:raw.error?.message||"AI request failed"},api.status,corsHeaders);
     const out=(raw.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==="output_text").map(x=>x.text).join("\n");return json({interpretation:out},200,corsHeaders);
    }
-   if(Number(request.headers.get("Content-Length")||0)>16000000)return json({error:"Request too large"},413,corsHeaders);
-   const body=await request.json();const image=body?.image;
+   const body=await readJsonLimited(request,16*1024*1024);const image=body?.image;
    if(!image||typeof image!=="string"||!/^data:image\/(png|jpeg|webp);base64,/i.test(image))return json({error:"Image must be a PNG, JPEG or WebP data URL"},400,corsHeaders);
    if(image.length>15*1024*1024)return json({error:"Image payload too large"},413,corsHeaders);
    const imageBytes=Math.floor((image.split(",")[1]||"").length*3/4);
@@ -56,8 +53,19 @@ export default {
    const textout=(raw.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==="output_text").map(x=>x.text).join("\n");
    const cleaned=textout.replace(/^\s*\x60\x60\x60json/i,"").replace(/\x60\x60\x60\s*$/,"").trim();
    return json(JSON.parse(cleaned),200,corsHeaders);
-  } catch(e){return json({error:e.message||"Unexpected error"},500,corsHeaders)}
+  } catch(e){return json({error:e.message||"Unexpected error"},e instanceof RequestError?e.status:500,corsHeaders)}
  }
 };
+class RequestError extends Error { constructor(message,status=400){super(message);this.status=status;} }
+export async function readBodyLimited(request,maxBytes){
+ const declared=Number(request.headers.get("Content-Length")||0);
+ if(declared>maxBytes)throw new RequestError("Request too large",413);
+ if(!request.body)return new Uint8Array();
+ const reader=request.body.getReader();const chunks=[];let total=0;
+ try{while(true){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>maxBytes){await reader.cancel();throw new RequestError("Request too large",413);}chunks.push(value);}}
+ catch(e){if(e instanceof RequestError)throw e;throw new RequestError("Could not read request body",400);}
+ const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}return bytes;
+}
+async function readJsonLimited(request,maxBytes){const bytes=await readBodyLimited(request,maxBytes);try{return JSON.parse(new TextDecoder().decode(bytes));}catch{throw new RequestError("Invalid JSON",400);}}
 function cors(request,env){const headers={"Access-Control-Allow-Headers":"Content-Type","Access-Control-Allow-Methods":"POST,OPTIONS","Vary":"Origin","Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer"};if(env.ALLOWED_ORIGIN)headers["Access-Control-Allow-Origin"]=env.ALLOWED_ORIGIN;return headers}
 function json(value,status=200,headers){return new Response(JSON.stringify(value),{status,headers:{...(headers||{}),"Content-Type":"application/json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer"}})}
