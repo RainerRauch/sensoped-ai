@@ -74,7 +74,7 @@ checks.push(["10m measurement status must match numeric distance", source.includ
 checks.push(["patient view does not invent an unmeasured 10m gait distance", source.includes("data.gaitDistance?data.gaitDistance+\' m\':data.gaitDistanceStatus===\'10 m vor Ort gemessen und markiert\'") && source.includes(":\'Nicht dokumentiert\'") && !source.includes("data.gaitDistance||\'10\'")]);
 checks.push(["gait distance input has no assumed default", source.includes("value={data.gaitDistance??''}") && !source.includes("value={data.gaitDistance??'10'}")]);
 checks.push(["gait-distance regex matches numeric digits", source.includes(String.raw`if(!/^\d+(?:[.,]\d+)?$/.test(gaitDistanceRaw)`)]);
-checks.push(["patient view prominently states demo-only and unvalidated AI", source.includes('className="prototypeSafetyBanner"' ) && source.includes("Keine klinisch validierte KI-Auswertung.")]);
+checks.push(["patient view prominently states demo-only and unvalidated AI", source.includes('className="prototypeSafetyBanner"' ) && source.includes("keine klinisch validierte KI-Auswertung.")]);
 checks.push(["exported report includes explicit demo-only warning", source.includes('class="prototypeSafetyBanner"') && source.includes("DEMO-ANWENDUNG – NICHT FÜR REALE PATIENTEN.")]);
 const failures = [];
 for (const [name, pattern] of checks) {
