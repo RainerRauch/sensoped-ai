@@ -131,3 +131,14 @@ Stand: 24. November 2026
 - Verify-backup Run 46103264517 erfolgreich; Backup-Tag `backup-2026-11-28-fc8bd916a5b9` auf den geprüften Code-HEAD.
 - Vercel Preview-Checks für die verknüpften Projekte werden aktuell durch das Tageslimit (build-rate-limit) abgewiesen; daher keine neue Live-Preview verifiziert. Das GitHub Actions Build-Artefakt ist der verfügbare Teststand.
 - Main bleibt bei `9f1001adac6ac17e319479ae8dc55f4abdeae024`; keine Zusammenführung, Production oder bestehende Domain verändert.
+
+
+## Entwicklungsupdate 28.11.2026 – Speicher-Preflight für Akten speichern und importieren
+- Aktueller Code-Stand vor dieser Statusdokumentation: `e770cda022032cce5618099b4078a447c9a3f045`; App-Änderung `15cfa4f`, Regressionprüfung `e770cda`.
+- Beim Speichern einer Untersuchung wird der neue Datensatz mit `validateDemoImport({records:[record]}, patients)` gegen die Sitzungsgrenze und Struktur geprüft. Die komplette nächste Aktenliste wird vor dem React-State-Update in `sessionStorage` geschrieben. Wenn die Grenze (100 Akten) oder der Sitzungsspeicher erreicht ist, bleibt die Akte unverändert und eine Fehlermeldung wird angezeigt.
+- Der JSON-Import verwendet ebenfalls einen Speicher-Preflight vor dem State-Update. Ein Quota-/Speicherfehler führt nicht mehr zu einem scheinbar erfolgreichen Import.
+- GitHub Actions Verify-Dev Run `46121168473` für `e770cda` erfolgreich: Vite-Build, Worker-Syntax, `dist/index.html`, 79 Smoke-Checks und 20 Import-/Validierungstests; Artefakt `sensoped-ai-development-preview` (ID `15253477296`, 14 Tage).
+- Daily-Backup Run `46121168467` und Verify-Backup Run `46121168476` erfolgreich. Tag `backup-2026-11-28-e770cda02203` zeigt auf den aktuellen Code-Stand.
+- Vercel-Preview für den neuen Commit konnte nicht erstellt werden: API meldet `api-deployments-free-per-day` (über 100 Deployments/24 Stunden; retry nach 1 Tag). Keine weiteren Deployments/Projekte angelegt und keine Einstellungen geändert. GitHub-Artefakt bleibt der verifizierte Testbuild.
+- Vergleich mit Main: Branch bleibt divergent, `389 ahead / 12 behind`; Main `9f1001ad` nicht verändert. Kein Merge, Production oder bestehende Domain geändert.
+- Grenzen: kein interaktiver Browser-Ende-zu-Ende-Test dieser neuen Änderung. Keine echten Patientendaten verwenden; Prototyp nicht klinisch validiert.
