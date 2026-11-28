@@ -98,6 +98,10 @@ checks.push(["interpret endpoint uses shared URL normalizer",source.includes("re
 checks.push(["patient report export requires explicit review", source.includes("async function exportReport(){if(reportMode==='patient'&&!patientViewApproved){setMsg('Bitte zuerst die Patientenansicht fachlich prüfen und freigeben.');return;}")]);
 checks.push(["report step links to patient view when approval is missing", source.includes("Fachliche Prüfung erforderlich")&&source.includes("onClick={()=>setPage(\'Patientenansicht\')}")]);
 
+checks.push(["patient view contains a data-only documentation overview", source.includes('className="patientProgress"') && source.includes("Dokumentationsübersicht") && source.includes("Diese Übersicht zeigt nur, ob Angaben vorhanden sind") && source.includes("Angaben vorhanden") && source.includes("Noch nicht dokumentiert")]);
+checks.push(["patient documentation overview has five sections", source.includes("label:'Beschwerden und Alltag'") && source.includes("label:'Fußbefund'") && source.includes("label:'Statik und Haltung'") && source.includes("label:'Gang und Bewegung'") && source.includes("label:'Auswertung und Bericht'")]);
+checks.push(["documentation overview responsive styles exist", styleSource.includes(".patientProgressGrid") && styleSource.includes("@media(max-width:650px){.patientProgress")]);
+
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
