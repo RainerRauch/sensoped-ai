@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import worker, { readBodyLimited } from "../worker.js";
+import worker, { readBodyLimited, fetchUpstream } from "../worker.js";
 
 const origin = "https://sensoped-preview.example";
 const env = { ALLOWED_ORIGIN: origin, OPENAI_API_KEY: "test-only" };
@@ -18,6 +18,18 @@ function streamedRequest(path, bytes, headers = {}) {
     duplex: "half"
   });
 }
+
+
+const originalFetch = globalThis.fetch;
+globalThis.fetch = async () => new Response("ok", { status: 200 });
+const upstreamSuccess = await fetchUpstream("https://api.example.test", {}, 100);
+assert.equal(upstreamSuccess.status, 200);
+globalThis.fetch = (_url, { signal }) => new Promise((resolve, reject) => {
+  if (signal.aborted) reject(new DOMException("Aborted", "AbortError"));
+  else signal.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")), { once: true });
+});
+await assert.rejects(() => fetchUpstream("https://api.example.test", {}, 10), error => error?.status === 504);
+globalThis.fetch = originalFetch;
 
 const health = await worker.fetch(new Request("https://worker.test/health"), env);
 assert.equal(health.status, 200);
@@ -94,4 +106,4 @@ const directOversize = new Request("https://worker.test/body", {
 });
 await assert.rejects(() => readBodyLimited(directOversize, 32), error => error?.status === 413);
 
-console.log("Worker input and route tests passed: 11");
+console.log("Worker input and route tests passed: 13");
