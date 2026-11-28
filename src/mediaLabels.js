@@ -6,7 +6,7 @@ export function guessVideoView(name) {
     .replace(/[ü]/g, "ue");
   if (/frontal|front|vorne|anterior/.test(normalized)) return "Gang frontal";
   if (/hinten|rear|posterior/.test(normalized)) return "Gang von hinten";
-  if (/seite|side|lateral/.test(normalized)) return "Gang seitlich";
+  if (/seitlich|seite|side|lateral|profil|sagittal/.test(normalized)) return "Gang seitlich";
   if (/schraeg|diagonal/.test(normalized)) return "Gang schräg";
   return "";
 }
