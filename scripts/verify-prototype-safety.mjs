@@ -88,6 +88,13 @@ checks.push(["corrupt demo storage recovery is disclosed", source.includes("sens
 checks.push(["saving new demo records validates against the session-wide cap", source.includes("const validated=validateDemoImport({records:[record]},patients)")]);
 checks.push(["saving new records preflights session storage before updating state", source.includes("sessionStorage.setItem('sensoped_demo_patients',JSON.stringify(nextPatients))") && source.includes("setPatients(nextPatients)")]);
 checks.push(["demo imports preflight session storage before updating state", source.includes("const next=[...incoming,...patients];try{sessionStorage.setItem('sensoped_demo_patients',JSON.stringify(next))") && source.includes("setPatients(next);setMsg(incoming.length+' geprüfte Demo-Akten importiert.');")]);
+const healthTestStart=source.indexOf("async function testAIConnection(){");
+const healthTestEnd=source.indexOf("async function runAIInterpretation(){",healthTestStart);
+const healthTestSource=source.slice(healthTestStart,healthTestEnd);
+checks.push(["worker health check has an eight-second abort",healthTestStart>=0&&healthTestEnd>healthTestStart&&healthTestSource.includes("const controller=new AbortController();")&&healthTestSource.includes("setTimeout(()=>controller.abort(),8000)")&&healthTestSource.includes("clearTimeout(timeout)")]);
+checks.push(["worker health check reports timeout clearly",healthTestSource.includes("e.name==='AbortError'?'Zeitüberschreitung nach 8 Sekunden.")]);
+checks.push(["health URL strips route suffix and query/hash",healthTestSource.includes("base.pathname.replace(/\\/(?:interpret|image|transcribe|health)\\/?$/,'')")&&healthTestSource.includes("base.search='';base.hash='';")]);
+
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
