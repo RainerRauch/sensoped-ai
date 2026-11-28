@@ -11,6 +11,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: sensoped-ai-backup-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   backup:
     runs-on: ubuntu-latest
@@ -22,11 +26,31 @@ jobs:
           fetch-depth: 0
 
       - name: Create dated restore tag
+        shell: bash
         run: |
+          set -euo pipefail
+          HEAD_SHA="$(git rev-parse HEAD)"
           TAG="backup-$(date -u +%Y-%m-%d)-$(git rev-parse --short=12 HEAD)"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Backup tag $TAG already exists; leaving it unchanged."
-            exit 0
+          REMOTE_TAG="$(git ls-remote --tags origin "refs/tags/$TAG" | awk '{print $1}')"
+
+          if [ -n "$REMOTE_TAG" ]; then
+            if [ "$REMOTE_TAG" = "$HEAD_SHA" ]; then
+              echo "Backup tag $TAG already points to this HEAD; leaving it unchanged."
+              exit 0
+            fi
+            echo "Backup tag $TAG exists but points to a different commit; refusing to overwrite it."
+            exit 1
           fi
+
           git tag "$TAG" HEAD
-          git push origin "$TAG"
+          if git push origin "$TAG"; then
+            echo "Created $TAG at $HEAD_SHA."
+          else
+            REMOTE_TAG="$(git ls-remote --tags origin "refs/tags/$TAG" | awk '{print $1}')"
+            if [ "$REMOTE_TAG" = "$HEAD_SHA" ]; then
+              echo "Concurrent backup created the same tag at the same HEAD; treating it as success."
+              exit 0
+            fi
+            echo "Backup push failed and the remote tag does not match this HEAD."
+            exit 1
+          fi
