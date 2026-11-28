@@ -34,3 +34,12 @@
 ## Ergebnisprotokoll
 
 Datum, Browser/Version, Bildschirmbreite, getestete Schritte, Fehler und Screenshots (ohne personenbezogene Inhalte) notieren. Smoke-Checks und Build sind getrennt von einem interaktiven Browser-Test zu bewerten.
+
+
+## JSON-Aktenimport – zusätzliche Schutzprüfung (28.11.2026)
+- Import ist auch bei einer leeren Sitzungsaktenliste verfügbar.
+- Importdateien sind auf 2 MB und 100 Akten begrenzt.
+- Akten werden vor dem Import strukturell geprüft; nur einfache Feldwerte, gültige IDs, Namen und Medienlisten sind erlaubt.
+- Maximal 6 Bild- und 3 Videodateinamen pro Akte werden akzeptiert; Originaldateien bleiben nicht enthalten.
+- Vorhandene und doppelte IDs werden übersprungen.
+- Ungültige oder übergroße Einträge werden abgewiesen; keine echten Patientendaten verwenden.
