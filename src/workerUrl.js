@@ -19,9 +19,9 @@ export function resolveWorkerUrl(value, route) {
     throw new Error("Worker-Adresse muss HTTPS verwenden (HTTP nur lokal).");
   }
 
-  base.pathname = base.pathname.replace(/\/(?:health|interpret|image|transcribe)\/?$/i, "").replace(/\/+$/, "");
+  const basePath = base.pathname.replace(/\/(?:health|interpret|image|transcribe)\/?$/i, "").replace(/\/+$/, "");
   base.search = "";
   base.hash = "";
-  base.pathname = base.pathname + "/" + route;
+  base.pathname = basePath + "/" + route;
   return base.toString();
 }
