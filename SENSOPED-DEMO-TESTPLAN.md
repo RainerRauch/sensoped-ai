@@ -10,6 +10,7 @@
 4. **Fußbefund / Statik** – rechte und linke Seite getrennt dokumentieren; Frontal-, Rück- und Seitenansicht als Textbeobachtung abbilden.
 5. **Bilddokumentation** – Demo-Medienbestätigung setzen; PNG, JPEG oder WebP bis 10 MB pro Bild und insgesamt maximal 6 Fotos/30 MB ausprobieren. Zuordnung und Notiz kontrollieren; Bild entfernen und dasselbe Testbild erneut auswählen.
 6. **Gang / Video** – Demo-Bestätigung setzen; künstliches Video (max. 100 MB je Video, 3 Videos/150 MB gesamt) laden, Perspektive und Beobachtungsnotiz eintragen. Die App wertet Videos nicht automatisch aus.
+   - Gangstrecke: Eingaben von 0,1 bis 100 m testen; Speichern muss eine gemessene Streckenbestätigung verlangen. „10 m“ darf nur mit exakt 10 m gespeichert werden; abweichende Strecken benötigen einen Zahlenwert.
 7. **Auswertung / Bericht** – den regelbasierten Hinweisentwurf erstellen, fachlich im Demo-Kontext prüfen, Patienten- und Arztbericht auswählen und Export auslösen. Exportdatei mit einem fiktiven Namen prüfen; keine diagnostische Aussage als validiert behandeln.
 8. **Patientenansicht** – nur dokumentierte Inhalte kontrollieren; fehlende Angaben müssen als nicht dokumentiert erkennbar sein. Demo-Freigabe setzen und Druck/PDF nur mit künstlichen Daten testen.
 9. **Speichern / Wiederöffnen** – Demo-Akte speichern, in der Sitzung öffnen und kontrollieren, dass Medien nur als Namen/Notizen dokumentiert sind; ursprüngliche Dateien werden beim Wiederöffnen nicht automatisch geladen.
