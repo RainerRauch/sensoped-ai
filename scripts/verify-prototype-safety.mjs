@@ -79,7 +79,7 @@ checks.push(["gait-distance regex matches numeric digits", source.includes(Strin
 checks.push(["patient view prominently states demo-only and unvalidated AI", source.includes('className="prototypeSafetyBanner"' ) && source.includes("keine klinisch validierte KI-Auswertung.")]);
 checks.push(["exported report includes explicit demo-only warning", source.includes('class="prototypeSafetyBanner"') && source.includes("DEMO-ANWENDUNG – NICHT FÜR REALE PATIENTEN.")]);
 checks.push(["demo import validation is integrated", source.includes("validateDemoImport(parsed,patients)") && source.includes("file.size>2*1024*1024")]);
-checks.push(["demo import is available when patient list is empty", !source.includes("patients.length>0&&<label className=\"secondary\" style={{display:'inline-block',padding:10,borderRadius:8,cursor:'pointer'}}> <FileText size={16}/> Akten importieren"));
+checks.push(["demo import is available when patient list is empty", !source.includes("patients.length>0&&<label className=\"secondary\" style={{display:'inline-block',padding:10,borderRadius:8,cursor:'pointer'}}> <FileText size={16}/> Akten importieren")]);
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
