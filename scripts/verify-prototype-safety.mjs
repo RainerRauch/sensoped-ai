@@ -73,7 +73,7 @@ checks.push(["entered gait distance requires measured status", source.includes("
 checks.push(["10m measurement status must match numeric distance", source.includes("gaitDistanceValue!==10") && source.includes("gaitDistanceValue===10")]);
 checks.push(["patient view does not invent an unmeasured 10m gait distance", source.includes("data.gaitDistance?data.gaitDistance+\' m\':data.gaitDistanceStatus===\'10 m vor Ort gemessen und markiert\'") && source.includes(":\'Nicht dokumentiert\'") && !source.includes("data.gaitDistance||\'10\'")]);
 checks.push(["gait distance input has no assumed default", source.includes("value={data.gaitDistance??''}") && !source.includes("value={data.gaitDistance??'10'}")]);
-checks.push(["gait-distance regex matches numeric digits", /if\(!\/\^\\d\+\(?:\[.,\]\\d\+\)\?\$\/\.test\(gaitDistanceRaw\)/.test(source)]);
+checks.push(["gait-distance regex matches numeric digits", source.includes(String.raw`if(!/^\d+(?:[.,]\d+)?$/.test(gaitDistanceRaw)`)]);
 const failures = [];
 for (const [name, pattern] of checks) {
   const passed = typeof pattern === "boolean" ? pattern : pattern.test(source);
