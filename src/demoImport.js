@@ -66,14 +66,20 @@ export function validateDemoImport(payload, existingRecords = []) {
   if (!isRecord(payload) || !Array.isArray(payload.records)) {
     throw new Error("Ungültige SENSOPED-Aktenstruktur.");
   }
+  if (!Array.isArray(existingRecords)) throw new Error("Vorhandene Demo-Akten müssen eine Liste sein.");
   if (payload.records.length > 100) throw new Error("Maximal 100 Akten pro Import.");
   const validated = payload.records.map(validateRecord);
   const existingIds = new Set(existingRecords.map(record => String(record?.id)));
   const seenIds = new Set();
-  return validated.filter(record => {
+  const additions = validated.filter(record => {
     const key = String(record.id);
     if (existingIds.has(key) || seenIds.has(key)) return false;
     seenIds.add(key);
     return true;
   });
+  const availableSlots = Math.max(0, 100 - existingRecords.length);
+  if (additions.length > availableSlots) {
+    throw new Error("Maximal 100 Demo-Akten pro Sitzung. Bitte zuerst alte Demo-Akten löschen.");
+  }
+  return additions;
 }
